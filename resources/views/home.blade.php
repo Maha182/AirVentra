@@ -1,23 +1,18 @@
-
-
-        
 @extends('layouts.home.app')
 @section('content')
         <!-- Carousel Start -->
-        <div class="header-carousel owl-carousel">
+        <div id="home" class="header-carousel owl-carousel">
             <div class="header-carousel-item bg-primary">
                 <div class="carousel-caption">
                     <div class="container">
                         <div class="row g-4 align-items-center">
                             <div class="col-lg-7 animated fadeInLeft">
                                 <div class="text-sm-center text-md-start">
-                                    <h4 class="text-white text-uppercase fw-bold mb-4">Welcome To LifeSure</h4>
-                                    <h1 class="display-1 text-white mb-4">Life Insurance Makes You Happy</h1>
-                                    <p class="mb-5 fs-5">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy... 
-                                    </p>
+                                    <h3 class="display-1 text-white mb-6">Revolutionizing Warehouse Management with Airventra</h3>
+                                    <p class="mb-5 fs-5">Smart storage assignment. Drone-driven precision. Efficiency redefined.</p>
                                     <div class="d-flex justify-content-center justify-content-md-start flex-shrink-0 mb-4">
-                                        <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="#"><i class="fas fa-play-circle me-2"></i> Watch Video</a>
-                                        <a class="btn btn-dark rounded-pill py-3 px-4 px-md-5 ms-2" href="#">Learn More</a>
+                                        <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="#"> Explore Features</a>
+                                        <a class="btn btn-dark rounded-pill py-3 px-4 px-md-5 ms-2" href="#">Contact us</a>
                                     </div>
                                 </div>
                             </div>
@@ -41,13 +36,11 @@
                             </div>
                             <div class="col-lg-7 animated fadeInRight">
                                 <div class="text-sm-center text-md-end">
-                                    <h4 class="text-white text-uppercase fw-bold mb-4">Welcome To LifeSure</h4>
-                                    <h1 class="display-1 text-white mb-4">Life Insurance Makes You Happy</h1>
-                                    <p class="mb-5 fs-5">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy... 
-                                    </p>
+                                <h2 class="display-1 text-white mb-4">Revolutionizing Warehouse Management with Airventra</h2>
+                                <p class="mb-5 fs-5">Smart storage assignment. Drone-driven precision. Efficiency redefined.</p>
                                     <div class="d-flex justify-content-center justify-content-md-end flex-shrink-0 mb-4">
-                                        <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="#"><i class="fas fa-play-circle me-2"></i> Watch Video</a>
-                                        <a class="btn btn-dark rounded-pill py-3 px-4 px-md-5 ms-2" href="#">Learn More</a>
+                                        <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="#">Explore Features</a>
+                                        <a class="btn btn-dark rounded-pill py-3 px-4 px-md-5 ms-2" href="#">Contact us</a>
                                     </div>
                                 </div>
                             </div>
@@ -59,218 +52,197 @@
         <!-- Carousel End -->
 
         <!-- Feature Start -->
-        <div class="container-fluid feature bg-light py-5">
+        <div id="features" class="container-fluid feature bg-light py-5">
             <div class="container py-5">
                 <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-                    <h4 class="text-primary">Our Features</h4>
-                    <h1 class="display-4 mb-4">Insurance Provide you a Better Future</h1>
-                    <p class="mb-0">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tenetur adipisci facilis cupiditate recusandae aperiam temporibus corporis itaque quis facere, numquam, ad culpa deserunt sint dolorem autem obcaecati, ipsam mollitia hic.
+                    <h1 class="display-4 mb-4"> What is Airventra?</h1>
+                    <p class="mb-0">Airventra is an innovative warehouse management solution designed to streamline operations through intelligent storage assignment and drone-powered inventory tracking. Our software combines cutting-edge AI algorithms with autonomous drone technology to reduce errors, improve efficiency, and make warehouse management smarter than ever.
                     </p>
                 </div>
-                <div class="row g-4">
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="feature-item p-4 pt-0">
-                            <div class="feature-icon p-4 mb-4">
-                                <i class="far fa-handshake fa-3x"></i>
+            <div class="container-fluid blog py-5">
+
+            <div class="container py-5">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
+                    <h1 class="display-4 mb-4"> Our Features  </h1>
+                </div> 
+                <div class="row g-4 justify-content-center">
+                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="blog-item">
+                            <div class="blog-img">
+                                <img src="img/blog-1.png" class="img-fluid rounded-top w-100" alt="">
+                                
                             </div>
-                            <h4 class="mb-4">Trusted Company</h4>
-                            <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea hic laborum odit pariatur...
-                            </p>
-                            <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Learn More</a>
+                            <div class="blog-content p-4">
+                            <div class="blog-content p-4">
+                                <a href="#" class="h4 d-inline-block mb-3">Smart Storage Assignment</a>
+                                <p class="mb-3">Automatically assign storage zones and racks using AI-powered algorithms.</p>
+                            </div>
+                        </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="feature-item p-4 pt-0">
-                            <div class="feature-icon p-4 mb-4">
-                                <i class="fa fa-dollar-sign fa-3x"></i>
+                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
+                        <div class="blog-item">
+                            <div class="blog-img">
+                                <img src="img/blog-2.png" class="img-fluid rounded-top w-100" alt="">
                             </div>
-                            <h4 class="mb-4">Anytime Money Back</h4>
-                            <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea hic laborum odit pariatur...
-                            </p>
-                            <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Learn More</a>
+                            <div class="blog-content p-4">
+                                <div class="blog-comment d-flex justify-content-between mb-3">
+                                <div class="blog-content p-4">
+                                    <a href="#" class="h4 d-inline-block mb-3"> Real-Time Inventory Tracking</a>
+                                    <p class="mb-3">Keep your inventory accurate with autonomous drone scans.</p>
+                                </div>
+                            </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="feature-item p-4 pt-0">
-                            <div class="feature-icon p-4 mb-4">
-                                <i class="fa fa-bullseye fa-3x"></i>
+                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
+                        <div class="blog-item">
+                            <div class="blog-img">
+                                <img src="img/blog-3.png" class="img-fluid rounded-top w-100" alt="">
+                                
                             </div>
-                            <h4 class="mb-4">Flexible Plans</h4>
-                            <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea hic laborum odit pariatur...
-                            </p>
-                            <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Learn More</a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.8s">
-                        <div class="feature-item p-4 pt-0">
-                            <div class="feature-icon p-4 mb-4">
-                                <i class="fa fa-headphones fa-3x"></i>
+                            <div class="blog-content p-4">
+                                <div class="blog-comment d-flex justify-content-between mb-3">
+                                <div class="blog-content p-4">
+                                    <a href="#" class="h4 d-inline-block mb-3">Error Detection</a>
+                                    <p class="mb-3">Verify product placement to minimize costly mistakes.</p>
+                                </div>
                             </div>
-                            <h4 class="mb-4">24/7 Fast Support</h4>
-                            <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea hic laborum odit pariatur...
-                            </p>
-                            <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Learn More</a>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
             </div>
         </div>
         <!-- Feature End -->
+        
+        <div id="benefits" class="container-fluid feature bg-light py-5">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
+                    <h1 class="display-4 mb-4" > Why Airventra is a Game-Changer  </h1>
+            </div> 
 
-        <!-- About Start -->
-        <div class="container-fluid bg-light about pb-5">
-            <div class="container pb-5">
-                <div class="row g-5">
-                    <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s">
-                        <div class="about-item-content bg-white rounded p-5 h-100">
-                            <h4 class="text-primary">About Our Company</h4>
-                            <h1 class="display-4 mb-4">High Range of Exploring Protection</h1>
-                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sunt debitis sint tempora. Corporis consequatur illo blanditiis voluptates aperiam quos aliquam totam aliquid rem explicabo,
-                            </p>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae praesentium recusandae eligendi modi hic
-                            </p>
-                            <p class="text-dark"><i class="fa fa-check text-primary me-3"></i>We can save your money.</p>
-                            <p class="text-dark"><i class="fa fa-check text-primary me-3"></i>Production or trading of good</p>
-                            <p class="text-dark mb-4"><i class="fa fa-check text-primary me-3"></i>Our life insurance is flexible</p>
-                            <a class="btn btn-primary rounded-pill py-3 px-5" href="#">More Information</a>
+
+            <div class="container-fluid blog py-5">
+    <div class="container py-5">
+        <div class="row g-4 justify-content-center">
+            <?php
+            $cards = [
+                ["img/blog-1.png", "Streamlined Operations", "Simplify warehouse processes with intelligent storage assignment and automation."],
+                ["img/blog-2.png", "Real-Time Accuracy", "Keep your inventory updated instantly with drone-powered tracking."],
+                ["img/blog-3.png", "Error Reduction", "Detect misplaced products and prevent costly human errors."],
+                ["img/blog-4.png", "Optimized Storage", "Maximize space usage by assigning products to the right zones and racks."],
+                ["img/blog-4.png", "Cost Efficiency", "Reduce operational costs by improving accuracy and saving time on manual checks."],
+                ["img/blog-4.png", "Sustainability", "Embrace smarter resource use and energy-efficient drones to reduce waste."]
+            ];
+
+            foreach ($cards as $index => $card) {
+                $delay = 0.2 + ($index * 0.2);
+            ?>
+                <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="<?= $delay ?>s">
+                    <div class="blog-item">
+                        <div class="blog-img">
+                            <img src="<?= $card[0] ?>" class="img-fluid rounded-top w-100" alt="">
                         </div>
-                    </div>
-                    <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.2s">
-                        <div class="bg-white rounded p-5 h-100">
-                            <div class="row g-4 justify-content-center">
-                                <div class="col-12">
-                                    <div class="rounded bg-light">
-                                        <img src="img/about-1.png" class="img-fluid rounded w-100" alt="">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">129</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Insurance Policies</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">99</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Awards WON</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">556</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Skilled Agents</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">967</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Team Members</h4>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="blog-content p-4">
+                            <a href="#" class="h4 d-inline-block mb-3"><?= $card[1] ?></a>
+                            <p class="mb-3"><?= $card[2] ?></p>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
+        </div>
+    </div>
+</div>
+
         </div>
         <!-- About End -->
+        <style>
+    .team-item {
+        background: #004aad; /* Matching Blue Background */
+        color: white; /* White text */
+        font-weight: bold; 
+        border-radius: 10px;
+        padding: 20px;
+        min-height: 300px; /* Uniform Height */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth Hover */
+    }
+    .team-item h4 {
+        color: white; /* White text */
+        font-weight: bold; /* Bold font */
+    }
+    /* Hover Effect */
+    .team-item:hover {
+        transform: translateY(-10px); /* Lift the card slightly */
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); /* Add Shadow */
+        background: #00338d; /* Slightly Darker Blue */
+    }
+
+    .team-title ul {
+        padding-left: 20px;
+    }
+
+    .team-title ul li {
+        list-style-type: disc;
+    }
+        </style>
+        
+        <div  id="pricing" class="container-fluid team pb-5">
+        <div class="container pb-5">
+        <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
+            <h1 class="display-4 mb-4">Subscription Options</h1>
+        </div>
+        <div class="row g-4">
+            <?php
+            $plans = [
+                ["Basic Plan", "(Small Warehouses)", [
+                    "Smart storage assignment.",
+                    "Limited drone inventory tracking (2 drones supported).",
+                    "Basic reporting and analytics."
+                ]],
+                ["Standard Plan", "(Medium-Sized Warehouses)", [
+                    "Everything in the Basic Plan.",
+                    "Support for more drones (5 drones).",
+                    "Advanced reporting and analytics tools.",
+                    "Error detection for product placement."
+                ]],
+                ["Premium Plan", "(Large Warehouses)", [
+                    "Everything in the Standard Plan.",
+                    "Unlimited drones supported.",
+                    "Customized AI algorithms for unique warehouse setups.",
+                    "Priority customer support and on-site assistance.",
+                    "Advanced forecasting tools for inventory trends."
+                ]]
+            ];
+
+            foreach ($plans as $index => $plan) {
+                $delay = 0.2 + ($index * 0.2);
+            ?>
+                <div class="col-md-6 col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="<?= $delay ?>s">
+                    <div class="team-item h-100">
+                        <div >
+                            <h4 ><?= $plan[0] ?></h4>
+                            <p ><strong><?= $plan[1] ?></strong></p>
+                            <ul >
+                                <?php foreach ($plan[2] as $feature) { ?>
+                                    <li><?= $feature ?></li>
+                                <?php } ?>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+        </div>
+
+
 
         <!-- Service Start -->
-        <div class="container-fluid service py-5">
-            <div class="container py-5">
-                <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-                    <h4 class="text-primary">Our Services</h4>
-                    <h1 class="display-4 mb-4">We Provide Best Services</h1>
-                    <p class="mb-0">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tenetur adipisci facilis cupiditate recusandae aperiam temporibus corporis itaque quis facere, numquam, ad culpa deserunt sint dolorem autem obcaecati, ipsam mollitia hic.
-                    </p>
-                </div>
-                <div class="row g-4 justify-content-center">
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="service-item">
-                            <div class="service-img">
-                                <img src="img/blog-1.png" class="img-fluid rounded-top w-100" alt="">
-                                <div class="service-icon p-3">
-                                    <i class="fa fa-users fa-2x"></i>
-                                </div>
-                            </div>
-                            <div class="service-content p-4">
-                                <div class="service-content-inner">
-                                    <a href="#" class="d-inline-block h4 mb-4">Life Insurance</a>
-                                    <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis, eum!</p>
-                                    <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="service-item">
-                            <div class="service-img">
-                                <img src="img/blog-2.png" class="img-fluid rounded-top w-100" alt="">
-                                <div class="service-icon p-3">
-                                    <i class="fa fa-hospital fa-2x"></i>
-                                </div>
-                            </div>
-                            <div class="service-content p-4">
-                                <div class="service-content-inner">
-                                    <a href="#" class="d-inline-block h4 mb-4">Health Insurance</a>
-                                    <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis, eum!</p>
-                                    <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="service-item">
-                            <div class="service-img">
-                                <img src="img/blog-3.png" class="img-fluid rounded-top w-100" alt="">
-                                <div class="service-icon p-3">
-                                    <i class="fa fa-car fa-2x"></i>
-                                </div>
-                            </div>
-                            <div class="service-content p-4">
-                                <div class="service-content-inner">
-                                    <a href="#" class="d-inline-block h4 mb-4">Car Insurance</a>
-                                    <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis, eum!</p>
-                                    <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.8s">
-                        <div class="service-item">
-                            <div class="service-img">
-                                <img src="img/blog-4.png" class="img-fluid rounded-top w-100" alt="">
-                                <div class="service-icon p-3">
-                                    <i class="fa fa-home fa-2x"></i>
-                                </div>
-                            </div>
-                            <div class="service-content p-4">
-                                <div class="service-content-inner">
-                                    <a href="#" class="d-inline-block h4 mb-4">Home Insurance</a>
-                                    <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis, eum!</p>
-                                    <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.2s">
-                        <a class="btn btn-primary rounded-pill py-3 px-5" href="#">More Services</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
         <!-- Service End -->
 
         <!-- FAQs Start -->
@@ -331,250 +303,45 @@
         </div>
         <!-- FAQs End -->
 
-        <!-- Blog Start -->
-        <div class="container-fluid blog py-5">
-            <div class="container py-5">
-                <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-                    <h4 class="text-primary">From Blog</h4>
-                    <h1 class="display-4 mb-4">News And Updates</h1>
-                    <p class="mb-0">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tenetur adipisci facilis cupiditate recusandae aperiam temporibus corporis itaque quis facere, numquam, ad culpa deserunt sint dolorem autem obcaecati, ipsam mollitia hic.
-                    </p>
-                </div>
-                <div class="row g-4 justify-content-center">
-                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="blog-item">
-                            <div class="blog-img">
-                                <img src="img/blog-1.png" class="img-fluid rounded-top w-100" alt="">
-                                <div class="blog-categiry py-2 px-4">
-                                    <span>Business</span>
-                                </div>
-                            </div>
-                            <div class="blog-content p-4">
-                                <div class="blog-comment d-flex justify-content-between mb-3">
-                                    <div class="small"><span class="fa fa-user text-primary"></span> Martin.C</div>
-                                    <div class="small"><span class="fa fa-calendar text-primary"></span> 30 Dec 2025</div>
-                                    <div class="small"><span class="fa fa-comment-alt text-primary"></span> 6 Comments</div>
-                                </div>
-                                <a href="#" class="h4 d-inline-block mb-3">Which allows you to pay down insurance bills</a>
-                                <p class="mb-3">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius libero soluta impedit eligendi? Quibusdam, laudantium.</p>
-                                <a href="#" class="btn p-0">Read More  <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="blog-item">
-                            <div class="blog-img">
-                                <img src="img/blog-2.png" class="img-fluid rounded-top w-100" alt="">
-                                <div class="blog-categiry py-2 px-4">
-                                    <span>Business</span>
-                                </div>
-                            </div>
-                            <div class="blog-content p-4">
-                                <div class="blog-comment d-flex justify-content-between mb-3">
-                                    <div class="small"><span class="fa fa-user text-primary"></span> Martin.C</div>
-                                    <div class="small"><span class="fa fa-calendar text-primary"></span> 30 Dec 2025</div>
-                                    <div class="small"><span class="fa fa-comment-alt text-primary"></span> 6 Comments</div>
-                                </div>
-                                <a href="#" class="h4 d-inline-block mb-3">Leverage agile frameworks to provide</a>
-                                <p class="mb-3">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius libero soluta impedit eligendi? Quibusdam, laudantium.</p>
-                                <a href="#" class="btn p-0">Read More  <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="blog-item">
-                            <div class="blog-img">
-                                <img src="img/blog-3.png" class="img-fluid rounded-top w-100" alt="">
-                                <div class="blog-categiry py-2 px-4">
-                                    <span>Business</span>
-                                </div>
-                            </div>
-                            <div class="blog-content p-4">
-                                <div class="blog-comment d-flex justify-content-between mb-3">
-                                    <div class="small"><span class="fa fa-user text-primary"></span> Martin.C</div>
-                                    <div class="small"><span class="fa fa-calendar text-primary"></span> 30 Dec 2025</div>
-                                    <div class="small"><span class="fa fa-comment-alt text-primary"></span> 6 Comments</div>
-                                </div>
-                                <a href="#" class="h4 d-inline-block mb-3">Leverage agile frameworks to provide</a>
-                                <p class="mb-3">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius libero soluta impedit eligendi? Quibusdam, laudantium.</p>
-                                <a href="#" class="btn p-0">Read More  <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Blog End -->
 
         <!-- Team Start -->
-        <div class="container-fluid team pb-5">
+        <div id="contact" class="container-fluid team pb-5">
             <div class="container pb-5">
                 <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-                    <h4 class="text-primary">Our Team</h4>
-                    <h1 class="display-4 mb-4">Meet Our Expert Team Members</h1>
-                    <p class="mb-0">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tenetur adipisci facilis cupiditate recusandae aperiam temporibus corporis itaque quis facere, numquam, ad culpa deserunt sint dolorem autem obcaecati, ipsam mollitia hic.
-                    </p>
-                </div>
-                <div class="row g-4">
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="img/team-1.jpg" class="img-fluid rounded-top w-100" alt="">
-                                <div class="team-icon">
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-0" href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-title p-4">
-                                <h4 class="mb-0">David James</h4>
-                                <p class="mb-0">Profession</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="img/team-2.jpg" class="img-fluid rounded-top w-100" alt="">
-                                <div class="team-icon">
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-0" href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-title p-4">
-                                <h4 class="mb-0">David James</h4>
-                                <p class="mb-0">Profession</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="img/team-3.jpg" class="img-fluid rounded-top w-100" alt="">
-                                <div class="team-icon">
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-0" href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-title p-4">
-                                <h4 class="mb-0">David James</h4>
-                                <p class="mb-0">Profession</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.8s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="img/team-4.jpg" class="img-fluid rounded-top w-100" alt="">
-                                <div class="team-icon">
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-2" href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a class="btn btn-primary btn-sm-square rounded-pill mb-0" href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-title p-4">
-                                <h4 class="mb-0">David James</h4>
-                                <p class="mb-0">Profession</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Team End -->
+                    <h1 class="display-4 mb-4">Our Team</h1>
+                    <h4 class="text-primary">Meet the Team Behind Airventra </h4>
 
-        <!-- Testimonial Start -->
-        <div class="container-fluid testimonial pb-5">
-            <div class="container pb-5">
-                <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-                    <h4 class="text-primary">Testimonial</h4>
-                    <h1 class="display-4 mb-4">What Our Customers Are Saying</h1>
-                    <p class="mb-0">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tenetur adipisci facilis cupiditate recusandae aperiam temporibus corporis itaque quis facere, numquam, ad culpa deserunt sint dolorem autem obcaecati, ipsam mollitia hic.
-                    </p>
                 </div>
-                <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.2s">
-                    <div class="testimonial-item bg-light rounded">
-                        <div class="row g-0">
-                            <div class="col-4  col-lg-4 col-xl-3">
-                                <div class="h-100">
-                                    <img src="img/testimonial-1.jpg" class="img-fluid h-100 rounded" style="object-fit: cover;" alt="">
+                <div class="row g-3 justify-content-center"> <!-- Reduced gap -->
+                    <?php
+                    $teamMembers = [
+                        ["img/team-1.jpg", "Noor Alawlaqi", "Developer"],
+                        ["img/team-2.jpg", "Maha Almashharawi", "Developer"],
+                        ["img/team-3.jpg", "Mashael Alsalamah", "Developer"],
+                        ["img/team-4.jpg", "Dr. Passent M. ElKafrawy", ""],
+                        ["img/team-5.jpg", "Dr. Naila Marir", ""],
+                    ];
+                
+                    foreach ($teamMembers as $index => $member) {
+                        $delay = 0.2 + ($index * 0.2);
+                    ?>
+                        <div class="col-6 col-md-4 col-lg-3 col-xxl-2 wow fadeInUp" data-wow-delay="<?= $delay ?>s">
+                            <div class="team-item text-center"> <!-- Centered text -->
+                                <div class="team-img">
+                                    <img src="<?= $member[0] ?>" class="img-fluid rounded-circle" alt="<?= $member[1] ?>">
                                 </div>
-                            </div>
-                            <div class="col-8 col-lg-8 col-xl-9">
-                                <div class="d-flex flex-column my-auto text-start p-4">
-                                    <h4 class="text-dark mb-0">Client Name</h4>
-                                    <p class="mb-3">Profession</p>
-                                    <div class="d-flex text-primary mb-3">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <p class="mb-0">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim error molestiae aut modi corrupti fugit eaque rem nulla incidunt temporibus quisquam,
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item bg-light rounded">
-                        <div class="row g-0">
-                            <div class="col-4  col-lg-4 col-xl-3">
-                                <div class="h-100">
-                                    <img src="img/testimonial-2.jpg" class="img-fluid h-100 rounded" style="object-fit: cover;" alt="">
-                                </div>
-                            </div>
-                            <div class="col-8 col-lg-8 col-xl-9">
-                                <div class="d-flex flex-column my-auto text-start p-4">
-                                    <h4 class="text-dark mb-0">Client Name</h4>
-                                    <p class="mb-3">Profession</p>
-                                    <div class="d-flex text-primary mb-3">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star text-body"></i>
-                                    </div>
-                                    <p class="mb-0">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim error molestiae aut modi corrupti fugit eaque rem nulla incidunt temporibus quisquam,
-                                    </p>
+                                <div class="team-title p-3">
+                                    <h6 class="mb-1 text-white fw-bold"><?= $member[1] ?></h6> <!-- Smaller, white, bold -->
+                                    <p class="mb-0 text-light"><?= $member[2] ?></p> <!-- Lighter text -->
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="testimonial-item bg-light rounded">
-                        <div class="row g-0">
-                            <div class="col-4  col-lg-4 col-xl-3">
-                                <div class="h-100">
-                                    <img src="img/testimonial-3.jpg" class="img-fluid h-100 rounded" style="object-fit: cover;" alt="">
-                                </div>
-                            </div>
-                            <div class="col-8 col-lg-8 col-xl-9">
-                                <div class="d-flex flex-column my-auto text-start p-4">
-                                    <h4 class="text-dark mb-0">Client Name</h4>
-                                    <p class="mb-3">Profession</p>
-                                    <div class="d-flex text-primary mb-3">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star text-body"></i>
-                                        <i class="fas fa-star text-body"></i>
-                                    </div>
-                                    <p class="mb-0">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim error molestiae aut modi corrupti fugit eaque rem nulla incidunt temporibus quisquam,
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <?php } ?>
                 </div>
+
+
             </div>
         </div>
-        <!-- Testimonial End -->
 
 @endsection
 
