@@ -3,140 +3,46 @@
         <div class="col-md-12 col-lg-12">
             <div class="row row-cols-1">
                 <div class="overflow-hidden d-slider1 ">
-                    <ul class="p-0 m-0 mb-2 swiper-wrapper list-inline">
-                        <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="700">
-                            <div class="card-body">
-                                <div class="progress-widget">
-                                    <div id="circle-progress-01"
-                                        class="text-center circle-progress-01 circle-progress circle-progress-primary"
-                                        data-min-value="0" data-max-value="100" data-value="90" data-type="percent">
-                                        <svg class="card-slie-arrow icon-24 " width="24" viewBox="0 0 24 24" >
-                                            <path fill="currentColor"
-                                                d="M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z" />
-                                        </svg>
-                                    </div>
-                                    <div class="progress-detail">
-                                        <p class="mb-2">Total Sales</p>
-                                        <h4 class="counter">$560K</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="800">
-                            <div class="card-body">
-                                <div class="progress-widget">
-                                    <div id="circle-progress-02"
-                                        class="text-center circle-progress-01 circle-progress circle-progress-info"
-                                        data-min-value="0" data-max-value="100" data-value="80" data-type="percent">
-                                        <svg class="card-slie-arrow icon-24" width="24" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                d="M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z" />
-                                        </svg>
-                                    </div>
-                                    <div class="progress-detail">
-                                        <p class="mb-2">Total Profit</p>
-                                        <h4 class="counter">$185K</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="900">
-                            <div class="card-body">
-                                <div class="progress-widget">
-                                    <div id="circle-progress-03"
-                                        class="text-center circle-progress-01 circle-progress circle-progress-primary"
-                                        data-min-value="0" data-max-value="100" data-value="70" data-type="percent">
-                                        <svg class="card-slie-arrow icon-24" width="24" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                d="M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z" />
-                                        </svg>
-                                    </div>
-                                    <div class="progress-detail">
-                                        <p class="mb-2">Total Cost</p>
-                                        <h4 class="counter">$375K</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="1000">
-                            <div class="card-body">
-                                <div class="progress-widget">
-                                    <div id="circle-progress-04"
-                                        class="text-center circle-progress-01 circle-progress circle-progress-info"
-                                        data-min-value="0" data-max-value="100" data-value="60" data-type="percent">
-                                        <svg class="card-slie-arrow icon-24" width="24px" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                d="M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z" />
-                                        </svg>
-                                    </div>
-                                    <div class="progress-detail">
-                                        <p class="mb-2">Revenue</p>
-                                        <h4 class="counter">$742K</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="1100">
-                            <div class="card-body">
-                                <div class="progress-widget">
-                                    <div id="circle-progress-05"
-                                        class="text-center circle-progress-01 circle-progress circle-progress-primary"
-                                        data-min-value="0" data-max-value="100" data-value="50" data-type="percent">
-                                        <svg class="card-slie-arrow icon-24" width="24px" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                d="M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z" />
-                                        </svg>
-                                    </div>
-                                    <div class="progress-detail">
-                                        <p class="mb-2">Net Income</p>
-                                        <h4 class="counter">$150K</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="1200">
-                            <div class="card-body">
-                                <div class="progress-widget">
-                                    <div id="circle-progress-06"
-                                        class="text-center circle-progress-01 circle-progress circle-progress-info"
-                                        data-min-value="0" data-max-value="100" data-value="40" data-type="percent">
-                                        <svg class="card-slie-arrow icon-24" width="24" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                d="M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z" />
-                                        </svg>
-                                    </div>
-                                    <div class="progress-detail">
-                                        <p class="mb-2">Today</p>
-                                        <h4 class="counter">$4600</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="1300">
-                            <div class="card-body">
-                                <div class="progress-widget">
-                                    <div id="circle-progress-07"
-                                        class="text-center circle-progress-01 circle-progress circle-progress-primary"
-                                        data-min-value="0" data-max-value="100" data-value="30" data-type="percent">
-                                        <svg class="card-slie-arrow icon-24 " width="24" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                d="M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z" />
-                                        </svg>
-                                    </div>
-                                    <div class="progress-detail">
-                                        <p class="mb-2">Members</p>
-                                        <h4 class="counter">11.2M</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
+                <?php
+$data = [
+    ['id' => '01', 'progress' => 90, 'title' => 'Total Sales', 'amount' => '$560K', 'delay' => 700, 'color' => 'primary', 'svg' => 'M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z'],
+    ['id' => '02', 'progress' => 80, 'title' => 'Total Profit', 'amount' => '$185K', 'delay' => 800, 'color' => 'info', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
+    ['id' => '03', 'progress' => 70, 'title' => 'Total Cost', 'amount' => '$375K', 'delay' => 900, 'color' => 'primary', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
+    ['id' => '04', 'progress' => 60, 'title' => 'Revenue', 'amount' => '$742K', 'delay' => 1000, 'color' => 'info', 'svg' => 'M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z'],
+    ['id' => '05', 'progress' => 50, 'title' => 'Net Income', 'amount' => '$150K', 'delay' => 1100, 'color' => 'primary', 'svg' => 'M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z'],
+    ['id' => '06', 'progress' => 40, 'title' => 'Today', 'amount' => '$4600', 'delay' => 1200, 'color' => 'info', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
+    ['id' => '07', 'progress' => 30, 'title' => 'Members', 'amount' => '11.2M', 'delay' => 1300, 'color' => 'primary', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z']
+];
+?>
+
+<ul class="p-0 m-0 mb-2 swiper-wrapper list-inline">
+    <?php foreach ($data as $item): ?>
+        <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="<?= $item['delay']; ?>">
+            <div class="card-body">
+                <div class="progress-widget">
+                    <div id="circle-progress-<?= $item['id']; ?>"
+                        class="text-center circle-progress-01 circle-progress circle-progress-<?= $item['color']; ?>"
+                        data-min-value="0" data-max-value="100" data-value="<?= $item['progress']; ?>" data-type="percent">
+                        <svg class="card-slie-arrow icon-24" width="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M<?= $item['svg']; ?>" />
+                        </svg>
+                    </div>
+                    <div class="progress-detail">
+                        <p class="mb-2"><?= $item['title']; ?></p>
+                        <h4 class="counter"><?= $item['amount']; ?></h4>
+                    </div>
+                </div>
+            </div>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
                     <div class="swiper-button swiper-button-next"></div>
                     <div class="swiper-button swiper-button-prev"></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-12 col-lg-8">
+        <div class="col-md-12 col-lg-12">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card" data-aos="fade-up" data-aos-delay="800">
@@ -260,208 +166,164 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12 col-lg-12">
-                    <div class="overflow-hidden card" data-aos="fade-up" data-aos-delay="600">
-                        <div class="flex-wrap card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="mb-2 card-title">Enterprise Clients</h4>
-                                <p class="mb-0">
-                                    <svg class="me-2 text-primary icon-24" width="24" viewBox="0 0 24 24">
-                                        <path fill="currentColor"
-                                            d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
-                                    </svg>
-                                    15 new acquired this month
-                                </p>
-                            </div>
-                        </div>
-                        <div class="p-0 card-body">
-                            <div class="mt-4 table-responsive">
-                                <table id="basic-table" class="table mb-0 table-striped" role="grid">
-                                    <thead>
-                                        <tr>
-                                            <th>COMPANIES</th>
-                                            <th>CONTACTS</th>
-                                            <th>ORDER</th>
-                                            <th>COMPLETION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img class="rounded bg-primary-subtle img-fluid avatar-40 me-3"
-                                                        src="{{asset('images/shapes/01.png')}}" alt="profile">
-                                                    <h6>Addidis Sportwear</h6>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="iq-media-group iq-media-group-1">
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">SP</div>
-                                                    </a>
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                    </a>
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">MM</div>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>$14,000</td>
-                                            <td>
-                                                <div class="mb-2 d-flex align-items-center">
-                                                    <h6>60%</h6>
-                                                </div>
-                                                <div class="shadow-none progress bg-primary-subtle w-100"
-                                                    style="height: 4px">
-                                                    <div class="progress-bar bg-primary" data-toggle="progress-bar"
-                                                        role="progressbar" aria-valuenow="60" aria-valuemin="0"
-                                                        aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img class="rounded bg-primary-subtle img-fluid avatar-40 me-3"
-                                                        src="{{asset('images/shapes/05.png')}}" alt="profile">
-                                                    <h6>Netflixer Platforms</h6>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="iq-media-group iq-media-group-1">
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">SP</div>
-                                                    </a>
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>$30,000</td>
-                                            <td>
-                                                <div class="mb-2 d-flex align-items-center">
-                                                    <h6>25%</h6>
-                                                </div>
-                                                <div class="shadow-none progress bg-primary-subtle w-100"
-                                                    style="height: 4px">
-                                                    <div class="progress-bar bg-primary" data-toggle="progress-bar"
-                                                        role="progressbar" aria-valuenow="25" aria-valuemin="0"
-                                                        aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img class="rounded bg-primary-subtle img-fluid avatar-40 me-3"
-                                                        src="{{asset('images/shapes/02.png')}}" alt="profile">
-                                                    <h6>Shopifi Stores</h6>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="iq-media-group iq-media-group-1">
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                    </a>
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">TP</div>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>$8,500</td>
-                                            <td>
-                                                <div class="mb-2 d-flex align-items-center">
-                                                    <h6>100%</h6>
-                                                </div>
-                                                <div class="shadow-none progress   bg-success-subtle w-100"
-                                                    style="height: 4px">
-                                                    <div class="progress-bar bg-success" data-toggle="progress-bar"
-                                                        role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                                                        aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img class="rounded bg-primary-subtle img-fluid avatar-40 me-3"
-                                                        src="{{asset('images/shapes/03.png')}}" alt="profile">
-                                                    <h6>Bootstrap Technologies</h6>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="iq-media-group iq-media-group-1">
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">SP</div>
-                                                    </a>
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                    </a>
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">MM</div>
-                                                    </a>
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">TP</div>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>$20,500</td>
-                                            <td>
-                                                <div class="mb-2 d-flex align-items-center">
-                                                    <h6>100%</h6>
-                                                </div>
-                                                <div class="shadow-none progress bg-success-subtle w-100"
-                                                    style="height: 4px">
-                                                    <div class="progress-bar bg-success" data-toggle="progress-bar"
-                                                        role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                                                        aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img class="rounded bg-primary-subtle img-fluid avatar-40 me-3"
-                                                        src="{{asset('images/shapes/04.png')}}" alt="profile">
-                                                    <h6>Community First</h6>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="iq-media-group iq-media-group-1">
-                                                    <a href="#" class="iq-media-1">
-                                                        <div class="icon iq-icon-box-3 rounded-pill">MM</div>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>$9,800</td>
-                                            <td>
-                                                <div class="mb-2 d-flex align-items-center">
-                                                    <h6>75%</h6>
-                                                </div>
-                                                <div class="shadow-none progress bg-primary-subtle w-100"
-                                                    style="height: 4px">
-                                                    <div class="progress-bar bg-primary" data-toggle="progress-bar"
-                                                        role="progressbar" aria-valuenow="75" aria-valuemin="0"
-                                                        aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+
+
+                <!-- tabels -->
+                <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="header-title">
+                        <h2 class="card-title">Placment Error Report:</h2>
+                    </div>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="custom-datatable-entries">
+                                    <table id="datatable" class="table table-striped" data-toggle="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Position</th>
+                                                <th>Office</th>
+                                                <th>Age</th>
+                                                <th>Start date</th>
+                                                <th>Salary</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php
+                                        $employees = [
+                                        [
+                                            'name' => 'Tiger Nixon',
+                                            'position' => 'System Architect',
+                                            'office' => 'Edinburgh',
+                                                'age' => 61,
+                                                'start_date' => '2011/04/25',
+                                                'salary' => '$320,800',
+                                            ],
+                                            [
+                                                'name' => 'Garrett Winters',
+                                                'position' => 'Accountant',
+                                                'office' => 'Tokyo',
+                                                'age' => 63,
+                                                'start_date' => '2011/07/25',
+                                                'salary' => '$170,750',
+                                            ],
+                                            // Add more employees here...
+                                        ];
+                                        ?>
+                                            @foreach($employees as $employee)
+                                                <tr>
+                                                    <td>{{ $employee['name'] }}</td>
+                                                    <td>{{ $employee['position'] }}</td>
+                                                    <td>{{ $employee['office'] }}</td>
+                                                    <td>{{ $employee['age'] }}</td>
+                                                    <td>{{ $employee['start_date'] }}</td>
+                                                    <td>{{ $employee['salary'] }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Position</th>
+                                                <th>Office</th>
+                                                <th>Age</th>
+                                                <th>Start date</th>
+                                                <th>Salary</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+            </div>
+
+
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="header-title">
+                        <h2 class="card-title">Inventory Level Report:</h2>
+                    </div>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="custom-datatable-entries">
+                                    <table id="datatable" class="table table-striped" data-toggle="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Position</th>
+                                                <th>Office</th>
+                                                <th>Age</th>
+                                                <th>Start date</th>
+                                                <th>Salary</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php
+                                        $employees = [
+                                        [
+                                            'name' => 'Tiger Nixon',
+                                            'position' => 'System Architect',
+                                            'office' => 'Edinburgh',
+                                                'age' => 61,
+                                                'start_date' => '2011/04/25',
+                                                'salary' => '$320,800',
+                                            ],
+                                            [
+                                                'name' => 'Garrett Winters',
+                                                'position' => 'Accountant',
+                                                'office' => 'Tokyo',
+                                                'age' => 63,
+                                                'start_date' => '2011/07/25',
+                                                'salary' => '$170,750',
+                                            ],
+                                            // Add more employees here...
+                                        ];
+                                        ?>
+                                            @foreach($employees as $employee)
+                                                <tr>
+                                                    <td>{{ $employee['name'] }}</td>
+                                                    <td>{{ $employee['position'] }}</td>
+                                                    <td>{{ $employee['office'] }}</td>
+                                                    <td>{{ $employee['age'] }}</td>
+                                                    <td>{{ $employee['start_date'] }}</td>
+                                                    <td>{{ $employee['salary'] }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Position</th>
+                                                <th>Office</th>
+                                                <th>Age</th>
+                                                <th>Start date</th>
+                                                <th>Salary</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="col-md-12 col-lg-4">
+        <!-- <div class="col-md-12 col-lg-4">
             <div class="row">
                 <div class="col-md-12 col-lg-12">
-                    <div class="card credit-card-widget" data-aos="fade-up" data-aos-delay="900">
+                     <div class="card credit-card-widget" data-aos="fade-up" data-aos-delay="900">
                         <div class="pb-4 border-0 card-header">
                             <div class="p-4 rounded primary-gradient-card">
-                                <div class="d-flex justify-content-between align-items-center">
+                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h5 class="font-weight-bold">VISA </h5>
                                         <P class="mb-0">PREMIUM ACCOUNT</P>
@@ -476,7 +338,7 @@
                                                 d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
                                         </svg>
                                     </div>
-                                </div>
+                                </div> 
                                 <div class="my-4">
                                     <div class="card-number">
                                         <span class="fs-5 me-2">5789</span>
@@ -493,7 +355,7 @@
                                     <h6>Mike Smith</h6>
                                     <h6 class="ms-5">06/11</h6>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                         <div class="card-body">
                             <div class="flex-wrap mb-4 d-flex align-itmes-center justify-content-between">
@@ -544,7 +406,7 @@
                                 <button class="p-2 btn btn btn-secondary text-uppercase">ANALYTICS</button>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                     <div class="card" data-aos="fade-up" data-aos-delay="500">
                         <div class="text-center card-body d-flex justify-content-around">
                             <div>
@@ -613,6 +475,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </x-app-layout>

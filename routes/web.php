@@ -29,6 +29,9 @@ Route::get('/storage', function () {
 });
 
 
+
+
+
 //Landing-Pages Routes
 Route::group(['prefix' => 'landing-pages'], function() {
 Route::get('index',[dashController::class, 'landing_index'])->name('landing-pages.index');
@@ -62,6 +65,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Users Module
     Route::resource('users', UserController::class);
+
+    // Inside the 'auth' or 'dashboard' middleware group
+    Route::get('/options', function () {
+    return view('optionspage');  
+    })->name('OptionsPage');
+
+    Route::get('/AddEmployee', function () {
+        return view('AddEmployee');  
+        })->name('AddEmployee');
 });
 
 //App Details Page => 'Dashboard'], function() {

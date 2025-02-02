@@ -1,4 +1,4 @@
-<!-- @extends('layouts.home.app')
+@extends('layouts.home.app')
 @section('content')
        
 
@@ -6,10 +6,10 @@
         <div id="features" class="container-fluid feature bg-light py-5">
             <div class="container py-5">
             <div class="container-fluid blog py-5">
-
+            <h4 class="display-4 "> Airventra Control Panel</h4>
             <div class="container py-5">
             <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-                    <h1 class="display-4 mb-4"> Select a feature to begin optimizing your operations: </h1>
+                    <h3 style="color: navy;"> Select a feature to begin optimizing your operations: </h3>
                 </div> 
                 <div class="row g-4 justify-content-center">
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
@@ -60,4 +60,4 @@
        
 
 @endsection
- -->
+
