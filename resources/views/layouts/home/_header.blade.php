@@ -38,7 +38,7 @@
                             </div>
                             <a href="#contact" class="nav-item nav-link">Contact</a>
                             <div class="nav-btn px-3">
-                                <a href="#" class="btn btn-primary rounded-pill py-2 px-4 ms-3 flex-shrink-0">Login</a>
+                                <a href="{{route('login')}}" class="btn btn-primary rounded-pill py-2 px-4 ms-3 flex-shrink-0">Login</a>
                             </div>
                         </div>
                     </div>

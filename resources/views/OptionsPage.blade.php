@@ -1,8 +1,8 @@
-@extends('layouts.home.app')
+<!-- @extends('layouts.home.app')
 @section('content')
        
 
-        <!-- Feature Start -->
+     
         <div id="features" class="container-fluid feature bg-light py-5">
             <div class="container py-5">
             <div class="container-fluid blog py-5">
@@ -57,7 +57,7 @@
         </div>
             </div>
         </div>
-        <!-- Feature End -->
+       
 
 @endsection
-
+ -->

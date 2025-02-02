@@ -48,7 +48,8 @@ Route::get('startup',[dashController::class, 'landing_startup'])->name('landing-
 });
 
 //UI Pages Routs
-Route::get('/', [HomeController::class, 'home']);
+Route::get('/', [HomeController::class, 'home'])->name('home');
+//Route::get('/', [dashController::class, 'uisheet'])->name('uisheet');
 
 Route::group(['middleware' => 'auth'], function () {
     // Permission Module
