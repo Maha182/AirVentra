@@ -1,3 +1,4 @@
+
 <x-app-layout :assets="$assets ?? []">
    <div>
       <?php
@@ -13,7 +14,7 @@
             <div class="card">
                <div class="card-header d-flex justify-content-between">
                   <div class="header-title">
-                     <h4 class="card-title">{{$id !== null ? 'Update' : 'Add New' }} User</h4>
+                     <h4 class="card-title">{{$id !== null ? 'Update' : 'Add New' }} Employee</h4>
                   </div>
                </div>
                <div class="card-body">
@@ -41,25 +42,13 @@
                         <label class="form-label">Status:</label>
                         <div class="grid" style="--bs-gap: 1rem">
                             <div class="form-check g-col-6">
-                                {{ Form::radio('status', 'active',old('status') || true, ['class' => 'form-check-input', 'id' => 'status-active']); }}
+                                {{ Form::radio('status', 'active', old('status') || true, ['class' => 'form-check-input', 'id' => 'status-active']); }}
                                 <label class="form-check-label" for="status-active">
                                     Active
                                 </label>
                             </div>
                             <div class="form-check g-col-6">
-                                {{ Form::radio('status', 'pending',old('status'), ['class' => 'form-check-input', 'id' => 'status-pending']); }}
-                                <label class="form-check-label" for="status-pending">
-                                    Pending
-                                </label>
-                            </div>
-                            <div class="form-check g-col-6">
-                                {{ Form::radio('status', 'banned',old('status'), ['class' => 'form-check-input', 'id' => 'status-banned']); }}
-                                <label class="form-check-label" for="status-banned">
-                                    Banned
-                                </label>
-                            </div>
-                            <div class="form-check g-col-6">
-                                {{ Form::radio('status', 'inactive',old('status'), ['class' => 'form-check-input', 'id' => 'status-inactive']); }}
+                                {{ Form::radio('status', 'inactive', old('status'), ['class' => 'form-check-input', 'id' => 'status-inactive']); }}
                                 <label class="form-check-label" for="status-inactive">
                                     Inactive
                                 </label>
@@ -67,24 +56,8 @@
                         </div>
                      </div>
                      <div class="form-group">
-                        <label class="form-label">User Role: <span class="text-danger">*</span></label>
-                        {{Form::select('user_role', $roles , old('user_role') ? old('user_role') : $data->user_type ?? 'user', ['class' => 'form-control', 'placeholder' => 'Select User Role'])}}
-                     </div>
-                     <div class="form-group">
-                        <label class="form-label" for="furl">Facebook Url:</label>
-                        {{ Form::text('userProfile[facebook_url]', old('userProfile[facebook_url]'), ['class' => 'form-control', 'id' => 'furl', 'placeholder' => 'Facebook Url']) }}
-                     </div>
-                     <div class="form-group">
-                        <label class="form-label" for="turl">Twitter Url:</label>
-                        {{ Form::text('userProfile[twitter_url]', old('userProfile[twitter_url]'), ['class' => 'form-control', 'id' => 'turl', 'placeholder' => 'Twitter Url']) }}
-                     </div>
-                     <div class="form-group">
-                        <label class="form-label" for="instaurl">Instagram Url:</label>
-                        {{ Form::text('userProfile[instagram_url]', old('userProfile[instagram_url]'), ['class' => 'form-control', 'id' => 'instaurl', 'placeholder' => 'Instagram Url']) }}
-                     </div>
-                     <div class="form-group mb-0">
-                        <label class="form-label" for="lurl">Linkedin Url:</label>
-                        {{ Form::text('userProfile[linkdin_url]', old('userProfile[linkdin_url]'), ['class' => 'form-control', 'id' => 'lurl', 'placeholder' => 'Linkedin Url']) }}
+                        <label class="form-label">Employee Role: <span class="text-danger">*</span></label>
+                        {{ Form::select('role', $roles, old('role'), ['class' => 'form-control', 'placeholder' => 'Select Employee Role', 'required']) }}
                      </div>
                </div>
             </div>
@@ -93,7 +66,7 @@
             <div class="card">
                <div class="card-header d-flex justify-content-between">
                   <div class="header-title">
-                     <h4 class="card-title">{{$id !== null ? 'Update' : 'New' }} User Information</h4>
+                     <h4 class="card-title">{{$id !== null ? 'Update' : 'New' }} Employee Information</h4>
                   </div>
                   <div class="card-action">
                         <a href="{{route('users.index')}}" class="btn btn-sm btn-primary" role="button">Back</a>
@@ -108,71 +81,35 @@
                            </div>
                            <div class="form-group col-md-6">
                               <label class="form-label fw-bold" for="lname">Last Name: <span class="text-danger">*</span></label>
-                              {{ Form::text('last_name', old('last_name'), ['class' => 'form-control', 'placeholder' => 'Last Name' ,'required']) }}
-                           </div>
-                           <div class="form-group col-md-6">
-                              <label class="form-label fw-bold" for="add1">Street Address 1:</label>
-                              {{ Form::text('userProfile[street_addr_1]', old('userProfile[street_addr_1]'), ['class' => 'form-control', 'id' => 'add1', 'placeholder' => 'Enter Street Address 1']) }}
-                           </div>
-                           <div class="form-group col-md-6">
-                              <label class="form-label fw-bold" for="add2">Street Address 2:</label>
-                              {{ Form::text('userProfile[street_addr_2]', old('userProfile[street_addr_2]'), ['class' => 'form-control', 'id' => 'add2', 'placeholder' => 'Enter Street Address 2']) }}
-                           </div>
-                           <div class="form-group col-md-12">
-                              <label class="form-label fw-bold" for="cname">Company Name: <span class="text-danger">*</span></label>
-                              {{ Form::text('userProfile[company_name]', old('userProfile[company_name]'), ['class' => 'form-control', 'required', 'placeholder' => 'Company Name']) }}
-                           </div>
-                           <div class="form-group col-sm-12">
-                              <label class="form-label fw-bold" id="country">Country:</label>
-                              {{ Form::text('userProfile[country]', old('userProfile[country]'), ['class' => 'form-control', 'id' => 'country']) }}
-
-                           </div>
-                           <div class="form-group col-md-6">
-                              <label class="form-label fw-bold" for="mobno">Mobile Number:</label>
-                              {{ Form::text('userProfile[phone_number]', old('userProfile[phone_number]'), ['class' => 'form-control', 'id' => 'mobno', 'placeholder' => 'Mobile Number']) }}
-                           </div>
-                           <div class="form-group col-md-6">
-                              <label class="form-label fw-bold" for="altconno">Alternate Contact:</label>
-                              {{ Form::text('userProfile[alt_phone_number]', old('userProfile[alt_phone_number]'), ['class' => 'form-control', 'id' => 'altconno', 'placeholder' => 'Alternate Contact']) }}
+                              {{ Form::text('last_name', old('last_name'), ['class' => 'form-control', 'placeholder' => 'Last Name', 'required']) }}
                            </div>
                            <div class="form-group col-md-6">
                               <label class="form-label fw-bold" for="email">Email: <span class="text-danger">*</span></label>
                               {{ Form::email('email', old('email'), ['class' => 'form-control', 'placeholder' => 'Enter e-mail', 'required']) }}
                            </div>
                            <div class="form-group col-md-6">
-                              <label class="form-label fw-bold" for="pno">Pin Code:</label>
-                              {{ Form::number('userProfile[pin_code]', old('userProfile[pin_code]'), ['class' => 'form-control', 'id' => 'pin_code','step' => 'any']) }}
+                              <label class="form-label fw-bold" for="phone_number">Phone Number:</label>
+                              {{ Form::text('phone_number', old('phone_number'), ['class' => 'form-control', 'placeholder' => 'Phone Number']) }}
                            </div>
-                           <div class="form-group col-md-12">
-                              <label class="form-label fw-bold" for="city">Town/City:</label>
-                              {{ Form::text('userProfile[city]', old('city'), ['class' => 'form-control', 'id' => 'city', 'placeholder' => 'Enter City Name' ]) }}
+                           <div class="form-group col-md-6">
+                              <label class="form-label fw-bold" for="hire_date">Hire Date:</label>
+                              {{ Form::date('hire_date', old('hire_date'), ['class' => 'form-control', 'required']) }}
+                           </div>
+                           <div class="form-group col-md-6">
+                              <label class="form-label fw-bold" for="supervisor_id">Supervisor:</label>
+                              {{ Form::select('supervisor_id', $supervisors, old('supervisor_id'), ['class' => 'form-control', 'placeholder' => 'Select Supervisor']) }}
+                           </div>
+                           <div class="form-group col-md-6">
+                              <label class="form-label fw-bold" for="password">Password: <span class="text-danger">*</span></label>
+                              {{ Form::password('password', ['class' => 'form-control', 'placeholder' => 'Password', 'required']) }}
+                           </div>
+                           <div class="form-group col-md-6">
+                              <label class="form-label fw-bold" for="password_confirmation">Confirm Password: <span class="text-danger">*</span></label>
+                              {{ Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Confirm Password', 'required']) }}
                            </div>
                         </div>
                         <hr>
-                        <h5 class="mb-3">Security</h5>
-                        <div class="row">
-                           <div class="form-group col-md-12">
-                              <label class="form-label fw-bold" for="uname">User Name: <span class="text-danger">*</span></label>
-                              {{ Form::text('username', old('username'), ['class' => 'form-control', 'required', 'placeholder' => 'Enter Username']) }}
-                           </div>
-                           <div class="form-group col-md-6">
-                              <label class="form-label fw-bold" for="pass">Password:</label>
-                              {{ Form::password('password', ['class' => 'form-control', 'placeholder' => 'Password']) }}
-                           </div>
-                           <div class="form-group col-md-6">
-                              <label class="form-label fw-bold" for="rpass">Repeat Password:</label>
-                              {{ Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Repeat Password']) }}
-                           </div>
-                        </div>
-                        <div class="checkbox">
-                            <label class="form-label"><input class="form-check-input me-2" type="checkbox" value="" id="flexCheckChecked">Enable Two-Factor-Authentication</label>
-                         </div>
-                         <button
-    onclick="window.location.href='{{ $id !== null ? route('users.index') : route('dashboard') }}'"
-    class="btn btn-primary ">
-    {{ $id !== null ? 'Cancel' : 'Cancel' }}
-</button>
-                        <button type="submit" class="btn btn-primary">{{$id !== null ? 'Save' : 'Save' }}</button>
+                        <button type="submit" class="btn btn-primary">{{$id !== null ? 'Update' : 'Add Employee' }}</button>
                   </div>
                </div>
             </div>

@@ -29,8 +29,8 @@ class RoleTableSeeder extends Seeder
                 'permissions' => []
             ],
             [
-                'name' => 'user',
-                'title' => 'User',
+                'name' => 'employee',
+                'title' => 'employee',
                 'status' => 1,
                 'permissions' => []
             ]

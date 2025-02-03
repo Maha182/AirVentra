@@ -14,7 +14,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     use HasFactory, Notifiable, HasRoles, InteractsWithMedia;
-
+    protected $guard_name = 'web';
     /**
      * The attributes that are mass assignable.
      *

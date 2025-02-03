@@ -39,17 +39,21 @@ class UserFactory extends Factory
                 $status = 'pending';
                 break;
         }
+
         return [
-            'username' => $fullname,
-            'first_name' => $fname,
-            'last_name' => $lname,
-            'phone_number' => $this->faker->phoneNumber,
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
-            'email_verified_at' => now(),
-            'password' => bcrypt('password'),
+            'role' => $this->faker->randomElement(['admin', 'employee']), // Only admin or employee
             'phone_number' => $this->faker->phoneNumber,
-            'user_type' => 'user',
-            'status' => $status
+            'hire_date' => $this->faker->date(),
+            'supervisor_id' => null, // Can be manually assigned if needed
+            'password' => Hash::make('password'), // Encrypt password
+            'status' => $status, 
+            'remember_token' => Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
+    
     }
 }

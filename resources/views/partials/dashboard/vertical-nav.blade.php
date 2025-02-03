@@ -43,19 +43,7 @@
             <span class="item-name">Dashboard</span>
         </a>
     </li>
-    <li class="nav-item">
-                <a class="nav-link {{activeRoute(route('users.index'))}}" href="{{route('users.index')}}">
-                    <i class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
-                            <g>
-                                <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
-                            </g>
-                        </svg>
-                    </i>
-                    <i class="sidenav-mini-icon"> U </i>
-                    <span class="item-name">User List</span>
-                </a>
-            </li>
+    
     <!-- <li class="nav-item">
         <a class="nav-link" data-bs-toggle="collapse" href="#horizontal-menu" role="button" aria-expanded="false"
             aria-controls="horizontal-menu">
@@ -206,7 +194,20 @@
         </a>
     </li> 
     <li class="nav-item">
-        <a class="nav-link" href="{{route('AddEmployee')}}" >
+                <a class="nav-link {{activeRoute(route('users.index'))}}" href="{{route('users.index')}}">
+                    <i class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
+                            <g>
+                                <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
+                            </g>
+                        </svg>
+                    </i>
+                    <i class="sidenav-mini-icon"> U </i>
+                    <span class="item-name">Employee List</span>
+                </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{route('storage-assignment')}}" >
             <i class="icon">
                 <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path opacity="0.4"
@@ -221,7 +222,7 @@
                     </path>
                 </svg>
             </i>
-            <span class="item-name">Add Employee</span>
+            <span class="item-name">Assign Storage</span>
         </a>
     </li>
 

@@ -10,7 +10,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
 // Packages
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\StorageAssignmentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -71,9 +71,17 @@ Route::group(['middleware' => 'auth'], function () {
     return view('optionspage');  
     })->name('OptionsPage');
 
-    Route::get('/AddEmployee', function () {
-        return view('AddEmployee');  
-        })->name('AddEmployee');
+    // Route::get('/AddEmployee', function () {
+    //     return view('AddEmployee');  
+    //     })->name('AddEmployee');
+
+    Route::get('/storage-assignment', function () {
+         return view('storage-assignment');  
+         })->name('storage-assignment');
+  
+    Route::get('/lookup/location', [StorageAssignmentController::class, 'lookupLocation'])->name('lookup.location');
+    Route::post('/assign/manual', [StorageAssignmentController::class, 'assignManual'])->name('assign.manual');
+         
 });
 
 //App Details Page => 'Dashboard'], function() {

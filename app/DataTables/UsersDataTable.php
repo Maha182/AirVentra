@@ -28,7 +28,7 @@ class UsersDataTable extends DataTable
             })
             ->addColumn('action', function ($query) {
                 return '<a href="' . route('users.edit', $query->id) . '" class="btn btn-sm btn-primary">Edit</a> 
-                        <button class="btn btn-sm btn-danger delete-user" data-id="' . $query->id . '">Delete</button>';
+                        <a href="' . route('users.destroy', $query->id) . '"class="btn btn-sm btn-danger delete-user">Delete</a>';
             })
             ->rawColumns(['action']);
     }
