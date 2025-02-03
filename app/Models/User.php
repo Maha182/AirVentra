@@ -21,14 +21,15 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
      * @var array
      */
     protected $fillable = [
-        'username',
+        'id',
         'first_name',
         'last_name',
-        'phone_number',
-        'status',
-        'banned',
         'email',
+        'role',
+        'phone_number',
         'password',
+        'hire_date',
+        'supervisor_id',
     ];
 
     /**
@@ -46,18 +47,23 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
      *
      * @var array
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    // ];
 
-    protected $appends = ['full_name'];
+    // protected $appends = ['full_name'];
 
-    public function getFullNameAttribute()
+    // public function getFullNameAttribute()
+    // {
+    //     return $this->first_name . ' ' . $this->last_name;
+    // }
+
+    // public function userProfile() {
+    //     return $this->hasOne(UserProfile::class, 'employeeID', 'id');
+    // }
+    public function getIdAttribute($value)
     {
-        return $this->first_name . ' ' . $this->last_name;
-    }
-
-    public function userProfile() {
-        return $this->hasOne(UserProfile::class, 'user_id', 'id');
+        // Make sure there's no logic here that modifies the ID display
+        return $value;
     }
 }

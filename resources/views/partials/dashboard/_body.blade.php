@@ -4,7 +4,6 @@
 @include('partials.dashboard._body_sidebar')
 <main class="main-content">
     <div class="position-relative iq-banner">
-        @include('partials.dashboard._body_header')
         @include('partials.dashboard.sub-header')
     </div>
 

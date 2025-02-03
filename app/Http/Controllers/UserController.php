@@ -11,17 +11,34 @@ use App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
+    // /**
+    //  * Display a listing of the resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function index(UsersDataTable $dataTable)
+    // {
+    //     $pageTitle = trans('global-message.list_form_title',['form' => trans('users.title')] );
+    //     $auth_user = AuthHelper::authSession();
+    //     $assets = ['data-table'];
+    //     $headerAction = '<a href="'.route('users.create').'" class="btn btn-sm btn-primary" role="button">Add New User </a>';
+    //     return $dataTable->render('global.datatable', compact('pageTitle','auth_user','assets', 'headerAction'));
+    // }
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    * Display a listing of the users.
+    *
+    * @return \Illuminate\Http\Response
+    */
     public function index(UsersDataTable $dataTable)
     {
         $pageTitle = trans('global-message.list_form_title',['form' => trans('users.title')] );
         $auth_user = AuthHelper::authSession();
         $assets = ['data-table'];
         $headerAction = '<a href="'.route('users.create').'" class="btn btn-sm btn-primary" role="button">Add New User </a>';
+    
+        // Fetch all users excluding the password column
+        $users = User::select('id', 'first_name', 'last_name', 'email', 'role', 'phone_number', 'hire_date', 'supervisor_id', 'updated_at', 'created_at')->get();
+
         return $dataTable->render('global.datatable', compact('pageTitle','auth_user','assets', 'headerAction'));
     }
 

@@ -1,5 +1,32 @@
 <ul class="navbar-nav iq-main-menu" id="sidebar">
-    
+        <li class="nav-item dropdown">
+          <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="{{asset('images/avatars/01.png')}}" alt="User-Profile" class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
+          <img src="{{asset('images/avatars/avtar_1.png')}}" alt="User-Profile" class="theme-color-purple-img img-fluid avatar avatar-50 avatar-rounded">
+          <img src="{{asset('images/avatars/avtar_2.png')}}" alt="User-Profile" class="theme-color-blue-img img-fluid avatar avatar-50 avatar-rounded">
+          <img src="{{asset('images/avatars/avtar_4.png')}}" alt="User-Profile" class="theme-color-green-img img-fluid avatar avatar-50 avatar-rounded">
+          <img src="{{asset('images/avatars/avtar_5.png')}}" alt="User-Profile" class="theme-color-yellow-img img-fluid avatar avatar-50 avatar-rounded">
+          <img src="{{asset('images/avatars/avtar_3.png')}}" alt="User-Profile" class="theme-color-pink-img img-fluid avatar avatar-50 avatar-rounded">
+            <div class="caption ms-3 d-none d-md-block ">
+              <h6 class="mb-0 caption-title">{{ auth()->user()->first_name}}  {{auth()->user()->last_name }}</h6>
+              <p class="mb-0 caption-sub-title">{{ str_replace('_',' ',auth()->user()->role) ?? 'Marketing Administrator' }}</p>
+            </div>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end me-2 me-lg-0" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{{route('users.show', auth()->id() || 1)}}">Profile</a></li>
+            <li><a class="dropdown-item" href="{{route('auth.userprivacysetting')}}">Privacy Setting</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><form method="POST" action="{{route('logout')}}">
+              @csrf
+              <a href="javascript:void(0)" class="dropdown-item"
+                onclick="event.preventDefault();
+              this.closest('form').submit();">
+                  {{ __('Log out') }}
+              </a>
+              </form>
+            </li>
+          </ul>
+        </li>
 
     <li class="nav-item">
         <a class="nav-link {{activeRoute(route('dashboard'))}}" aria-current="page" href="{{route('dashboard')}}">
@@ -16,6 +43,19 @@
             <span class="item-name">Dashboard</span>
         </a>
     </li>
+    <li class="nav-item">
+                <a class="nav-link {{activeRoute(route('users.index'))}}" href="{{route('users.index')}}">
+                    <i class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
+                            <g>
+                                <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
+                            </g>
+                        </svg>
+                    </i>
+                    <i class="sidenav-mini-icon"> U </i>
+                    <span class="item-name">User List</span>
+                </a>
+            </li>
     <!-- <li class="nav-item">
         <a class="nav-link" data-bs-toggle="collapse" href="#horizontal-menu" role="button" aria-expanded="false"
             aria-controls="horizontal-menu">

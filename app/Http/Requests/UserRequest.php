@@ -34,7 +34,7 @@ class UserRequest extends FormRequest
         switch ($method) {
             case 'post':
                 $rules = [
-                    'username' => 'required|max:20',
+                    // 'username' => 'required|max:20',
                     'password' => 'required|confirmed|min:8',
                     'email' => 'required|max:191|email|unique:users',
                     'phone_number'=>'max:13',
@@ -47,7 +47,7 @@ class UserRequest extends FormRequest
                 break;
             case 'patch':
                 $rules = [
-                    'username' => 'required|max:20',
+                    // 'username' => 'required|max:20',
                     'email' => 'required|max:191|email|unique:users,email,'.$user_id,
                     'phone_number'=>'max:13',
                     'password' => 'confirmed|min:8|nullable',
