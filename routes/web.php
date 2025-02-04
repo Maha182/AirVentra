@@ -87,6 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/lookup/location', [StorageAssignmentController::class, 'lookupLocation'])->name('lookup.location');
     Route::post('/assign/manual', [StorageAssignmentController::class, 'assignManual'])->name('assign.manual');
+    Route::post('/assign-storage', [StorageAssignmentController::class, 'storage'])->name('assign.storage');
          
 });
 

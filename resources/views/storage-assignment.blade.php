@@ -1,85 +1,102 @@
 @extends('layouts.home.app')
 
 @section('content')
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f8f9fa;
-            }
-            .control-panel-btn {
-                float: right;
-                background-color: #00338d;
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                cursor: pointer;
-            }
-            .section-title {
-                font-size: 24px;
-                font-weight: bold;
-                color: navy;
-            }
-            .error-report-table th, .error-report-table td {
-                text-align: center;
-            }
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+    }
+    .control-panel-btn {
+        float: right;
+        background-color: #00338d;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+    }
+    .section-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: navy;
+    }
+    .error-report-table th, .error-report-table td {
+        text-align: center;
+    }
+</style>
 
-        </style>
+<div id="features" class="container-fluid bg-light py-5">
+    <h4 class="display-4">Storage Assignment</h4>       
+</div>
 
-    <div id="features" class="container-fluid bg-light py-5">
-        <h4 class="display-4">Storage Assignment</h4>       
+@if(session('success'))
+    <div class="alert alert-success text-center" role="alert">
+        {{ session('success') }}
     </div>
+@endif
 
+@if(session('error'))
+    <div class="alert alert-danger text-center" role="alert">
+        {{ session('error') }}
+    </div>
+@endif
 
-    @if(session('success'))
-            <div class="alert alert-success text-center" role="alert">
-                {{ session('success') }}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="bg-light p-4 border"style=" height: 250px;">
+                <h4 class="section-title">Current Location (from database)</h4>
+                <div class="border mt-3" style="height: 150px; background-color: white;"></div>
             </div>
-        @endif
-
-
-    <div class="container my-5">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="bg-light p-4 border"style=" height: 250px;">
-                    <h4 class="section-title">Current Location (from database)</h4>
-                    <div class="border mt-3" style="height: 150px; background-color: white;"></div>
-                </div>
+        </div>
+        <div class="col-md-6">
+            <div class="bg-light p-4 border" style=" height: 250px;">
+                <h4 class="section-title">Scanned Product</h4>
+                <p>Product ID: <strong>Text</strong></p>
+                <p>Product Name: <strong>Text</strong></p>
+                <p>Product Description: <strong>Text</strong></p>
+                <p>Product Quantity: <strong>Text</strong></p>
             </div>
-            <div class="col-md-6">
-                <div class="bg-light p-4 border" style=" height: 250px;">
-                    <h4 class="section-title">Scanned Product</h4>
-                    <p>Product ID: <strong>Text</strong></p>
-                    <p>Product Name: <strong>Text</strong></p>
-                    <p>Product Description: <strong>Text</strong></p>
-                    <p>Product Quantity: <strong>Text</strong></p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row ">
+        <div class="col-12">
+            <div class="bg-light p-4 border">
+                <h4 class="section-title">Recommended Location #ID: <span class="text-primary">ID number</span></h4>
+                <div class="border p-3">
+                    <p>Zone Name:<strong>Text</strong></p>
+                    <p>Aisle Number: <strong>Text</strong></p>
+                    <p>Rack Number: <strong>Text</strong></p>
                 </div>
             </div>
         </div>
     </div>
-       
+    <div class="d-flex justify-content-end mt-3 mb-5">
+        <button class="btn btn-primary me-2">Assign to Recommended</button>
+        <button class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#manualAssignModal">Manually Assign</button>
+    </div>
+</div>
 
-    <div class="container">
-        <div class="row ">
-            <div class="col-12">
-                <div class="bg-light p-4 border">
-                    <h4 class="section-title">Recommended Location #ID: <span class="text-primary">ID number</span></h4>
-                    <div class="border p-3">
-                        <p>Zone Name:<strong>Text</strong></p>
-                        <p>Aisle Number: <strong>Text</strong></p>
-                        <p>Rack Number: <strong>Text</strong></p>
-                    </div>
+<!-- Display Assigned Location (Added Section) -->
+@if(session('assigned_location'))
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bg-light p-4 border">
+                <h4 class="section-title">Assigned Location</h4>
+                <div class="border p-3">
+                    <p>Location ID: <strong>{{ session('assigned_location')->locationID }}</strong></p>
+                    <p>Zone Name: <strong>{{ session('assigned_location')->zone_name }}</strong></p>
+                    <p>Aisle Number: <strong>{{ session('assigned_location')->aisle }}</strong></p>
+                    <p>Rack Number: <strong>{{ session('assigned_location')->rack }}</strong></p>
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-end mt-3 mb-5">
-            <button class="btn btn-primary me-2">Assign to Recommended</button>
-            <button class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#manualAssignModal">Manually Assign</button>
-        </div>
-
     </div>
-
-        
-
+</div>
+@endif
 
 <!-- Manual Storage Assignment Modal -->
 <div class="modal fade" id="manualAssignModal" tabindex="-1" aria-labelledby="manualAssignModalLabel" aria-hidden="true">
@@ -122,7 +139,6 @@
                         <button type="submit" class="btn btn-primary">Assign Location</button>
                     </div>
                 </form>
-
 
                 <!-- Add jQuery for AJAX -->
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -168,11 +184,40 @@
                         });
                     });
                 });
-
                 </script>
             </div>
         </div>
     </div>
+</div>
+
+<div class="container my-5"> 
+    <h4 class="section-title">Test Storage Function</h4>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <!-- Test Assignment Button -->
+    <form action="{{ route('assign.storage') }}" method="POST">
+        @csrf
+        <input type="hidden" name="productID" value="1"> <!-- Replace with actual productID -->
+        <input type="hidden" name="zone_name" id="zone_name" value="ZoneA"> <!-- Replace with actual zone -->
+        <button type="submit" class="btn btn-success">Test Assign Location</button>
+    </form>
+
+    <!-- Box to Show Assigned Location -->
+    @if(session('assigned_location'))
+    <div class="mt-3 p-3 border rounded bg-light">
+        <h5 class="text-primary">Assigned Location</h5>
+        <p>Location ID: <strong>{{ session('assigned_location')['locationID'] }}</strong></p>
+        <p>Zone Name: <strong>{{ session('assigned_location')['zone_name'] }}</strong></p>
+        <p>Aisle Number: <strong>{{ session('assigned_location')['aisle'] }}</strong></p>
+        <p>Rack Number: <strong>{{ session('assigned_location')['rack'] }}</strong></p>
+    </div>
+    @endif
 </div>
 
 
