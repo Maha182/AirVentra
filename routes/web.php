@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Artisan;
 // Packages
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StorageAssignmentController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
