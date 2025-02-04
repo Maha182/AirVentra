@@ -1,59 +1,85 @@
 @extends('layouts.home.app')
 
 @section('content')
-<div id="features" class="container-fluid bg-light py-5">
-    <div class="container py-5">
-        <h4 class="display-4">Storage Assignment</h4>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f8f9fa;
+            }
+            .control-panel-btn {
+                float: right;
+                background-color: #00338d;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+            }
+            .section-title {
+                font-size: 24px;
+                font-weight: bold;
+                color: navy;
+            }
+            .error-report-table th, .error-report-table td {
+                text-align: center;
+            }
 
-        <!-- Success Messages -->
-        @if(session('success'))
+        </style>
+
+    <div id="features" class="container-fluid bg-light py-5">
+        <h4 class="display-4">Storage Assignment</h4>       
+    </div>
+
+
+    @if(session('success'))
             <div class="alert alert-success text-center" role="alert">
                 {{ session('success') }}
             </div>
         @endif
 
-        <div class="row g-4 justify-content-center mt-4">
-            <!-- Scanning Section -->
+
+    <div class="container my-5">
+        <div class="row">
             <div class="col-md-6">
-                <div class="border p-4 bg-white" style="min-height: 300px; width: 100%; border: 2px solidrgb(4, 75, 150);">
-                    <!-- Scanning Area -->
+                <div class="bg-light p-4 border"style=" height: 250px;">
+                    <h4 class="section-title">Current Location (from database)</h4>
+                    <div class="border mt-3" style="height: 150px; background-color: white;"></div>
                 </div>
             </div>
-
-            <!-- Scanned Product Details -->
             <div class="col-md-6">
-                <div class="p-4" style="background-color: #D6EAF8; border-radius: 5px;">
-                    <h5 class="fw-bold">Scanned Product</h5>
-                    <div class="p-3 bg-white" style="color: black;">
-                        <p><strong>Product ID:</strong> <span>Text</span></p>
-                        <p><strong>Product Name:</strong> <span>Text</span></p>
-                        <p><strong>Product Description:</strong> <span>Text</span></p>
-                        <p><strong>Product Quantity:</strong> <span>Text</span></p>
+                <div class="bg-light p-4 border" style=" height: 250px;">
+                    <h4 class="section-title">Scanned Product</h4>
+                    <p>Product ID: <strong>Text</strong></p>
+                    <p>Product Name: <strong>Text</strong></p>
+                    <p>Product Description: <strong>Text</strong></p>
+                    <p>Product Quantity: <strong>Text</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+       
+
+    <div class="container">
+        <div class="row ">
+            <div class="col-12">
+                <div class="bg-light p-4 border">
+                    <h4 class="section-title">Recommended Location #ID: <span class="text-primary">ID number</span></h4>
+                    <div class="border p-3">
+                        <p>Zone Name:<strong>Text</strong></p>
+                        <p>Aisle Number: <strong>Text</strong></p>
+                        <p>Rack Number: <strong>Text</strong></p>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Recommended Location Section -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="p-4 bg-white">
-                    <h5 class="fw-bold">Recommended Location #ID: <span class="text-primary">ID number</span></h5>
-                    <p><strong>Zone Name:</strong> <span>Text</span></p>
-                    <p><strong>Aisle Number:</strong> <span>Text</span></p>
-                    <p><strong>Rack Number:</strong> <span>Text</span></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="d-flex justify-content-end mt-3">
+        <div class="d-flex justify-content-end mt-3 mb-5">
             <button class="btn btn-primary me-2">Assign to Recommended</button>
-            <!-- Button to trigger modal -->
             <button class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#manualAssignModal">Manually Assign</button>
         </div>
+
     </div>
-</div>
+
+        
+
 
 <!-- Manual Storage Assignment Modal -->
 <div class="modal fade" id="manualAssignModal" tabindex="-1" aria-labelledby="manualAssignModalLabel" aria-hidden="true">
@@ -148,4 +174,6 @@
         </div>
     </div>
 </div>
+
+
 @endsection

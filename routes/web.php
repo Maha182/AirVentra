@@ -79,6 +79,12 @@ Route::group(['middleware' => 'auth'], function () {
          return view('storage-assignment');  
          })->name('storage-assignment');
   
+
+    Route::get('/mainPage', function () {
+        return view('mainPage');  
+        })->name('mainPage');
+
+
     Route::get('/lookup/location', [StorageAssignmentController::class, 'lookupLocation'])->name('lookup.location');
     Route::post('/assign/manual', [StorageAssignmentController::class, 'assignManual'])->name('assign.manual');
          

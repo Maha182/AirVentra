@@ -251,7 +251,7 @@
                 <div class="row g-5 align-items-center">
                     <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s">
                         <div class="h-100">
-                            <div class="mb-5">
+                            <div id="FAQ" class="mb-5">
                                 <h4 class="text-primary">Some Important FAQ's</h4>
                                 <h1 class="display-4 mb-0">Common Frequently Asked Questions</h1>
                             </div>
