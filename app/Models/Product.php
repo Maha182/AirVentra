@@ -11,7 +11,19 @@ class Product extends Model
 
     protected $table = 'products';
 
+    // Define the primary key for this model
+    protected $primaryKey = 'productID'; 
+
+    // If your primary key is not auto-incrementing, set this property:
+    public $incrementing = false;  // Set to true if primary key is auto-incrementing
+    public $timestamps = false; // <---- ADD THIS LINE
+
     protected $fillable = ['productID', 'title', 'description', 'main_category', 'location_id', 'barcode_path'];
+
+    // If the productID is a string (like UUID), use casting
+    protected $casts = [
+        'productID' => 'string',
+    ];
 
     public function location()
     {

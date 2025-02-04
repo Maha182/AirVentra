@@ -53,66 +53,49 @@ class StorageAssignmentController extends Controller
         return redirect()->back()->with('error', 'These credentials do not match our records.');
     }
 
-    public function storage(Request $request)
-        {
-        // Force Laravel to read JSON requests
-        $data = $request->json()->all();
-
-        Log::info('Storage function called', $data); // Log incoming request
-
-        // Validate input
-        $validated = Validator::make($data, [
-            'productID' => 'required|exists:products,productID',
-            'zone_name' => 'required|string'
-        ]);
-
-        if ($validated->fails()) {
-            Log::error('Validation failed', ['errors' => $validated->errors()]);
-            return response()->json(['error' => $validated->errors()], 400);
+    public function assignStorage()
+    {
+        // Fixed product ID for now
+        $productID = '1'; // Change this as needed
+        $zoneName = 'Refrigerator Zone';
+    
+        // Find the product by its ID
+        $product = Product::find($productID);
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product with ID ' . $productID . ' not found');
         }
+        // Query to find available location within the specified zone
+        $locationQuery = Location::where('zone_name', $zoneName)
+        ->whereRaw('CAST(current_capacity AS SIGNED) < CAST(capacity AS SIGNED)')
+        ->orderBy('aisle');
+    
+                                
 
-        Log::info('Validation passed');
+        \Log::info($locationQuery->toSql(), $locationQuery->getBindings()); // Debug query
 
-        // Find an unfilled location within the specified zone
-        $location = Location::where('zone_name', $data['zone_name'])
-            ->whereColumn('current_capacity', '<', 'capacity')
-            ->first();
+        $location = $locationQuery->first();
+
 
         if (!$location) {
-            Log::error('No available locations found in zone: ' . $data['zone_name']);
-            return response()->json(['error' => 'No available locations found in this zone'], 404);
+            return redirect()->back()->with('error', 'No available storage locations in zone: ' . $zoneName);
         }
-
-        Log::info('Location found', ['locationID' => $location->locationID]);
-
-        // Assign the location to the product
-        $product = Product::where('productID', $data['productID'])->first();
-        if (!$product) {
-            Log::error('Product not found with ID: ' . $data['productID']);
-            return response()->json(['error' => 'Product not found.'], 404);
-        }
-
-        Log::info('Product found', ['productID' => $product->productID]);
-
-        // Update product location
-        $product->update(['location_id' => $location->locationID]);
-        Log::info('Product assigned to location', ['productID' => $product->productID, 'locationID' => $location->locationID]);
-
-        // Update the location's current capacity
-        $location->update(['current_capacity' => $location->current_capacity + 1]);
-        Log::info('Location capacity updated', ['locationID' => $location->locationID, 'current_capacity' => $location->current_capacity]);
-
-        return response()->json([
-            'success' => 'Product assigned to a location successfully',
-            'assigned_location' => [
-                'locationID' => $location->locationID,
-                'zone_name' => $location->zone_name,
-                'aisle' => $location->aisle,
-                'rack' => $location->rack
-            ]
-        ], 200);
-    }
-
-
     
+        // Assign the location to the product
+        $product->location_id = $location->locationID;
+        $product->save();
+    
+        // Update the current capacity of the location
+        $location->increment('current_capacity');
+    
+        // Store info in session
+        return redirect()->back()->with('storage_info', [
+            'product_id' => $productID,
+            'assigned_location' => $location->locationID,
+            'zone_name' => $location->zone_name
+        ]);
+
+        return redirect()->back()->with('success', 'product added to a specific location');
+    }
+    
+
 }

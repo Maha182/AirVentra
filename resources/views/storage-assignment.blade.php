@@ -192,33 +192,20 @@
 
 <div class="container my-5"> 
     <h4 class="section-title">Test Storage Function</h4>
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
-
-    <!-- Test Assignment Button -->
-    <form action="{{ route('assign.storage') }}" method="POST">
+    <form  action="{{ route('assign.storage') }}" method="POST" >
         @csrf
-        <input type="hidden" name="productID" value="1"> <!-- Replace with actual productID -->
-        <input type="hidden" name="zone_name" id="zone_name" value="ZoneA"> <!-- Replace with actual zone -->
-        <button type="submit" class="btn btn-success">Test Assign Location</button>
+    <button type="submit" class="btn btn-primary">Assign Storage</button>
     </form>
 
-    <!-- Box to Show Assigned Location -->
-    @if(session('assigned_location'))
-    <div class="mt-3 p-3 border rounded bg-light">
-        <h5 class="text-primary">Assigned Location</h5>
-        <p>Location ID: <strong>{{ session('assigned_location')['locationID'] }}</strong></p>
-        <p>Zone Name: <strong>{{ session('assigned_location')['zone_name'] }}</strong></p>
-        <p>Aisle Number: <strong>{{ session('assigned_location')['aisle'] }}</strong></p>
-        <p>Rack Number: <strong>{{ session('assigned_location')['rack'] }}</strong></p>
-    </div>
+    @if(session('storage_info'))
+        <div>
+            <p>Product ID: {{ session('storage_info')['product_id'] }}</p>
+            <p>Assigned Location: {{ session('storage_info')['assigned_location'] }}</p>
+            <p>Zone Name: {{ session('storage_info')['zone_name'] }}</p>
+        </div>
     @endif
 </div>
+
 
 
 @endsection
