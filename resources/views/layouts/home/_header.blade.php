@@ -10,11 +10,12 @@
                 <span class="fa fa-bars"></span>
             </button>
             <div class="navbar-nav mx-0 mx-lg- d-flex" >
-                    <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
-                    <a href="{{ route('home') }}#pricing" class="nav-item nav-link">Pricing</a>
-                    <a href="{{ route('home') }}#benefits" class="nav-item nav-link">Benefits</a>
-                    <a href="{{ route('home') }}#features" class="nav-item nav-link">Features</a>
-                    <a href="{{ route('OptionsPage') }}" class="nav-item nav-link ms-3" style="white-space: nowrap;">Control Panel</a>
+                <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
+                <a href="{{ route('home') }}#pricing" class="nav-item nav-link">Pricing</a>
+                <a href="{{ route('home') }}#benefits" class="nav-item nav-link">Benefits</a>
+                <a href="{{ route('home') }}#features" class="nav-item nav-link">Features</a>
+                <a href="{{ route('OptionsPage') }}" class="nav-item nav-link ms-3" style="white-space: nowrap;">Control Panel</a>
+                <div class="nav-item dropdown">
                     <a href="#" class="nav-link" data-bs-toggle="dropdown">
                         <span class="dropdown-toggle">Pages</span>
                     </a>
