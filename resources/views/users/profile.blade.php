@@ -14,8 +14,8 @@
                         <img src="{{asset('images/avatars/avtar_3.png')}}" alt="User-Profile" class="theme-color-pink-img img-fluid rounded-pill avatar-100">
                      </div>
                      <div class="d-flex flex-wrap align-items-center mb-3 mb-sm-0">
-                        <h4 class="me-2 h4">{{ $data->full_name ?? 'Austin Robertson'  }}</h4>
-                        <span class="text-capitalize"> - {{ str_replace('_',' ',auth()->user()->user_type) ?? 'Marketing Administrator' }}</span>
+                        <h4 class="me-2 h4">{{ $user->full_name}}</h4>
+                        <span class="text-capitalize"> - {{ str_replace('_',' ',auth()->user()->role) }}</span>
                      </div>
                   </div>
                   <ul class="d-flex nav nav-pills mb-0 text-center profile-tab iq-class" data-toggle="slider-tab" id="profile-pills-tab" role="tablist">

@@ -197,7 +197,8 @@ class UserController extends Controller
     */
     public function index(UsersDataTable $dataTable)
     {
-        $pageTitle = trans('global-message.list_form_title', ['form' => trans('users.title')]);
+        $pageTitle = 'Employee List';
+        //trans('global-message.list_form_title', ['form' => trans('users.title')]);
         $auth_user = AuthHelper::authSession();
         $assets = ['data-table'];
         $headerAction = '<a href="'.route('users.create').'" class="btn btn-sm btn-primary" role="button">Add New Employee </a>';
@@ -236,7 +237,7 @@ class UserController extends Controller
 
         User::create($validatedData);
 
-        return redirect()->route('users.index')->withSuccess(__('User added successfully!'));
+        return redirect()->route('users.index')->withSuccess(__('Employee added successfully!'));
     }
 
     /**
@@ -256,10 +257,11 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $roles = ['admin' => 'Admin', 'employee' => 'Employee']; // Available roles
-
-        return view('users.form', compact('user', 'roles', 'id'));
+        $supervisors = User::whereNotNull('role')->pluck('first_name', 'id'); // Fetch supervisors
+    
+        return view('users.form', compact('user', 'roles', 'id', 'supervisors'));
     }
-
+    
     /**
      * Update the specified user in storage.
      */
@@ -286,7 +288,7 @@ class UserController extends Controller
 
         $user->update($validatedData);
 
-        return redirect()->route('users.index')->withSuccess(__('User updated successfully!'));
+        return redirect()->route('users.index')->withSuccess(__('Employee updated successfully!'));
     }
 
     /**
@@ -298,10 +300,10 @@ class UserController extends Controller
 
         if ($user) {
             $user->delete();
-            return redirect()->back()->withSuccess(__('User deleted successfully.'));
+            return redirect()->back()->withSuccess(__('Employee deleted successfully.'));
         }
 
-        return redirect()->back()->withErrors(__('Error deleting user.'));
+        return redirect()->back()->withErrors(__('Error deleting Employee.'));
     }
 }
 

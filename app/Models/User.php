@@ -66,4 +66,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         // Make sure there's no logic here that modifies the ID display
         return $value;
     }
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
 }

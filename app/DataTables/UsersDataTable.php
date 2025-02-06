@@ -26,10 +26,9 @@ class UsersDataTable extends DataTable
             ->editColumn('created_at', function ($query) {
                 return date('Y/m/d', strtotime($query->created_at));
             })
-            ->addColumn('action', function ($query) {
-                return '<a href="' . route('users.edit', $query->id) . '" class="btn btn-sm btn-primary">Edit</a> 
-                        <a href="' . route('users.destroy', $query->id) . '"class="btn btn-sm btn-danger delete-user">Delete</a>';
-            })
+
+            
+            ->addColumn('action', 'users.action')
             ->rawColumns(['action']);
     }
     // public function dataTable($query)
@@ -69,6 +68,15 @@ class UsersDataTable extends DataTable
     //                 $q->where('company_name', 'like', "%{$keyword}%");
     //             });
     //         })
+    // ->addColumn('action', function ($query) {
+    //     return '<a href="' . route('users.edit', $query->id) . '" class="btn btn-sm btn-primary">Edit</a> 
+    //             <form action="' . route('users.destroy', $query->id) . '" method="POST" style="display:inline;">
+    //                 ' . csrf_field() . '
+    //                 ' . method_field('DELETE') . '
+    //                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure you want to delete this user?\');">Delete</button>
+    //             </form>';
+    // })
+    
     //         ->filterColumn('userProfile.country', function($query, $keyword) {
     //             return $query->orWhereHas('userProfile', function($q) use($keyword) {
     //                 $q->where('country', 'like', "%{$keyword}%");
@@ -91,7 +99,8 @@ class UsersDataTable extends DataTable
     // }
     public function query()
     {
-        return User::select(['id', 'first_name', 'last_name', 'email', 'role', 'phone_number', 'hire_date', 'supervisor_id', 'created_at']);
+        $model = User::select(['id', 'first_name', 'last_name', 'email', 'role', 'phone_number', 'hire_date', 'supervisor_id', 'created_at']);
+        return $this->applyScopes($model); 
     }
 
 
