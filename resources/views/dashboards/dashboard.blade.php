@@ -180,61 +180,37 @@ $data = [
                 <div class="card-body">
                     
                     <div class="custom-datatable-entries">
-                                    <table id="datatable" class="table table-striped" data-toggle="data-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Position</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php
-                                        $employees = [
-                                        [
-                                            'name' => 'Tiger Nixon',
-                                            'position' => 'System Architect',
-                                            'office' => 'Edinburgh',
-                                                'age' => 61,
-                                                'start_date' => '2011/04/25',
-                                                'salary' => '$320,800',
-                                            ],
-                                            [
-                                                'name' => 'Garrett Winters',
-                                                'position' => 'Accountant',
-                                                'office' => 'Tokyo',
-                                                'age' => 63,
-                                                'start_date' => '2011/07/25',
-                                                'salary' => '$170,750',
-                                            ],
-                                            // Add more employees here...
-                                        ];
-                                        ?>
-                                            @foreach($employees as $employee)
-                                                <tr>
-                                                    <td>{{ $employee['name'] }}</td>
-                                                    <td>{{ $employee['position'] }}</td>
-                                                    <td>{{ $employee['office'] }}</td>
-                                                    <td>{{ $employee['age'] }}</td>
-                                                    <td>{{ $employee['start_date'] }}</td>
-                                                    <td>{{ $employee['salary'] }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Position</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                    <table id="datatable" class="table table-striped" data-toggle="data-table">
+                        <thead>
+                            <tr>
+                            <th>Product ID</th>
+                            <th>Scan Date</th>
+                            <th>Wrong Location</th>
+                            <th>Correct Location</th>
+                            <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($locationChecks as $check)
+                            <tr>
+                                <td>{{ $check->product_id }}</td>
+                                <td>{{ $check->scan_date }}</td>
+                                <td>{{ $check->wrong_location }}</td>
+                                <td>{{ $check->correct_location }}</td>
+                                <td>{{ $check->status }}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Product ID</th>
+                                <th>Scan Date</th>
+                                <th>Wrong Location</th>
+                                <th>Correct Location</th>
+                                <th>Status</th>
+                            </tr>
+                        </tfoot>
+                    </table>
                                 </div>
                             </div>
                         </div>
@@ -254,61 +230,34 @@ $data = [
                 <div class="card-body">
                     
                     <div class="custom-datatable-entries">
-                                    <table id="datatable" class="table table-striped" data-toggle="data-table">
-                                        <thead>
+                    <table id="datatable2" class="table table-striped" data-toggle="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Location ID</th>
+                                            <th>Scan Date</th>
+                                            <th>Detected Capacity</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($locationCapacityChecks as $capacityCheck)
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Position</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
+                                                <td>{{ $capacityCheck->location_id }}</td>
+                                                <td>{{ $capacityCheck->scan_date }}</td>
+                                                <td>{{ $capacityCheck->detected_capacity }}</td>
+                                                <td>{{ $capacityCheck->status }}</td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php
-                                        $employees = [
-                                        [
-                                            'name' => 'Tiger Nixon',
-                                            'position' => 'System Architect',
-                                            'office' => 'Edinburgh',
-                                                'age' => 61,
-                                                'start_date' => '2011/04/25',
-                                                'salary' => '$320,800',
-                                            ],
-                                            [
-                                                'name' => 'Garrett Winters',
-                                                'position' => 'Accountant',
-                                                'office' => 'Tokyo',
-                                                'age' => 63,
-                                                'start_date' => '2011/07/25',
-                                                'salary' => '$170,750',
-                                            ],
-                                            // Add more employees here...
-                                        ];
-                                        ?>
-                                            @foreach($employees as $employee)
-                                                <tr>
-                                                    <td>{{ $employee['name'] }}</td>
-                                                    <td>{{ $employee['position'] }}</td>
-                                                    <td>{{ $employee['office'] }}</td>
-                                                    <td>{{ $employee['age'] }}</td>
-                                                    <td>{{ $employee['start_date'] }}</td>
-                                                    <td>{{ $employee['salary'] }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Position</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Location ID</th>
+                                            <th>Scan Date</th>
+                                            <th>Detected Capacity</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                                 </div>
                             </div>
                         </div>

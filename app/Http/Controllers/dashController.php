@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\LocationCheck;
+use App\Models\LocationCapacityCheck;
 class dashController extends Controller
 {
     /*
@@ -11,8 +12,12 @@ class dashController extends Controller
      */
     public function index(Request $request)
     {
+        $locationChecks = LocationCheck::all();
+
+        // Fetch all records from the location_capacity_checks table
+        $locationCapacityChecks = LocationCapacityCheck::all();
         $assets = ['chart', 'animation'];
-        return view('dashboards.dashboard', compact('assets'));
+        return view('dashboards.dashboard', compact('assets','locationChecks', 'locationCapacityChecks'));
     }
 
     /*

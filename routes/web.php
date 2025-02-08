@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StorageAssignmentController;
 use App\Http\Controllers\PythonController;
+use App\Http\Controllers\LocationCheckController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,22 +35,22 @@ Route::get('/storage', function () {
 
 
 //Landing-Pages Routes
-Route::group(['prefix' => 'landing-pages'], function() {
-Route::get('index',[dashController::class, 'landing_index'])->name('landing-pages.index');
-Route::get('blog',[dashController::class, 'landing_blog'])->name('landing-pages.blog');
-Route::get('blog-detail',[dashController::class, 'landing_blog_detail'])->name('landing-pages.blog-detail');
-Route::get('about',[dashController::class, 'landing_about'])->name('landing-pages.about');
-Route::get('contact',[dashController::class, 'landing_contact'])->name('landing-pages.contact');
-Route::get('ecommerce',[dashController::class, 'landing_ecommerce'])->name('landing-pages.ecommerce');
-Route::get('faq',[dashController::class, 'landing_faq'])->name('landing-pages.faq');
-Route::get('feature',[dashController::class, 'landing_feature'])->name('landing-pages.feature');
-Route::get('pricing',[dashController::class, 'landing_pricing'])->name('landing-pages.pricing');
-Route::get('saas',[dashController::class, 'landing_saas'])->name('landing-pages.saas');
-Route::get('shop',[dashController::class, 'landing_shop'])->name('landing-pages.shop');
-Route::get('shop-detail',[dashController::class, 'landing_shop_detail'])->name('landing-pages.shop-detail');
-Route::get('software',[dashController::class, 'landing_software'])->name('landing-pages.software');
-Route::get('startup',[dashController::class, 'landing_startup'])->name('landing-pages.startup');
-});
+// Route::group(['prefix' => 'landing-pages'], function() {
+// Route::get('index',[dashController::class, 'landing_index'])->name('landing-pages.index');
+// Route::get('blog',[dashController::class, 'landing_blog'])->name('landing-pages.blog');
+// Route::get('blog-detail',[dashController::class, 'landing_blog_detail'])->name('landing-pages.blog-detail');
+// Route::get('about',[dashController::class, 'landing_about'])->name('landing-pages.about');
+// Route::get('contact',[dashController::class, 'landing_contact'])->name('landing-pages.contact');
+// Route::get('ecommerce',[dashController::class, 'landing_ecommerce'])->name('landing-pages.ecommerce');
+// Route::get('faq',[dashController::class, 'landing_faq'])->name('landing-pages.faq');
+// Route::get('feature',[dashController::class, 'landing_feature'])->name('landing-pages.feature');
+// Route::get('pricing',[dashController::class, 'landing_pricing'])->name('landing-pages.pricing');
+// Route::get('saas',[dashController::class, 'landing_saas'])->name('landing-pages.saas');
+// Route::get('shop',[dashController::class, 'landing_shop'])->name('landing-pages.shop');
+// Route::get('shop-detail',[dashController::class, 'landing_shop_detail'])->name('landing-pages.shop-detail');
+// Route::get('software',[dashController::class, 'landing_software'])->name('landing-pages.software');
+// Route::get('startup',[dashController::class, 'landing_startup'])->name('landing-pages.startup');
+// });
 
 //UI Pages Routs
 Route::get('/', [HomeController::class, 'home'])->name('home');
@@ -63,7 +64,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Dashboard Routes
     Route::get('/dashboard', [dashController::class, 'index'])->name('dashboard');
-
     // Users Module
     Route::resource('users', UserController::class);
 
