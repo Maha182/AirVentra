@@ -61,20 +61,58 @@
 </div>
 
 <div class="container">
-    <div class="row ">
+    <div class="row">
         <div class="col-12">
-            <div class="bg-light p-4 border">
-                <h4 class="section-title">Recommended Location #ID: <span class="text-primary">ID number</span></h4>
-                <div class="border p-3">
-                    <p>Zone Name:<strong>Text</strong></p>
-                    <p>Aisle Number: <strong>Text</strong></p>
-                    <p>Rack Number: <strong>Text</strong></p>
-                </div>
-            </div>
+        <div class="bg-light p-4 border">
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="section-title">
+        Recommended Location #ID: <span class="text-primary">{{ $location->id ?? '' }}</span>
+        </h4>
+
+    <!-- Form to send location data to Flask -->
+        <form id="lookupForm" method="GET" action="{{ route('sendLocationData') }}">
+        @csrf
+        <button class="btn btn-primary" type="submit">Look Up Location</button>
+    </form>
+
+    @if(session('assigned_product'))
+        <p><strong>Product ID:</strong> {{ session('assigned_product.product_id') }}</p>
+        <p><strong>Assigned Location:</strong> {{ session('assigned_product.assigned_location') }}</p>
+        <p><strong>Zone Name:</strong> {{ session('assigned_product.zone_name') }}</p>
+    @endif
+
+
+</div>
+
+
+            <!-- <div class="border p-3">
+                <p>Zone Name: <strong>Text</strong></p>
+                <p>Aisle Number: <strong>Text</strong></p>
+                <p>Rack Number: <strong>Text</strong></p>
+            </div> -->
+</div>
+
+
+
+
+<!-- Form to trigger submitData -->
+
+
+
+
+
+
+
+
+
         </div>
     </div>
+
     <div class="d-flex justify-content-end mt-3 mb-5">
-        <button class="btn btn-primary me-2">Assign to Recommended</button>
+    <form method="POST" action="{{ route('assignProduct') }}">
+            @csrf
+            <button class="btn btn-success" type="submit">Assign to Recommended</button>
+        </form>
         <button class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#manualAssignModal">Manually Assign</button>
     </div>
 </div>
@@ -189,26 +227,5 @@
         </div>
     </div>
 </div>
-
-
-<meta name="csrf-token" content="{{ csrf_token() }}">
-
-<!-- Form to trigger submitData -->
-<form id="assignForm" method="POST" action="{{ route('submitData') }}">
-    @csrf
-    <button type="submit" id="assignButton">Assign Product</button>
-</form>
-
-<h3>Assignment Details:</h3>
-<div id="result">
-    @if(session('assigned_product'))
-        <p><strong>Product ID:</strong> <span>{{ session('assigned_product.product_id') }}</span></p>
-        <p><strong>Assigned Location:</strong> <span>{{ session('assigned_product.assigned_location') }}</span></p>
-        <p><strong>Zone Name:</strong> <span>{{ session('assigned_product.zone_name') }}</span></p>
-    @else
-        <p>No product assigned yet.</p>
-    @endif
-</div>
-
 
 @endsection

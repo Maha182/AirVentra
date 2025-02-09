@@ -91,12 +91,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/assign/manual', [StorageAssignmentController::class, 'assignManual'])->name('assign.manual');
 
     
-    Route::get("/submitData", function () {
-        return view('storage-assignment');  
-    });
-    
-    // Route to handle the form submission (POST request)
-    Route::post("/submitData", [PythonController::class, 'submit'])->name('submitData');
+    // Route for fetching data from Python and handling location assignment
+    Route::post('/fetch-location-data', [PythonController::class, 'fetchDataFromPython'])->name('fetchDataFromPython');
+
+    Route::get('/sendLocationData', [PythonController::class, 'sendLocationData'])->name('sendLocationData');
+    Route::post('/assignProduct', [PythonController::class, 'assignProductToLocation'])->name('assignProduct');
+
 });
 
 //App Details Page => 'Dashboard'], function() {

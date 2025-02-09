@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,24 +8,35 @@ use App\Models\Location;
 
 class PythonController extends Controller
 {
-    public function submit(Request $request)
+    public function sendLocationData()
     {
-        // Initialize Guzzle HTTP client
         $client = new Client();
+        $productID = 'M1'; 
+    
+        // Fetch product from the database
+        $product = Product::where('id', $productID)->first();
 
-        // Make a GET request to Flask API
-        $request = $client->get('http://127.0.0.1:5000/submitData');
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
 
-        // Get the response from Flask
-        $response = json_decode($request->getBody()->getContents(), true);
+        $description = $product->description;
 
-        // Process the received data
-        $id = $response['id'];
-        $zone_name = $response['zone_name'];
+        // Send description to the Python API
+        $response = $client->post('http://127.0.0.1:5000/getData', [
+            'json' => ['description' => $description]
+        ]);
 
-        // Find product by ID
-        $product = Product::where('id', $id)->first();
+        // Get response from Python
+        $result = json_decode($response->getBody()->getContents(), true);
+        $zone_name = $result['zone_name'] ?? null;
 
+        // Call fetchDataFromPython and pass the zone name
+        return $this->fetchDataFromPython($product, $zone_name);
+    }
+
+    public function fetchDataFromPython($product, $zone_name)
+    {
         if (!$product) {
             return redirect()->route('storage-assignment')->with('error', 'Product not found');
         }
@@ -38,25 +48,58 @@ class PythonController extends Controller
             ->first();
 
         if (!$location) {
-            return redirect()->route('storage-assignment')->with('error', 'No available storage locations in zone: ' .$zone_name);
+            return redirect()->route('storage-assignment')->with('error', 'No available storage locations in zone: ' . $zone_name);
         }
-
-        // Assign the location to the product
-        $product->location_id = $location->id;
-        $product->save();
-
-        // Update capacity of the location
-        $location->increment('current_capacity');
-
-        // Store result in session to display on the page
-        session()->flash('assigned_product', [
+        
+        // Assign product to location
+        session()->put('assigned_product', [
             'product_id' => $product->id,
             'assigned_location' => $location->id,
             'zone_name' => $location->zone_name
         ]);
-
-        // Redirect back to the dashboard with success message
-        return redirect()->route('storage-assignment')->with('message', 'Product Assigned Successfully');
-        
+        return redirect()->route('storage-assignment');
     }
+
+    public function assignProductToLocation(Request $request)
+{
+    // Retrieve product_id and location_id from session
+    $product_id = session('assigned_product.product_id');
+    $location_id = session('assigned_product.assigned_location');
+
+    // Ensure product_id and location_id exist in session
+    if (!$product_id || !$location_id) {
+        return redirect()->route('storage-assignment')->with('error', 'No assigned product or location found in session.');
+    }
+
+    // Fetch product and location as single model instances
+    $product = Product::find($product_id);
+    $location = Location::find($location_id);
+
+    // Ensure valid product and location instances
+    if (!$product) {
+        return redirect()->route('storage-assignment')->with('error', 'Product not found.');
+    }
+
+    if (!$location) {
+        return redirect()->route('storage-assignment')->with('error', 'Location not found.');
+    }
+
+    // Assign location to product
+    $product->location_id = $location->id;
+    $product->save();
+
+    // Update location capacity
+    $location->increment('current_capacity');
+
+    // Update session with the new data
+    session()->put('assigned_product', [
+        'product_id' => $product->id,
+        'assigned_location' => $location->id,
+        'zone_name' => $location->zone_name
+    ]);
+
+    return redirect()->route('storage-assignment')->with('success', 'Product Assigned Successfully');
+}
+
+
 }
