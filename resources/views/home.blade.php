@@ -18,7 +18,7 @@
                             </div>
                             <div class="col-lg-5 animated fadeInRight">
                                 <div class="calrousel-img" style="object-fit: cover;">
-                                    <img src="img/carousel-2.png" class="img-fluid w-100" alt="">
+                                    <img src="img\homepageimg\drone.png" class="img-fluid w-100" alt="">
                                 </div>
                             </div>
                         </div>
@@ -31,7 +31,7 @@
                         <div class="row gy-4 gy-lg-0 gx-0 gx-lg-5 align-items-center">
                             <div class="col-lg-5 animated fadeInLeft">
                                 <div class="calrousel-img">
-                                    <img src="img/carousel-2.png" class="img-fluid w-100" alt="">
+                                    <img src="img\homepageimg\drone.png" class="img-fluid w-100" alt="">
                                 </div>
                             </div>
                             <div class="col-lg-7 animated fadeInRight">
@@ -69,7 +69,7 @@
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
                         <div class="blog-item">
                             <div class="blog-img">
-                                <img src="img/blog-1.png" class="img-fluid rounded-top w-100" alt="">
+                                <img src="img\homepageimg\Smart Storage Assignment.png" class="img-fluid rounded-top w-100" alt="">
                                 
                             </div>
                             <div class="blog-content p-4">
@@ -83,7 +83,7 @@
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
                         <div class="blog-item">
                             <div class="blog-img">
-                                <img src="img/blog-2.png" class="img-fluid rounded-top w-100" alt="">
+                                <img src="img\homepageimg\Real-Time Inventory Tracking.png " class="img-fluid rounded-top w-100" alt="">
                             </div>
                             <div class="blog-content p-4">
                                 <div class="blog-comment d-flex justify-content-between mb-3">
@@ -98,7 +98,7 @@
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
                         <div class="blog-item">
                             <div class="blog-img">
-                                <img src="img/blog-3.png" class="img-fluid rounded-top w-100" alt="">
+                                <img src="img\homepageimg\Error Detection.png" class="img-fluid rounded-top w-100" alt="">
                                 
                             </div>
                             <div class="blog-content p-4">
@@ -112,6 +112,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
             </div>
         </div>
@@ -128,12 +129,12 @@
         <div class="row g-4 justify-content-center">
             <?php
             $cards = [
-                ["img/blog-1.png", "Streamlined Operations", "Simplify warehouse processes with intelligent storage assignment and automation."],
-                ["img/blog-2.png", "Real-Time Accuracy", "Keep your inventory updated instantly with drone-powered tracking."],
-                ["img/blog-3.png", "Error Reduction", "Detect misplaced products and prevent costly human errors."],
-                ["img/blog-4.png", "Optimized Storage", "Maximize space usage by assigning products to the right zones and racks."],
-                ["img/blog-4.png", "Cost Efficiency", "Reduce operational costs by improving accuracy and saving time on manual checks."],
-                ["img/blog-4.png", "Sustainability", "Embrace smarter resource use and energy-efficient drones to reduce waste."]
+                ["img\homepageimg\Streamlined Operations.png", "Streamlined Operations", "Simplify warehouse processes with intelligent storage assignment and automation."],
+                ["img\homepageimg\Real-Time Accuracy.png", "Real-Time Accuracy", "Keep your inventory updated instantly with drone-powered tracking."],
+                ["img\homepageimg\Error Reduction.png", "Error Reduction", "Detect misplaced products and prevent costly human errors."],
+                ["img\homepageimg\Optimized Storage.png", "Optimized Storage", "Maximize space usage by assigning products to the right zones and racks."],
+                ["img\homepageimg\Cost Efficiency.png", "Cost Efficiency", "Reduce operational costs by improving accuracy and saving time on manual checks."],
+                ["img\homepageimg\Sustainability.png", "Sustainability", "Embrace smarter resource use and energy-efficient drones to reduce waste."]
             ];
 
             foreach ($cards as $index => $card) {
@@ -296,7 +297,7 @@
                         </div>
                     </div>
                     <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.4s">
-                        <img src="img/carousel-2.png" class="img-fluid w-100" alt="">
+                        <img src="img\homepageimg\FAQ.png" class="img-fluid w-100" alt="">
                     </div>
                 </div>
             </div>
