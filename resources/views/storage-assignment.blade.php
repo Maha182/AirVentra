@@ -190,22 +190,25 @@
     </div>
 </div>
 
-<div class="container my-5"> 
-    <h4 class="section-title">Test Storage Function</h4>
-    <form  action="{{ route('assign.storage') }}" method="POST" >
-        @csrf
-    <button type="submit" class="btn btn-primary">Assign Storage</button>
-    </form>
 
-    @if(session('storage_info'))
-        <div>
-            <p>Product ID: {{ session('storage_info')['product_id'] }}</p>
-            <p>Assigned Location: {{ session('storage_info')['assigned_location'] }}</p>
-            <p>Zone Name: {{ session('storage_info')['zone_name'] }}</p>
-        </div>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<!-- Form to trigger submitData -->
+<form id="assignForm" method="POST" action="{{ route('submitData') }}">
+    @csrf
+    <button type="submit" id="assignButton">Assign Product</button>
+</form>
+
+<h3>Assignment Details:</h3>
+<div id="result">
+    @if(session('assigned_product'))
+        <p><strong>Product ID:</strong> <span>{{ session('assigned_product.product_id') }}</span></p>
+        <p><strong>Assigned Location:</strong> <span>{{ session('assigned_product.assigned_location') }}</span></p>
+        <p><strong>Zone Name:</strong> <span>{{ session('assigned_product.zone_name') }}</span></p>
+    @else
+        <p>No product assigned yet.</p>
     @endif
 </div>
-
 
 
 @endsection

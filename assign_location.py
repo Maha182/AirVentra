@@ -1,17 +1,11 @@
-import requests
+from flask import Flask, jsonify
 
-url = 'http://127.0.0.1:8000/api/receive-data'  # Correct URL
+app = Flask(__name__)
 
-# Data to send (can be a dictionary, list, etc.)
-data = {
-    'id':'M1',  # Example product ID
-    'zone_name':'Dry Zone'
-}
-headers = {'Content-Type': 'application/json'}
+@app.route("/submitData", methods=["GET", "POST"])
+def submitData():
+    data = {'id': 'M1', 'zone_name': 'Dry Zone'}
+    return jsonify(data)  # Send JSON response
 
-# Send POST request
-response = requests.post(url, json=data)
-
-# Check the response
-print(response.status_code)  # Status Code
-print(response.json()) 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

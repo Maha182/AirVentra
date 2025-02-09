@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Artisan;
 // Packages
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StorageAssignmentController;
+
 use App\Http\Controllers\PythonController;
 use App\Http\Controllers\LocationCheckController;
 /*
@@ -88,13 +89,14 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/lookup/location', [StorageAssignmentController::class, 'lookupLocation'])->name('lookup.location');
     Route::post('/assign/manual', [StorageAssignmentController::class, 'assignManual'])->name('assign.manual');
-    // Route::post('/receive-data', [PythonController::class, 'receiveData'])->name('assign.storage');
-    Route::post('/receive-data', function () {
-        return redirect()->back(); // Reload page to show session data
-    })->name('assign.storage');
-    
 
-         
+    
+    Route::get("/submitData", function () {
+        return view('storage-assignment');  
+    });
+    
+    // Route to handle the form submission (POST request)
+    Route::post("/submitData", [PythonController::class, 'submit'])->name('submitData');
 });
 
 //App Details Page => 'Dashboard'], function() {

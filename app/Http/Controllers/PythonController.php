@@ -1,61 +1,62 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log; 
-use App\Models\Location;
-use App\Models\Product;
-use Illuminate\Support\Facades\Session;
 
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use App\Models\Product;
+use App\Models\Location;
 
 class PythonController extends Controller
 {
-    public function receiveData(Request $request)
-{
-    \Log::info('Received Data:', $request->all()); // Debugging
+    public function submit(Request $request)
+    {
+        // Initialize Guzzle HTTP client
+        $client = new Client();
 
-    $data = $request->json()->all(); // Retrieve JSON data from Python request
+        // Make a GET request to Flask API
+        $request = $client->get('http://127.0.0.1:5000/submitData');
 
-    if (!isset($data['id']) || !isset($data['zone_name'])) {
-        return response()->json(['error' => 'Missing productID or zone_name in request'], 400);
+        // Get the response from Flask
+        $response = json_decode($request->getBody()->getContents(), true);
+
+        // Process the received data
+        $id = $response['id'];
+        $zone_name = $response['zone_name'];
+
+        // Find product by ID
+        $product = Product::where('id', $id)->first();
+
+        if (!$product) {
+            return redirect()->route('storage-assignment')->with('error', 'Product not found');
+        }
+
+        // Query for location in the specified zone with available capacity
+        $location = Location::where('zone_name', $zone_name)
+            ->whereRaw('CAST(current_capacity AS SIGNED) < CAST(capacity AS SIGNED)')
+            ->orderBy('aisle')
+            ->first();
+
+        if (!$location) {
+            return redirect()->route('storage-assignment')->with('error', 'No available storage locations in zone: ' .$zone_name);
+        }
+
+        // Assign the location to the product
+        $product->location_id = $location->id;
+        $product->save();
+
+        // Update capacity of the location
+        $location->increment('current_capacity');
+
+        // Store result in session to display on the page
+        session()->flash('assigned_product', [
+            'product_id' => $product->id,
+            'assigned_location' => $location->id,
+            'zone_name' => $location->zone_name
+        ]);
+
+        // Redirect back to the dashboard with success message
+        return redirect()->route('storage-assignment')->with('message', 'Product Assigned Successfully');
+        
     }
-
-    $product = Product::where('id', $data['id'])->first();
-
-    if (!$product) {
-        return response()->json(['error' => 'Product with ID ' . $data['id'] . ' not found'], 404);
-    }
-
-    // Query for location
-    $location = Location::where('zone_name', $data['zone_name'])
-        ->whereRaw('CAST(current_capacity AS SIGNED) < CAST(capacity AS SIGNED)')
-        ->orderBy('aisle')
-        ->first();
-
-    if (!$location) {
-        return response()->json(['error' => 'No available storage locations in zone: ' . $data['zone_name']], 404);
-    }
-
-    // Assign the location to the product
-    $product->location_id = $location->locationID;
-    $product->save();
-
-    // Update capacity
-    $location->increment('current_capacity');
-
-    // Store result in session to display on the page
-    Session::put('storage_info', [
-        'product_id' => $product->id,
-        'assigned_location' => $location->locationID,
-        'zone_name' => $location->zone_name
-    ]);
-
-    return response()->json([
-        'message' => 'Storage assigned successfully!',
-        'product_id' => $product->id,
-        'assigned_location' => $location->locationID,
-        'zone_name' => $location->zone_name
-    ]);
-}
-
 }
