@@ -28,17 +28,24 @@
     <h4 class="display-4">Storage Assignment</h4>       
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success text-center" role="alert">
-        {{ session('success') }}
-    </div>
-@endif
+    @if (session('warning'))
+        <div class="alert alert-warning text-center">{{ session('warning') }}</div>
+    @endif
 
-@if(session('error'))
-    <div class="alert alert-danger text-center" role="alert">
-        {{ session('error') }}
-    </div>
-@endif
+    @if (session('info'))
+        <div class="alert alert-info text-center">{{ session('info') }}</div>
+    @endif
+    @if(session('success'))
+        <div class="alert alert-success text-center" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger text-center" role="alert">
+            {{ session('error') }}
+        </div>
+    @endif
 
 <div class="container my-5">
     <div class="row">
@@ -63,63 +70,45 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-        <div class="bg-light p-4 border">
-    <div class="d-flex justify-content-between align-items-center">
-        <h4 class="section-title">
-        Recommended Location #ID: <span class="text-primary">{{ $location->id ?? '' }}</span>
-        </h4>
-
-    <!-- Form to send location data to Flask -->
-        <form id="lookupForm" method="GET" action="{{ route('sendLocationData') }}">
-        @csrf
-        <button class="btn btn-primary" type="submit">Look Up Location</button>
-    </form>
-
-    @if(session('assigned_product'))
-        <p><strong>Product ID:</strong> {{ session('assigned_product.product_id') }}</p>
-        <p><strong>Assigned Location:</strong> {{ session('assigned_product.assigned_location') }}</p>
-        <p><strong>Zone Name:</strong> {{ session('assigned_product.zone_name') }}</p>
-    @endif
-
-
-</div>
-
-
-            <!-- <div class="border p-3">
-                <p>Zone Name: <strong>Text</strong></p>
-                <p>Aisle Number: <strong>Text</strong></p>
-                <p>Rack Number: <strong>Text</strong></p>
-            </div> -->
-</div>
-
-
-
-
-<!-- Form to trigger submitData -->
-
-
-
-
-
-
-
-
-
+            <div class="bg-light p-4 border">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="section-title">Recommended Location #ID: <span class="text-primary">{{session('assigned_product.assigned_location') ?? ' ' }}</span> </h4>
+                    <!-- Form to send location data to Flask -->
+                        <form id="lookupForm" method="GET" action="{{ route('sendLocationData') }}">
+                            @csrf
+                            <button class="btn btn-primary" type="submit">Look Up Location</button>
+                        </form>
+                </div>
+                
+                <div class="border p-4">
+                    <p><strong>Zone Name: </strong> <span id="zone_name">
+                        {{ session('assigned_product.zone_name') ?? ' ' }}
+                    </span></p>
+                    
+                    <p><strong>Aisle Number:</strong> <span id="aisle">
+                        {{ session('assigned_product.aisle') ?? ' ' }}
+                    </span></p>
+                    
+                    <p><strong>Rack Number:</strong> <span id="rack">
+                        {{ session('assigned_product.rack') ?? ' ' }}
+                    </span></p>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3 mb-5">
+                <form method="POST" action="{{ route('assignProduct') }}">
+                    @csrf
+                    <button class="btn btn-primary" type="submit">Assign to Recommended</button>
+                </form>
+                <button class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#manualAssignModal">Manually Assign</button>
+            </div>
         </div>
     </div>
-
-    <div class="d-flex justify-content-end mt-3 mb-5">
-    <form method="POST" action="{{ route('assignProduct') }}">
-            @csrf
-            <button class="btn btn-success" type="submit">Assign to Recommended</button>
-        </form>
-        <button class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#manualAssignModal">Manually Assign</button>
-    </div>
 </div>
 
-<!-- Display Assigned Location (Added Section) -->
-@if(session('assigned_location'))
-<div class="container my-4">
+
+    <!-- Display Assigned Location (Added Section) -->
+    @if(session('assigned_location'))
+    <div class="container my-4">
     <div class="row">
         <div class="col-md-12">
             <div class="bg-light p-4 border">
@@ -133,8 +122,8 @@
             </div>
         </div>
     </div>
-</div>
-@endif
+    </div>
+    @endif
 
 <!-- Manual Storage Assignment Modal -->
 <div class="modal fade" id="manualAssignModal" tabindex="-1" aria-labelledby="manualAssignModalLabel" aria-hidden="true">
@@ -150,7 +139,7 @@
                     Location ID not found!
                 </div>
 
-                <form action="{{ route('assign.manual') }}" method="POST">
+                <form action="{{ route('assignProduct') }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label bg-light p-2 d-block">Location ID</label>
@@ -164,17 +153,18 @@
 
                     <!-- Display Data in Labels with Gray Background -->
                     <div class="mb-3">
-                        <label class="form-label bg-light p-2 d-block">Zone Name: <span id="zone_name" class="fw-bold text-dark">N/A</span></label>
+                        <label class="form-label bg-light p-2 d-block">Zone Name: <span id="zone_name" class="fw-bold text-dark"></span></label>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label bg-light p-2 d-block">Aisle Number: <span id="aisle" class="fw-bold text-dark">N/A</span></label>
+                        <label class="form-label bg-light p-2 d-block">Aisle Number: <span id="aisle" class="fw-bold text-dark"></span></label>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label bg-light p-2 d-block">Rack Number: <span id="rack" class="fw-bold text-dark">N/A</span></label>
+                        <label class="form-label bg-light p-2 d-block">Rack Number: <span id="rack" class="fw-bold text-dark"></span></label>
                     </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Assign Location</button>
+                    <div class="d-grid gap-3 mb-4">
+
+                        <button class="btn btn-primary" type="submit">Assign Location</button>
                     </div>
                 </form>
 
@@ -191,37 +181,37 @@
                         // Clear previous data if input is empty
                         if (locationID === '') {
                             $("#lookupError").removeClass("d-none").text("Please enter a Location ID");
-                            $("#zone_name").text("N/A");
-                            $("#aisle").text("N/A");
-                            $("#rack").text("N/A");
+                            $("#zone_name").text(" ");
+                            $("#aisle").text(" ");
+                            $("#rack").text(" ");
                             return;
                         }
 
                         $.ajax({
-                            url: "{{ route('lookup.location') }}",
-                            type: "GET",
-                            data: { locationID: locationID },
-                            success: function(response) {
-                                if (response.success) {
-                                    $("#zone_name").text(response.data.zone_name);
-                                    $("#aisle").text(response.data.aisle);
-                                    $("#rack").text(response.data.rack);
-                                } else {
-                                    $("#lookupError").removeClass("d-none").text("Location ID not found!");
-                                    $("#zone_name").text("N/A");
-                                    $("#aisle").text("N/A");
-                                    $("#rack").text("N/A");
+                                url: "{{ route('lookup.location') }}",
+                                type: "GET",
+                                data: { locationID: locationID },
+                                success: function(response) {
+                                    if (response.success) {
+                                        $("#zone_name").text(response.data.zone_name);
+                                        $("#aisle").text(response.data.aisle);
+                                        $("#rack").text(response.data.rack);
+                                    } else {
+                                        $("#lookupError").removeClass("d-none").text("Location ID not found!");
+                                        $("#zone_name").text(" ");
+                                        $("#aisle").text(" ");
+                                        $("#rack").text(" ");
+                                    }
+                                },
+                                error: function() {
+                                    $("#lookupError").removeClass("d-none").text("An error occurred. Please try again.");
+                                    $("#zone_name").text(" ");
+                                    $("#aisle").text(" ");
+                                    $("#rack").text(" ");
                                 }
-                            },
-                            error: function() {
-                                $("#lookupError").removeClass("d-none").text("An error occurred. Please try again.");
-                                $("#zone_name").text("N/A");
-                                $("#aisle").text("N/A");
-                                $("#rack").text("N/A");
-                            }
+                            });
                         });
                     });
-                });
                 </script>
             </div>
         </div>
