@@ -29,7 +29,7 @@ def process_frame(frame):
 
 def gen():
     # Replace with your phone's camera feed URL
-    cap = cv2.VideoCapture('http://<phone-ip>:8080/video')  # Use your phone camera feed URL
+    cap = cv2.VideoCapture(0) 
     while True:
         ret, frame = cap.read()
         if not ret:
