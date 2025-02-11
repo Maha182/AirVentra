@@ -18,7 +18,7 @@ class Product extends Model
     public $incrementing = false;  // Set to true if primary key is auto-incrementing
     public $timestamps = false; // <---- ADD THIS LINE
 
-    protected $fillable = ['id', 'title', 'description', 'main_category', 'location_id', 'barcode_path'];
+    protected $fillable = ['id', 'title', 'description', 'main_category', 'location_id', 'barcode_path', 'quantity'];
 
     // If the productID is a string (like UUID), use casting
     protected $casts = [

@@ -9,7 +9,7 @@ use App\Models\Location;
 class PythonController extends Controller
 {
     public function sendLocationData()
-{
+    {
     $client = new Client();
 
     // Fetch barcode from Python
@@ -39,7 +39,7 @@ class PythonController extends Controller
     $zone_name = $result['zone_name'] ?? null;
 
     return $this->fetchDataFromPython($product, $zone_name);
-}
+    }
 
 
     public function fetchDataFromPython($product, $zone_name)
@@ -62,6 +62,9 @@ class PythonController extends Controller
         // Assign product to location
         session()->put('assigned_product', [
             'product_id' => $product->id,
+            'product_name' => $product->title,
+            'product_description' => $product->description,
+            'product_quantity' => $product->quantity,
             'assigned_location' => $location->id,
             'zone_name' => $location->zone_name,
             'aisle' => $location->aisle,
@@ -72,51 +75,51 @@ class PythonController extends Controller
 
     public function assignProductToLocation(Request $request)
     {
-    // Retrieve product_id and location_id from session
-    $product_id = session('assigned_product.product_id');
-    $location_id = session('assigned_product.assigned_location');
+        // Retrieve product_id and location_id from session
+        $product_id = session('assigned_product.product_id');
+        $location_id = session('assigned_product.assigned_location');
 
-    // Ensure product_id and location_id exist in session
-    if (!$product_id || !$location_id) {
-        return redirect()->route('storage-assignment')->with('error', 'No assigned product or location found in session.');
-    }
+        // Ensure product_id and location_id exist in session
+        if (!$product_id || !$location_id) {
+            return redirect()->route('storage-assignment')->with('error', 'No assigned product or location found in session.');
+        }
 
-    $product = Product::find($product_id);
-    $location = Location::find($location_id);
+        $product = Product::find($product_id);
+        $location = Location::find($location_id);
 
-    // Ensure valid product and location instances
-    if (!$product) {
-        return redirect()->route('storage-assignment')->with('error', 'Product not found.');
-    }
+        // Ensure valid product and location instances
+        if (!$product) {
+            return redirect()->route('storage-assignment')->with('error', 'Product not found.');
+        }
 
-    if (!$location) {
-        return redirect()->route('storage-assignment')->with('error', 'Location not found.');
-    }
+        if (!$location) {
+            return redirect()->route('storage-assignment')->with('error', 'Location not found.');
+        }
 
-    if ($product->location_id == $location->id) {
-        return redirect()->route('storage-assignment')->with('info', 'This product is already assigned to this location.');
-    }
+        if ($product->location_id == $location->id) {
+            return redirect()->route('storage-assignment')->with('info', 'This product is already assigned to this location.');
+        }
 
-    // Prevent assigning if current_capacity is already at maximum
-    if ((int) $location->current_capacity >= (int) $location->capacity) {
-        return redirect()->route('storage-assignment')->with('error', 'Location is at full capacity.');
-    }
+        // Prevent assigning if current_capacity is already at maximum
+        if ((int) $location->current_capacity >= (int) $location->capacity) {
+            return redirect()->route('storage-assignment')->with('error', 'Location is at full capacity.');
+        }
 
-    // Assign location to product
-    $product->location_id = $location->id;
-    $product->save();
+        // Assign location to product
+        $product->location_id = $location->id;
+        $product->save();
 
-    $location->increment('current_capacity');
+        $location->increment('current_capacity');
 
-    session()->put('assigned_product', [
-        'product_id' => $product->id,
-        'assigned_location' => $location->id,
-        'zone_name' => $location->zone_name,
-        'aisle' => $location->aisle,
-        'rack' => $location->rack
-    ]);
+        session()->put('assigned_product', [
+            'product_id' => $product->id,
+            'assigned_location' => $location->id,
+            'zone_name' => $location->zone_name,
+            'aisle' => $location->aisle,
+            'rack' => $location->rack
+        ]);
 
-    return redirect()->route('storage-assignment')->with('success', 'Product Assigned Successfully');
+        return redirect()->route('storage-assignment')->with('success', 'Product Assigned Successfully');
     }
 
 

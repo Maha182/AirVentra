@@ -61,15 +61,20 @@
             </div>
         </div>
         </div>
-        <div class="col-md-6">
-            <div class="bg-light p-4 border" style=" height: 250px;">
+        @if(session()->has('assigned_product')) 
+            @php
+                $product = session('assigned_product');
+            @endphp
+
+            <div class="bg-light p-4 border" style="height: 250px;">
                 <h4 class="section-title">Scanned Product</h4>
-                <p>Product ID: <strong>Text</strong></p>
-                <p>Product Name: <strong>Text</strong></p>
-                <p>Product Description: <strong>Text</strong></p>
-                <p>Product Quantity: <strong>Text</strong></p>
+                <p>Product ID: <strong>{{ $product['product_id'] ?? '' }}</strong></p>
+                <p>Product Name: <strong>{{ $product['product_name'] ?? '' }}</strong></p>
+                <p>Product Description: <strong>{{ $product['product_description'] ?? '' }}</strong></p>
+                <p>Product Quantity: <strong>{{ $product['product_quantity'] ?? '' }}</strong></p>
             </div>
-        </div>
+        @endif
+
     </div>
 </div>
 
