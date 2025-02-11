@@ -9,31 +9,38 @@ use App\Models\Location;
 class PythonController extends Controller
 {
     public function sendLocationData()
-    {
-        $client = new Client();
-        $productID = 'M1'; 
-    
-        // Fetch product from the database
-        $product = Product::where('id', $productID)->first();
+{
+    $client = new Client();
 
-        if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
-        }
+    // Fetch barcode from Python
+    $barcodeResponse = $client->get('http://127.0.0.1:5000/get_barcode');
+    $barcodeData = json_decode($barcodeResponse->getBody()->getContents(), true);
+    $productID = $barcodeData['barcode'] ?? null;
 
-        $description = $product->description;
-
-        // Send description to the Python API
-        $response = $client->post('http://127.0.0.1:5000/getData', [
-            'json' => ['description' => $description]
-        ]);
-
-        // Get response from Python
-        $result = json_decode($response->getBody()->getContents(), true);
-        $zone_name = $result['zone_name'] ?? null;
-
-        // Call fetchDataFromPython and pass the zone name
-        return $this->fetchDataFromPython($product, $zone_name);
+    if (!$productID) {
+        return response()->json(['error' => 'No barcode detected'], 400);
     }
+
+    // Fetch product from the database
+    $product = Product::where('id', $productID)->first();
+
+    if (!$product) {
+        return response()->json(['error' => 'Product not found'], 404);
+    }
+
+    $description = $product->description;
+
+    // Send description to the Python API
+    $response = $client->post('http://127.0.0.1:5001/getData', [
+        'json' => ['description' => $description]
+    ]);
+
+    $result = json_decode($response->getBody()->getContents(), true);
+    $zone_name = $result['zone_name'] ?? null;
+
+    return $this->fetchDataFromPython($product, $zone_name);
+}
+
 
     public function fetchDataFromPython($product, $zone_name)
     {
