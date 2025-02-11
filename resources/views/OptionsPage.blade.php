@@ -14,39 +14,39 @@
                 <div class="row g-4 justify-content-center">
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
                         <div class="blog-item">
-                            <a href="#">
+                            <a href="{{ route('storage-assignment') }}">
                                 <div class="blog-img">
                                     <img src="img/blog-1.png" class="img-fluid rounded-top w-100" alt="Smart Storage Assignment">
                                 </div>
                             </a>
                             <div class="blog-content p-4">
-                                <a href="smart-storage.html" class="h4 d-inline-block mb-3">Assign Storage</a>
+                                <a href="{{ route('storage-assignment') }}" class="h4 d-inline-block mb-3">Assign Storage</a>
                                 <p class="mb-3">Automatically assign storage zones and racks using AI-powered algorithms.</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
                         <div class="blog-item">
-                            <a href="#">
+                            <a href="{{ route('mainPage') }}">
                                 <div class="blog-img">
                                     <img src="img/blog-2.png" class="img-fluid rounded-top w-100" alt="Real-Time Inventory Tracking">
                                 </div>
                             </a>
                             <div class="blog-content p-4">
-                                <a href="#" class="h4 d-inline-block mb-3">Scan Inventory</a>
+                                <a href="{{ route('mainPage') }}" class="h4 d-inline-block mb-3">Scan Inventory</a>
                                 <p class="mb-3">Verify product placement to minimize costly mistakes. Update inventory levels and detect over/understock issues.</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
                         <div class="blog-item">
-                            <a href="#">
+                            <a href="{{ route('dashboard') }}">
                                 <div class="blog-img">
                                     <img src="img/blog-3.png" class="img-fluid rounded-top w-100" alt="Error Detection">
                                 </div>
                             </a>
                             <div class="blog-content p-4">
-                                <a href="error-detection.html" class="h4 d-inline-block mb-3">Dashboard</a>
+                                <a href="{{ route('dashboard') }}" class="h4 d-inline-block mb-3">Dashboard</a>
                                 <p class="mb-3">Monitor warehouse performance, track placement and inventory errors, and gain real-time insights with interactive reports</p>
                             </div>
                         </div>

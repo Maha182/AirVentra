@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StorageAssignmentController;
 
+use App\Http\Controllers\PlacementController;
 use App\Http\Controllers\PythonController;
 use App\Http\Controllers\LocationCheckController;
 /*
@@ -90,13 +91,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/lookup/location', [StorageAssignmentController::class, 'lookupLocation'])->name('lookup.location');
     Route::post('/assign/manual', [StorageAssignmentController::class, 'assignManual'])->name('assign.manual');
 
+    Route::get('/send-location-data', [PythonController::class, 'sendLocationData'])->name('sendLocationData');
+    Route::post('/assign-product', [PythonController::class, 'assignProductToLocation'])->name('assignProduct');
+    Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('checkPlacement');
     
-    // Route for fetching data from Python and handling location assignment
-    Route::post('/fetch-location-data', [PythonController::class, 'fetchDataFromPython'])->name('fetchDataFromPython');
-
-    Route::get('/sendLocationData', [PythonController::class, 'sendLocationData'])->name('sendLocationData');
-    Route::post('/assignProduct', [PythonController::class, 'assignProductToLocation'])->name('assignProduct');
-
 });
 
 //App Details Page => 'Dashboard'], function() {

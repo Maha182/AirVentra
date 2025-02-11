@@ -50,31 +50,29 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-md-6">
-        <div class="bg-light p-4 border" style="height: 250px;">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            
-            <h4 class="section-title">Current Location (Live Video Feed with Barcode Detection)</h4>
-            
-            <div class="border mt-3" style="height: 150px; background-color: white;">
-                <!-- Use Flask's video feed URL directly -->
-                <img src="http://127.0.0.1:5000/video_feed" width="100%" height="100%" alt="Live Video Feed">
+            <div class="bg-light p-4 border" style="height: 330px;">
+                <h4 class="section-title">(Live Video Feed with Barcode Detection)</h4>
+                <div class="border mt-3" style="height: 220px; background-color: white;">
+                    <img src="http://127.0.0.1:5000/video_feed" width="100%" height="100%" alt="Live Video Feed">
+                </div>
             </div>
         </div>
-        </div>
-        @if(session()->has('assigned_product')) 
-            @php
-                $product = session('assigned_product');
-            @endphp
 
-            <div class="bg-light p-4 border" style="height: 250px;">
-                <h4 class="section-title">Scanned Product</h4>
-                <p>Product ID: <strong>{{ $product['product_id'] ?? '' }}</strong></p>
-                <p>Product Name: <strong>{{ $product['product_name'] ?? '' }}</strong></p>
-                <p>Product Description: <strong>{{ $product['product_description'] ?? '' }}</strong></p>
-                <p>Product Quantity: <strong>{{ $product['product_quantity'] ?? '' }}</strong></p>
+            <div class="col-md-6">
+                <div class="bg-light p-4 border" style="height: 330px;">
+                    <h4 class="section-title">Scanned Product</h4>
+                    <p>Product ID: <strong>{{ session('assigned_product.product_id') ?? '' }}</strong></p>
+                    <p>Product Name: <strong>{{ session('assigned_product.product_name') ?? '' }}</strong></p>
+                    <p>Product Description: <strong>{{ session('assigned_product.product_description') ?? '' }}</strong></p>
+                    <p>Product Quantity: <strong>{{ session('assigned_product.product_quantity') ?? '' }}</strong></p>
+                    <form action="{{ route('sendLocationData') }}" method="GET">
+                        <input type="hidden" name="redirect_to" value="storage-assignment">
+                        <button type="submit" class="btn btn-primary">Fetch Product Data</button>
+                    </form>
+
+                </div>
             </div>
-        @endif
-
+            
     </div>
 </div>
 
@@ -85,10 +83,10 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="section-title">Recommended Location #ID: <span class="text-primary">{{session('assigned_product.assigned_location') ?? ' ' }}</span> </h4>
                     <!-- Form to send location data to Flask -->
-                        <form id="lookupForm" method="GET" action="{{ route('sendLocationData') }}">
+                        <!-- <form id="lookupForm" method="GET" action="{{ route('sendLocationData') }}">
                             @csrf
                             <button class="btn btn-primary" type="submit">Look Up Location</button>
-                        </form>
+                        </form> -->
                 </div>
                 
                 <div class="border p-4">
@@ -105,6 +103,9 @@
                     </span></p>
                 </div>
             </div>
+            @php
+                session()->forget('assigned_product'); 
+            @endphp
             <div class="d-flex justify-content-end mt-3 mb-5">
                 <form method="POST" action="{{ route('assignProduct') }}">
                     @csrf

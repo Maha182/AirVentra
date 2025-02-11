@@ -8,47 +8,48 @@ use App\Models\Location;
 
 class PythonController extends Controller
 {
-    public function sendLocationData()
+    public function sendLocationData(Request $request)
     {
-    $client = new Client();
+        $client = new Client();
+        $redirectTo = request()->input('redirect_to', 'storage-assignment'); 
 
-    // Fetch barcode from Python
-    $barcodeResponse = $client->get('http://127.0.0.1:5000/get_barcode');
-    $barcodeData = json_decode($barcodeResponse->getBody()->getContents(), true);
-    $productID = $barcodeData['barcode'] ?? null;
+        // Fetch barcode from Python
+        $barcodeResponse = $client->get('http://127.0.0.1:5000/get_barcode');
+        $barcodeData = json_decode($barcodeResponse->getBody()->getContents(), true);
+        $productID = $barcodeData['barcode'] ?? null;
 
-    if (!$productID) {
-        return response()->json(['error' => 'No barcode detected'], 400);
-    }
+        if (!$productID) {
+            return redirect()->route($redirectTo)->with('error', 'No barcode detected');
 
-    // Fetch product from the database
-    $product = Product::where('id', $productID)->first();
-
-    if (!$product) {
-        return response()->json(['error' => 'Product not found'], 404);
-    }
-
-    $description = $product->description;
-
-    // Send description to the Python API
-    $response = $client->post('http://127.0.0.1:5001/getData', [
-        'json' => ['description' => $description]
-    ]);
-
-    $result = json_decode($response->getBody()->getContents(), true);
-    $zone_name = $result['zone_name'] ?? null;
-
-    return $this->fetchDataFromPython($product, $zone_name);
-    }
-
-
-    public function fetchDataFromPython($product, $zone_name)
-    {
-        if (!$product) {
-            return redirect()->route('storage-assignment')->with('error', 'Product not found');
         }
 
-        // Query for location in the specified zone with available capacity
+        // Fetch product from the database
+        $product = Product::where('id', $productID)->first();
+
+        if (!$product) {
+            return redirect()->route($redirectTo)->with('error', 'Product not found');
+        }
+
+        $description = $product->description;
+
+        // Send description to the Python API
+        $response = $client->post('http://127.0.0.1:5001/getData', [
+            'json' => ['description' => $description]
+        ]);
+
+        $result = json_decode($response->getBody()->getContents(), true);
+        $zone_name = $result['zone_name'] ?? null;
+        return $this->assignLocation($product, $zone_name, $redirectTo);
+    }
+
+    private function assignLocation($product, $zone_name, $redirectTo)
+    {
+        if (!$product) {
+            return redirect()->route($redirectTo)->with('error', 'Product not found.');
+
+        }
+
+        // Query for an available location in the specified zone
         $location = Location::where('zone_name', $zone_name)
             ->whereRaw('CAST(current_capacity AS SIGNED) < CAST(capacity AS SIGNED)')
             ->orderBy('aisle')
@@ -56,11 +57,11 @@ class PythonController extends Controller
 
         if (!$location) {
             session()->forget('assigned_product');
-            return redirect()->route('storage-assignment')->with('error', 'No available storage locations in zone: ' . $zone_name);
+            return redirect()->route($redirectTo)->with('error', 'No available storage locations in zone: ' . $zone_name);
         }
-        
-        // Assign product to location
-        session()->put('assigned_product', [
+
+        // Store product assignment in session
+        session()->flash('assigned_product', [
             'product_id' => $product->id,
             'product_name' => $product->title,
             'product_description' => $product->description,
@@ -70,8 +71,10 @@ class PythonController extends Controller
             'aisle' => $location->aisle,
             'rack' => $location->rack
         ]);
-        return redirect()->route('storage-assignment');
+
+        return redirect()->route($redirectTo);
     }
+
 
     public function assignProductToLocation(Request $request)
     {
@@ -111,7 +114,7 @@ class PythonController extends Controller
 
         $location->increment('current_capacity');
 
-        session()->put('assigned_product', [
+        session()->flash('assigned_product', [
             'product_id' => $product->id,
             'assigned_location' => $location->id,
             'zone_name' => $location->zone_name,

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\PlacementErrorMail;
 use Carbon\Carbon;
 
+
 class PlacementController extends Controller
 {
     public function checkPlacement(Request $request)
@@ -21,7 +22,7 @@ class PlacementController extends Controller
         $productId = $barcodeData['barcode'] ?? null;
 
 
-        $scannedLocation = 'L0001';
+        $scannedLocation = 'L0006';
 
         // Fetch product details
         $product = Product::where('id', $productId)->first();
@@ -51,7 +52,7 @@ class PlacementController extends Controller
                 'correct_location' => $correctLocation
             ];
 
-            Mail::to('warehouse_manager@example.com')->send(new PlacementErrorMail($emailData));
+            Mail::to('maha1822003@gmail.com')->send(new PlacementErrorMail($emailData));
 
             return redirect()->back()->with('error', 'The product is in the wrong place. Notification sent.');
         }

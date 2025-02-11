@@ -14,18 +14,9 @@
                 <a href="{{ route('home') }}#pricing" class="nav-item nav-link">Pricing</a>
                 <a href="{{ route('home') }}#benefits" class="nav-item nav-link">Benefits</a>
                 <a href="{{ route('home') }}#features" class="nav-item nav-link">Features</a>
-                <a href="{{ route('OptionsPage') }}" class="nav-item nav-link ms-3" style="white-space: nowrap;">Control Panel</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link" data-bs-toggle="dropdown">
-                        <span class="dropdown-toggle">Pages</span>
-                    </a>
-                    <div class="dropdown-menu">
-                        <a href="{{ route('home') }}#features" class="dropdown-item">Our Features</a>
-                        <a href="{{ route('home') }}#contact" class="dropdown-item">Our team</a>
-                        <a href="{{ route('home') }}#pricing"  class="dropdown-item"> Pricing</a>
-                        <a href="{{ route('home') }}#FAQ" class="dropdown-item">FAQs</a>
-                    </div>
-                </div>
+                <a href="{{ route('OptionsPage') }}" class="nav-item nav-link " style="white-space: nowrap;">Control Panel</a>
+                <a href="{{ route('dashboard') }}" class="nav-item nav-link ">Dashboard</a>
+
                
                     <!-- Login/Logout Button -->
                     @guest
