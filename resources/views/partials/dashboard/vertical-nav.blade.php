@@ -243,7 +243,7 @@
                     </path>
                 </svg>
             </i>
-            <span class="item-name">Main Page</span>
+            <span class="item-name">Scan Inventory</span>
         </a>
     </li>
     <!-- <li class="nav-item">

@@ -22,7 +22,7 @@ class PlacementController extends Controller
         $productId = $barcodeData['barcode'] ?? null;
 
 
-        $scannedLocation = 'L0006';
+        $scannedLocation = 'L0008';
 
         // Fetch product details
         $product = Product::where('id', $productId)->first();

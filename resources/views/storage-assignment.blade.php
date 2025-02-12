@@ -103,9 +103,7 @@
                     </span></p>
                 </div>
             </div>
-            @php
-                session()->forget('assigned_product'); 
-            @endphp
+
             <div class="d-flex justify-content-end mt-3 mb-5">
                 <form method="POST" action="{{ route('assignProduct') }}">
                     @csrf
