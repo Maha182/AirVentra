@@ -61,7 +61,7 @@ class PythonController extends Controller
         }
 
         // Store product assignment in session
-        session()->flash('assigned_product', [
+        session()->put('assigned_product', [
             'product_id' => $product->id,
             'product_name' => $product->title,
             'product_description' => $product->description,
@@ -114,8 +114,11 @@ class PythonController extends Controller
 
         $location->increment('current_capacity');
 
-        session()->flash('assigned_product', [
+        session()->put('assigned_product', [
             'product_id' => $product->id,
+            'product_name' => $product->title,
+            'product_description' => $product->description,
+            'product_quantity' => $product->quantity,
             'assigned_location' => $location->id,
             'zone_name' => $location->zone_name,
             'aisle' => $location->aisle,
