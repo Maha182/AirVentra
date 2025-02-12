@@ -17,7 +17,8 @@ category_to_zone = {
     "home": "Bulk Zone",
     "grocery": "Refrigerator Zone"
 }
-
+model_path = "Bertopic_2"
+topic_model = BERTopic.load(model_path, embedding_model="sentence-transformers/all-mpnet-base-v2")
 @app.route("/getData", methods=["POST"])
 def getData():
     
@@ -32,8 +33,6 @@ def getData():
         return jsonify({"error": "Invalid or empty description"}), 400
     print(f"Description: {description}")
 
-    model_path = "Bertopic_2"
-    topic_model = BERTopic.load(model_path, embedding_model="sentence-transformers/all-mpnet-base-v2")
 
     print(topic_model.get_topic_info())
 
