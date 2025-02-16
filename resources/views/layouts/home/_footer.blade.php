@@ -10,8 +10,8 @@
 <div class="container-fluid footer py-3 wow fadeIn" data-wow-delay="0.2s">
     <div class="container py-3">
         <div class="row justify-content-center">
-            <div class="col-xl-9">
-                <div class="mb-5">
+            <div class="col-xl-12">
+                <div class="mb-6">
                     <div class="row g-4 justify-content-center">
                         <!-- Company Description -->
                         <div class="col-md-6 col-lg-4">
@@ -58,13 +58,11 @@
 
 <!-- Copyright Start -->
 <div class="container-fluid copyright py-2">
-    <div class="">
         <div class="row g-4 align-items-left">
             <div class="col-md-6 text-start mb-md-0">
                 <span class="text-body">©2025 Airventra. All rights reserved.</span>
             </div>
         </div>
-    </div>
 </div>
 
 <!-- Copyright End -->

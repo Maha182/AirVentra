@@ -69,7 +69,9 @@ class PythonController extends Controller
             'assigned_location' => $location->id,
             'zone_name' => $location->zone_name,
             'aisle' => $location->aisle,
-            'rack' => $location->rack
+            'rack' => $location->rack,
+            'current_capacity' => $location->current_capacity,
+            'capacity' => $location->capacity
         ]);
 
         return redirect()->route($redirectTo);
@@ -114,7 +116,7 @@ class PythonController extends Controller
 
         $location->increment('current_capacity');
 
-        session()->put('assigned_product', [
+        session()->flash('assigned_product', [
             'product_id' => $product->id,
             'product_name' => $product->title,
             'product_description' => $product->description,
@@ -122,7 +124,9 @@ class PythonController extends Controller
             'assigned_location' => $location->id,
             'zone_name' => $location->zone_name,
             'aisle' => $location->aisle,
-            'rack' => $location->rack
+            'rack' => $location->rack,
+            'current_capacity' => $location->current_capacity,
+            'capacity' => $location->capacity
         ]);
 
         return redirect()->route('storage-assignment')->with('success', 'Product Assigned Successfully');
