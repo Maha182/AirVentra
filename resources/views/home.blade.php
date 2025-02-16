@@ -11,8 +11,8 @@
                                     <h3 class="display-1 text-white mb-6">Revolutionizing Warehouse Management with Airventra</h3>
                                     <p class="mb-5 fs-5">Smart storage assignment. Drone-driven precision. Efficiency redefined.</p>
                                     <div class="d-flex justify-content-center justify-content-md-start flex-shrink-0 mb-4">
-                                        <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="#"> Explore Features</a>
-                                        <a class="btn btn-dark rounded-pill py-3 px-4 px-md-5 ms-2" href="#">Contact us</a>
+                                        <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="{{ route('home') }}#features">Explore Features</a>
+                                        <a class="btn btn-dark rounded-pill py-3 px-4 px-md-5 ms-2" href="{{ route('home') }}#contact">Contact us</a>
                                     </div>
                                 </div>
                             </div>
@@ -39,8 +39,8 @@
                                 <h2 class="display-1 text-white mb-4">Revolutionizing Warehouse Management with Airventra</h2>
                                 <p class="mb-5 fs-5">Smart storage assignment. Drone-driven precision. Efficiency redefined.</p>
                                     <div class="d-flex justify-content-center justify-content-md-end flex-shrink-0 mb-4">
-                                        <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="#">Explore Features</a>
-                                        <a class="btn btn-dark rounded-pill py-3 px-4 px-md-5 ms-2" href="#">Contact us</a>
+                                        <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2"href="{{ route('home') }}#features">Explore Features</a>
+                                        <a class="btn btn-dark rounded-pill py-3 px-4 px-md-5 ms-2" href="{{ route('home') }}#contact">Contact us</a>
                                     </div>
                                 </div>
                             </div>
@@ -158,7 +158,7 @@
 
         </div>
         <!-- About End -->
-        <style>
+    <style>
     .team-item {
         background: #004aad; /* Matching Blue Background */
         color: white; /* White text */
@@ -316,11 +316,11 @@
                 <div class="row g-3 justify-content-center"> <!-- Reduced gap -->
                     <?php
                     $teamMembers = [
-                        ["img/team-1.jpg", "Noor Alawlaqi", "Developer"],
-                        ["img/team-2.jpg", "Maha Almashharawi", "Developer"],
-                        ["img/team-3.jpg", "Mashael Alsalamah", "Developer"],
-                        ["img/team-4.jpg", "Dr. Passent M. ElKafrawy", ""],
-                        ["img/team-5.jpg", "Dr. Naila Marir", ""],
+                        [" ", "Noor Alawlaqi", "Developer"],
+                        [" ", "Maha Almashharawi", "Developer"],
+                        [" ", "Mashael Alsalamah", "Developer"],
+                        ["", "Dr. Passent M. ElKafrawy", ""],
+                        [" ", "Dr. Naila Marir", ""],
                     ];
                 
                     foreach ($teamMembers as $index => $member) {

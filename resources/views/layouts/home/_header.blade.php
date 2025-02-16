@@ -14,7 +14,6 @@
                 <a href="{{ route('home') }}#pricing" class="nav-item nav-link">Pricing</a>
                 <a href="{{ route('home') }}#benefits" class="nav-item nav-link">Benefits</a>
                 <a href="{{ route('home') }}#features" class="nav-item nav-link">Features</a>
-                <a href="{{ route('OptionsPage') }}" class="nav-item nav-link " style="white-space: nowrap;">Control Panel</a>
                 <a href="{{ route('dashboard') }}" class="nav-item nav-link ">Dashboard</a>
 
                

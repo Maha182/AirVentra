@@ -1,6 +1,9 @@
 @extends('layouts.home.app')
 
 @section('content')
+
+<meta charset="UTF-8">
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -22,6 +25,14 @@
     .error-report-table th, .error-report-table td {
         text-align: center;
     }
+    
+    .visualization {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: white;
+    }
+
 </style>
 
 <div id="features" class="container-fluid bg-light py-5">
@@ -67,7 +78,7 @@
                     <p>Product Quantity: <strong>{{ session('assigned_product.product_quantity') ?? '' }}</strong></p>
                     <form action="{{ route('sendLocationData') }}" method="GET">
                         <input type="hidden" name="redirect_to" value="storage-assignment">
-                        <button type="submit" class="btn btn-primary">Fetch Product Data</button>
+                        <button id="fetchDataBtn"  type="submit" class="btn btn-primary">Fetch Product Data</button>
                     </form>
 
                 </div>
@@ -79,62 +90,92 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <div class="bg-light p-4 border">
+            <div class="bg-light p-4 border rounded">
+                <!-- Header Section -->
                 <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="section-title">Recommended Location #ID: <span class="text-primary">{{session('assigned_product.assigned_location') ?? ' ' }}</span> </h4>
-                    <!-- Form to send location data to Flask -->
-                        <!-- <form id="lookupForm" method="GET" action="{{ route('sendLocationData') }}">
-                            @csrf
-                            <button class="btn btn-primary" type="submit">Look Up Location</button>
-                        </form> -->
+                    <h4 class="section-title">Recommended Location #ID: 
+                        <span class="text-primary">{{ session('assigned_product.assigned_location') ?? ' ' }}</span>
+                    </h4>
+                    <h4 class="section-title align-items-center">Storage Utilization</h4> <!-- Moved Title to Same Line -->
                 </div>
-                
-                <div class="border p-4">
-                    <p><strong>Zone Name: </strong> <span id="zone_name">
-                        {{ session('assigned_product.zone_name') ?? ' ' }}
-                    </span></p>
-                    
-                    <p><strong>Aisle Number:</strong> <span id="aisle">
-                        {{ session('assigned_product.aisle') ?? ' ' }}
-                    </span></p>
-                    
-                    <p><strong>Rack Number:</strong> <span id="rack">
-                        {{ session('assigned_product.rack') ?? ' ' }}
-                    </span></p>
-                </div>
-            </div>
 
-            <div class="d-flex justify-content-end mt-3 mb-5">
-                <form method="POST" action="{{ route('assignProduct') }}">
-                    @csrf
-                    <button class="btn btn-primary" type="submit">Assign to Recommended</button>
-                </form>
-                <button class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#manualAssignModal">Manually Assign</button>
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <!-- Left Side: Location Details -->
+                    <div class="col-md-6 border p-5">
+                        <p><strong>Zone Name: </strong> <span id="zone_name">
+                            {{ session('assigned_product.zone_name') ?? ' ' }}
+                        </span></p>
+                        
+                        <p><strong>Aisle Number:</strong> <span id="aisle">
+                            {{ session('assigned_product.aisle') ?? ' ' }}
+                        </span></p>
+                        
+                        <p><strong>Rack Number:</strong> <span id="rack">
+                            {{ session('assigned_product.rack') ?? ' ' }}
+                        </span></p>
+                    </div>
+
+                    <!-- Right Side: Chart -->
+                    <div class="col-md-6 card">
+                        <div class="card-body">
+                            <canvas id="storageChart" width="400" height="190"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <!-- Assign Buttons -->
+        <div class="d-flex justify-content-end mt-3 mb-5">
+            <form method="POST" action="{{ route('assignProduct') }}">
+                @csrf
+                <button class="btn btn-primary" type="submit">Assign to Recommended</button>
+            </form>
+            <button class="btn btn-light border ms-2" data-bs-toggle="modal" data-bs-target="#manualAssignModal">
+                Manually Assign
+            </button>
         </div>
     </div>
 </div>
 
 
-    <!-- Display Assigned Location (Added Section) -->
-    @if(session('assigned_location'))
-    <div class="container my-4">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="bg-light p-4 border">
-                <h4 class="section-title">Assigned Location</h4>
-                <div class="border p-3">
-                    <p>Location ID: <strong>{{ session('assigned_location')->locationID }}</strong></p>
-                    <p>Zone Name: <strong>{{ session('assigned_location')->zone_name }}</strong></p>
-                    <p>Aisle Number: <strong>{{ session('assigned_location')->aisle }}</strong></p>
-                    <p>Rack Number: <strong>{{ session('assigned_location')->rack }}</strong></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-    @endif
 
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctx = document.getElementById('storageChart').getContext('2d');
+
+        // Fetching data from the session
+        var usedCapacity = {{ session('assigned_product.current_capacity')}};
+        var totalCapacity = {{ session('assigned_product.capacity')}};
+        var remainingCapacity = totalCapacity - usedCapacity;
+
+        var data = {
+            labels: ["Used Capacity", "Remaining Capacity"],
+            datasets: [{
+                label: "Storage Utilization",
+                data: [usedCapacity, remainingCapacity],
+                backgroundColor: ["#001F3F", "#28A745"] // Navy Blue & Green
+            }]
+        };
+
+        var options = {
+            responsive: true,
+            maintainAspectRatio: false
+        };
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: data,
+            options: options
+        });
+    });
+</script>
+
+
+
+ 
 <!-- Manual Storage Assignment Modal -->
 <div class="modal fade" id="manualAssignModal" tabindex="-1" aria-labelledby="manualAssignModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -178,51 +219,6 @@
                     </div>
                 </form>
 
-                <!-- Add jQuery for AJAX -->
-                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                <script>
-                    $(document).ready(function() {
-                        $("#lookupLocation").click(function() {
-                        var locationID = $("#locationID").val();
-
-                        // Hide the error message initially
-                        $("#lookupError").addClass("d-none");
-
-                        // Clear previous data if input is empty
-                        if (locationID === '') {
-                            $("#lookupError").removeClass("d-none").text("Please enter a Location ID");
-                            $("#zone_name").text(" ");
-                            $("#aisle").text(" ");
-                            $("#rack").text(" ");
-                            return;
-                        }
-
-                        $.ajax({
-                                url: "{{ route('lookup.location') }}",
-                                type: "GET",
-                                data: { locationID: locationID },
-                                success: function(response) {
-                                    if (response.success) {
-                                        $("#zone_name").text(response.data.zone_name);
-                                        $("#aisle").text(response.data.aisle);
-                                        $("#rack").text(response.data.rack);
-                                    } else {
-                                        $("#lookupError").removeClass("d-none").text("Location ID not found!");
-                                        $("#zone_name").text(" ");
-                                        $("#aisle").text(" ");
-                                        $("#rack").text(" ");
-                                    }
-                                },
-                                error: function() {
-                                    $("#lookupError").removeClass("d-none").text("An error occurred. Please try again.");
-                                    $("#zone_name").text(" ");
-                                    $("#aisle").text(" ");
-                                    $("#rack").text(" ");
-                                }
-                            });
-                        });
-                    });
-                </script>
             </div>
         </div>
     </div>
