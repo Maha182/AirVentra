@@ -16,7 +16,7 @@
                         <div class="blog-item">
                             <a href="{{ route('storage-assignment') }}">
                                 <div class="blog-img">
-                                    <img src="img/blog-1.png" class="img-fluid rounded-top w-100" alt="Smart Storage Assignment">
+                                    <img src="img\homepageimg\st.png" class="img-fluid rounded-top w-100" alt="Smart Storage Assignment">
                                 </div>
                             </a>
                             <div class="blog-content p-4">
@@ -29,7 +29,7 @@
                         <div class="blog-item">
                             <a href="{{ route('mainPage') }}">
                                 <div class="blog-img">
-                                    <img src="img/blog-2.png" class="img-fluid rounded-top w-100" alt="Real-Time Inventory Tracking">
+                                    <img src="img\homepageimg\as.png" class="img-fluid rounded-top w-100" alt="Real-Time Inventory Tracking">
                                 </div>
                             </a>
                             <div class="blog-content p-4">
@@ -42,7 +42,7 @@
                         <div class="blog-item">
                             <a href="{{ route('dashboard') }}">
                                 <div class="blog-img">
-                                    <img src="img/blog-3.png" class="img-fluid rounded-top w-100" alt="Error Detection">
+                                    <img src="img\homepageimg\dash.png" class="img-fluid rounded-top w-100" alt="Error Detection">
                                 </div>
                             </a>
                             <div class="blog-content p-4">
