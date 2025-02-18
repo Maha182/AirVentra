@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log; 
 use App\Models\Location;
 use App\Models\Product;
+use App\Models\PlacementErrorReport;
+
 
 class StorageAssignmentController extends Controller
 {

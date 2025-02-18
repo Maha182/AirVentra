@@ -64,79 +64,108 @@
         <div class="col-md-6">
             <div class="bg-light p-4 border" style="height: 330px;">
                 <h4 class="section-title">Scanned Product</h4>
-                @if(session()->has('assigned_product')) 
-                    @php
-                        $product = session('assigned_product');
-                    @endphp
-                @endif
-                    <p>Product ID: <strong>{{ $product['product_id'] ?? '' }}</strong></p>
-                    <p>Product Name: <strong>{{ $product['product_name'] ?? '' }}</strong></p>
-                    <p>Rack Number: <strong>{{ $product['rack'] ?? '' }}</strong></p>
-                    <p>Product Zone: <strong>{{ $product['zone_name'] ?? '' }}</strong></p>
-                    <p>Product Quantity: <strong>{{ $product['product_quantity'] ?? '' }}</strong></p>
-                    <div class="d-flex gap-2"> 
-                        <form action="{{ route('sendLocationData') }}" method="GET" class="flex-grow-1">
-                            <input type="hidden" name="redirect_to" value="mainPage">
-                            <button type="submit" class="btn btn-primary w-100">Fetch Product Data</button>
-                        </form>
-                        <form action="{{ route('checkPlacement') }}" method="GET" class="flex-grow-1">
-                            <button type="submit" class="btn btn-primary w-100">Check Placement</button>
-                        </form>
-                    </div>
+                @php
+                    $product = session('assigned_product', []);
+                @endphp
+                <p>Product ID: <strong>{{ $product['product_id'] ?? '' }}</strong></p>
+                <p>Product Name: <strong>{{ $product['product_name'] ?? '' }}</strong></p>
+                <p>Rack Number: <strong>{{ $product['rack'] ?? '' }}</strong></p>
+                <p>Product Zone: <strong>{{ $product['zone_name'] ?? '' }}</strong></p>
+                <p>Product Quantity: <strong>{{ $product['product_quantity'] ?? '' }}</strong></p>
+                <div class="d-flex gap-2">
+                    <form action="{{ route('sendLocationData') }}" method="GET" class="flex-grow-1">
+                        <input type="hidden" name="rack_id" value="{{ $product['rack'] ?? '' }}">
+                        <input type="hidden" name="redirect_to" value="mainPage">
+                        <button type="submit" class="btn btn-primary w-100">Fetch Product Data</button>
+                    </form>
+                    <form action="{{ route('checkPlacement') }}" method="GET" class="flex-grow-1">
+                        <button type="submit" class="btn btn-primary w-100">Check Placement</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <!-- Scanning Progress and Error Report -->
 <div class="container">
     <div class="row justify-content-end mt-3 mb-5">
         <div class="col-md-6">
-            <div class="bg-light p-4 border" style=" height: 300px;">
-                <h4 class="section-title">Rack #ID Inventory Scan</h4>
-                <div class="progress my-3">
-                    <div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">60% Scanned</div>
-                </div>
-                <div class="border p-3">
-                    <p>Current Location: <strong>Text</strong></p>
-                    <p>Rack Capacity: <strong>Text</strong></p>
-                    <p>Status: <span class="text-danger">Incomplete</span></p>
-                </div>
+            <div class="bg-light p-4 border" style="height: 300px;">
+                <h4 class="section-title">Rack #
+                        <span class="text-primary">{{ session('assigned_product.assigned_location') ?? ' ' }}</span>
+                    </h4>
+
+                    
+                    <div class="progress my-3">
+                        @php
+                            $scanPercentage = (session('assigned_product.current_capacity') ?? 0) / (session('assigned_product.capacity') ?? 1) * 100;
+                        @endphp
+                        <div class="progress-bar" role="progressbar" style="width: {{ $scanPercentage }}%;" 
+                            aria-valuenow="{{ $scanPercentage }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ intval($scanPercentage) }}% Scanned
+                        </div>
+                    </div>
+                    <div class="border p-3">
+                        <p>Current Location: <strong>{{session('assigned_product.zone_name') ?? ' ' }}</strong></p>
+                        <p>Rack Capacity: <strong>{{ session('assigned_product.capacity') ?? ' ' }}</strong></p>
+                        <p>Status: 
+                            @if($scanPercentage < 100)
+                                <span class="text-danger">Incomplete</span>
+                            @else
+                                <span class="text-success">Complete</span>
+                            @endif
+                        </p>
+                    </div>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="bg-light p-4 border" style=" height: 300px;">
+            <div class="bg-light p-4 border" style="height: 300px;">
                 <h4 class="section-title">Error Report</h4>
-                <table class="table table-bordered error-report-table">
-                    <thead>
-                        <tr>
-                            <th>Product ID</th>
-                            <th>Current Location</th>
-                            <th>Correct Location</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>60001</td>
-                            <td>L0003</td>
-                            <td>D0005</td>
-                            <td><button class="btn btn-success btn-sm">Corrected</button></td>
-                        </tr>
-                        <tr>
-                            <td>60002</td>
-                            <td>L0005</td>
-                            <td>D0001</td>
-                            <td><button class="btn btn-success btn-sm">Corrected</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div style="max-height: 220px; overflow-y: auto;">
+                    <table class="table table-bordered error-report-table">
+                        <thead>
+                            <tr>
+                                <th>Product ID</th>
+                                <th>Current Location</th>
+                                <th>Correct Location</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                $errors = $location['errors'] ?? [];
+                            @endphp
+
+                            @foreach ($errors as $error)
+                                <tr>
+                                    <td>{{ $error['product_id'] ?? '' }}</td>
+                                    <td>{{ $error['wrong_location'] ?? '' }}</td>
+                                    <td>{{ $error['correct_location'] ?? '' }}</td>
+                                    <td>
+                                        @if(($error['status'] ?? '') == 'Pending')
+                                            <button class="btn btn-danger btn-sm">Pending</button>
+                                        @else
+                                            <button class="btn btn-success btn-sm">Corrected</button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<script>
+    // Check if the page is being refreshed
+    if (performance.navigation.type === 1) {
+        fetch("{{ route('clearSession') }}") // Call the route to clear the session only on a refresh
+            .then(response => location.reload()); // Ensure it reloads after clearing
+    }
+</script>
 
 @endsection

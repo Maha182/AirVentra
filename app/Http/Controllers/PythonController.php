@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Models\Product;
 use App\Models\Location;
+use App\Models\PlacementErrorReport;
 
 class PythonController extends Controller
 {
@@ -19,8 +20,13 @@ class PythonController extends Controller
         $productID = $barcodeData['barcode'] ?? null;
 
         if (!$productID) {
+            // If no barcode, redirect to the specified page and pass error message
+            if ($redirectTo == 'mainPage') {
+                return redirect()->route('mainPage')->with('error', 'No barcode detected');
+            }
+    
+            // Default redirect for other cases
             return redirect()->route($redirectTo)->with('error', 'No barcode detected');
-
         }
 
         // Fetch product from the database
@@ -32,13 +38,14 @@ class PythonController extends Controller
 
         $description = $product->description;
 
-        // Send description to the Python API
-        $response = $client->post('http://127.0.0.1:5001/getData', [
-            'json' => ['description' => $description]
-        ]);
+        // // Send description to the Python API
+        // $response = $client->post('http://127.0.0.1:5001/getData', [
+        //     'json' => ['description' => $description]
+        // ]);
 
-        $result = json_decode($response->getBody()->getContents(), true);
-        $zone_name = $result['zone_name'] ?? null;
+        // $result = json_decode($response->getBody()->getContents(), true);
+        // $zone_name = $result['zone_name'] ?? null;
+        $zone_name ='Dry Zone';
         return $this->assignLocation($product, $zone_name, $redirectTo);
     }
 
@@ -60,6 +67,9 @@ class PythonController extends Controller
             return redirect()->route($redirectTo)->with('error', 'No available storage locations in zone: ' . $zone_name);
         }
 
+
+            $errors = PlacementErrorReport::with('product')->get();
+
         // Store product assignment in session
         session()->put('assigned_product', [
             'product_id' => $product->id,
@@ -71,7 +81,15 @@ class PythonController extends Controller
             'aisle' => $location->aisle,
             'rack' => $location->rack,
             'current_capacity' => $location->current_capacity,
-            'capacity' => $location->capacity
+            'capacity' => $location->capacity,
+            'errors' => $errors->map(function ($error) {
+                return [
+                    'wrong_location' => $error->wrong_location,
+                    'correct_location' => $error->correct_location, // Access the correct location here
+                    'product_id' => $error->product->id,
+                    'status' =>$error->status,
+                ];
+            }),
         ]);
 
         return redirect()->route($redirectTo);
@@ -133,6 +151,11 @@ class PythonController extends Controller
     }
 
 
+    public function clearSession(Request $request)
+{
+    $request->session()->forget(['assigned_product']);
+    return response()->json(['message' => 'Session cleared']);
+}
 
 }
 

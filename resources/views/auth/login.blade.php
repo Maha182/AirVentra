@@ -19,13 +19,13 @@
                               <div class="col-lg-12">
                                  <div class="form-group">
                                     <label for="email" class="form-label">Email</label>
-                                    <input id="email" type="email" name="email"  value="{{env('IS_DEMO') ? 'admin@example.com' : old('email')}}"   class="form-control"  placeholder="admin@example.com" required autofocus>
+                                    <input id="email" type="email" name="email"  value="{{env('IS_DEMO') ? '' : old('email')}}"   class="form-control"  placeholder=" " required autofocus>
                                  </div>
                               </div>
                               <div class="col-lg-12">
                                  <div class="form-group">
                                     <label for="password" class="form-label">Password</label>
-                                    <input class="form-control" type="password" placeholder="********"  name="password" value="{{ env('IS_DEMO') ? 'password' : '' }}" required autocomplete="current-password">
+                                    <input class="form-control" type="password" placeholder="" name="password" value="">
                                  </div>
                               </div>
                               <div class="col-lg-12 d-flex justify-content-between">

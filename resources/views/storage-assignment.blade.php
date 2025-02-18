@@ -224,4 +224,12 @@
     </div>
 </div>
 
+<script>
+    // Check if the page is being refreshed
+    if (performance.navigation.type === 1) {
+        fetch("{{ route('clearSession') }}") // Call the route to clear the session only on a refresh
+            .then(response => location.reload()); // Ensure it reloads after clearing
+    }
+</script>
+
 @endsection
