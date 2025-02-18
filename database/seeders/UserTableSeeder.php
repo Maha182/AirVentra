@@ -24,7 +24,7 @@ class UserTableSeeder extends Seeder
                 'phone_number' => '5551234567',
                 'hire_date' => '2022-05-15',
                 'supervisor_id' => 5, // E005
-                'password' => bcrypt('password123'),
+                'password' => bcrypt('1234'),
                 'status' => 1
             ],
             [
