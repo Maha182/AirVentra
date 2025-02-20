@@ -96,7 +96,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('checkPlacement');
     Route::get('/clear-session', [PythonController::class, 'clearSession'])->name('clearSession');
 
-    
+    //inventory level check
+    Route::post('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
+    Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
 });
 
 //App Details Page => 'Dashboard'], function() {

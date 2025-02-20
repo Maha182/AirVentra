@@ -117,6 +117,12 @@
                             @endif
                         </p>
                     </div>
+                    <form action="{{ route('updateInventory') }}" method="GET" class="flex-grow-1">
+                        <button type="submit" class="btn btn-primary w-100">Check Rack level</button>
+                    </form>
+                    <form action="{{ route('Reset') }}" method="GET" class="flex-grow-1">
+                        <button type="submit" class="btn btn-primary w-100">next rack</button>
+                    </form>
             </div>
         </div>
 

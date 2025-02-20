@@ -1,5 +1,6 @@
 import cv2
-from flask import Flask, Response, jsonify, request
+import requests
+from flask import Flask, Response, jsonify
 from pyzbar.pyzbar import decode
 from ultralytics import YOLO
 import torch
@@ -11,7 +12,7 @@ CORS(app)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 barcode_model = YOLO('barcode.pt')
 
-last_detected_barcode = None  # Store the last detected barcode
+API_URL = "http://127.0.0.1:8000/api/update_inventory"  # Laravel API endpoint
 
 def decode_barcodes(image_np):
     """Decode barcodes using Pyzbar."""
@@ -25,7 +26,6 @@ def decode_barcodes(image_np):
 
 def process_frame(frame):
     """Process each frame: Detect barcodes using YOLO and decode with Pyzbar."""
-    global last_detected_barcode  # Use global variable
     image_np = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     yolo_results = barcode_model(image_np)
     detected_barcodes = []
@@ -45,19 +45,23 @@ def process_frame(frame):
             for zbar_result in zbar_results:
                 detected_barcodes.append(zbar_result["data"])
                 
-                # Save barcode only if it's new
-                if last_detected_barcode != zbar_result["data"]:
-                    last_detected_barcode = zbar_result["data"]
-                    print(f"New Barcode Detected: {last_detected_barcode}")
+                # Send barcode to Laravel API for counting
+                send_to_laravel(zbar_result["data"])
 
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
     
     return frame, detected_barcodes
 
-@app.route('/get_barcode', methods=['GET'])
-def get_barcode():
-    """Return the last detected barcode"""
-    return jsonify({"barcode": last_detected_barcode})
+def send_to_laravel(barcode):
+    """Send scanned barcode to Laravel API."""
+    try:
+        response = requests.post(API_URL, json={"barcode": barcode})
+        if response.status_code == 200:
+            print(f"Sent barcode {barcode} to Laravel: {response.json()}")
+        else:
+            print(f"Failed to send barcode {barcode}, Error: {response.text}")
+    except Exception as e:
+        print(f"Error sending barcode: {str(e)}")
 
 def gen():
     cap = cv2.VideoCapture(0)
