@@ -8,6 +8,8 @@ use App\Mail\InventoryAlertMail;
 use App\Models\Location;
 use App\Models\LocationCapacityCheck;
 use App\Models\Product;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Mail;
 
 class InventoryController extends Controller
 {
@@ -15,44 +17,37 @@ class InventoryController extends Controller
 
     public function updateInventory(Request $request)
     {
-
         $client = new Client();
-        $redirectTo = request()->input('redirect_to', 'storage-assignment'); 
 
-        // Fetch barcode from Python
-        $barcode = $client->get('http://127.0.0.1:5000/get_barcode');
-        $barcodeData = json_decode($barcode->getBody()->getContents(), true);
-        $productID = $barcodeData['barcode'] ?? null;
+        // Fetch barcodes from Python
+        $response = $client->get('http://127.0.0.1:5000/get_barcodes');
+        $barcodeData = json_decode($response->getBody()->getContents(), true);
+        $barcodes = $barcodeData['barcodes'] ?? [];
 
-
-        // In your database, the barcode is actually the product ID
-        $product = Product::find($barcode);
-
-        if (!$product) {
-            return response()->json(["error" => "Product not found"], 404);
+        if (empty($barcodes)) {
+            return response()->json(["error" => "No barcodes detected"], 404);
         }
 
-        // Get the location of the product
-        // $location = Location::where('id', $product->location_id)->first();
-        // if (!$location) {
-        //     return response()->json(["error" => "Location not found"], 404);
-        // }
-        $Location = 'L0005';
-        // Keep track of the number of times this product has been scanned
-        if (!isset($this->scanCounts[$barcode])) {
-            $this->scanCounts[$barcode] = 0;
-        }
-        
-        // Add the product's quantity each time it's scanned
-        $this->scanCounts[$barcode] += $product->quantity;
+        $totalScanned = 0;
 
-        // Sum total scanned products in this location
-        $totalScanned = array_sum($this->scanCounts);
+        foreach ($barcodes as $barcode) {
+            $product = Product::where('barcode', $barcode)->first();
+            if ($product) {
+                $this->scanCounts[$barcode] = ($this->scanCounts[$barcode] ?? 0) + $product->quantity;
+                $totalScanned += $product->quantity;
+            }
+        }
+
+        // Fetch location dynamically (modify as needed)
+        $location = Location::first();
+        if (!$location) {
+            return response()->json(["error" => "Location not found"], 404);
+        }
 
         // Determine stock status
         $status = ($totalScanned > $location->capacity) ? 'overstock' : (($totalScanned < ($location->capacity * 0.5)) ? 'understock' : 'normal');
 
-        // Store the scan result
+        // Store the inventory level check result
         LocationCapacityCheck::create([
             'location_id' => $location->id,
             'scan_date' => now(),
@@ -73,13 +68,13 @@ class InventoryController extends Controller
         }
 
         return response()->json([
-            "message" => "Inventory updated",
+            "message" => "Inventory levels checked",
             "status" => $status,
             "total_scanned" => $totalScanned
         ]);
     }
 
-    // Reset the scan count for a new rack
+    // Reset scan counts
     public function resetScans()
     {
         $this->scanCounts = [];
