@@ -15,7 +15,15 @@ class InventoryController extends Controller
 
     public function updateInventory(Request $request)
     {
-        $barcode = $request->input('barcode');
+
+        $client = new Client();
+        $redirectTo = request()->input('redirect_to', 'storage-assignment'); 
+
+        // Fetch barcode from Python
+        $barcode = $client->get('http://127.0.0.1:5000/get_barcode');
+        $barcodeData = json_decode($barcode->getBody()->getContents(), true);
+        $productID = $barcodeData['barcode'] ?? null;
+
 
         // In your database, the barcode is actually the product ID
         $product = Product::find($barcode);
@@ -29,7 +37,7 @@ class InventoryController extends Controller
         // if (!$location) {
         //     return response()->json(["error" => "Location not found"], 404);
         // }
-        $Location = 'L0008';
+        $Location = 'L0005';
         // Keep track of the number of times this product has been scanned
         if (!isset($this->scanCounts[$barcode])) {
             $this->scanCounts[$barcode] = 0;

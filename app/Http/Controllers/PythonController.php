@@ -36,15 +36,17 @@ class PythonController extends Controller
             return redirect()->route($redirectTo)->with('error', 'Product not found');
         }
 
-        $description = $product->description;
+        // $description = $product->description;
 
-        // // Send description to the Python API
-        $response = $client->post('http://127.0.0.1:5001/getData', [
-            'json' => ['description' => $description]
-        ]);
+        // // // Send description to the Python API
+        // $response = $client->post('http://127.0.0.1:5001/getData', [
+        //     'json' => ['description' => $description]
+        // ]);
 
-        $result = json_decode($response->getBody()->getContents(), true);
-        $zone_name = $result['zone_name'] ?? null;
+        // $result = json_decode($response->getBody()->getContents(), true);
+        // $zone_name = $result['zone_name'] ?? null;
+        $zone_name = 'Dry Zone';
+
         return $this->assignLocation($product, $zone_name, $redirectTo);
     }
 
