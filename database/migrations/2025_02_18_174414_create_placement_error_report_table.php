@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('placement_error_report', function (Blueprint $table) {
             $table->id(); // Auto-incrementing primary key
-            $table->string('product_id'); // Product ID (foreign key to products table)
+            $table->string('product_id', 255)->collation('utf8mb4_unicode_ci');
             $table->date('scan_date'); // Date of the scan
             $table->string('wrong_location'); // Incorrect location ID
             $table->string('correct_location'); // Correct location ID

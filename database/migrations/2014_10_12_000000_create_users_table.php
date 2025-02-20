@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             // $table->unsignedBigInteger('supervisor_id')->nullable();
             $table->string('password');
             $table->tinyInteger('status')->default(1); // 1 = Active, 0 = Inactive
-            $table->string('supervisor_id');
+            $table->string('supervisor_id')->nullable();;
 
             $table->rememberToken();
             $table->timestamps();

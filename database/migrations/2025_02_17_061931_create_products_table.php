@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 255)->collation('utf8mb4_unicode_ci')->primary();
             $table->string('title'); // Product title
             $table->text('description'); // Product description
             $table->string('main_category'); // Main category (e.g., "Books")
