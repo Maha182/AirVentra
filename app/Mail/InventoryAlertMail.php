@@ -20,7 +20,7 @@ class InventoryAlertMail extends Mailable
     public function build()
     {
         return $this->subject('Warehouse Inventory Alert Notification')
-                    ->view('emails.inventory_alert_email')
+                    ->view('inventory_alert_email')
                     ->with('emailData', $this->emailData);
     }
 }

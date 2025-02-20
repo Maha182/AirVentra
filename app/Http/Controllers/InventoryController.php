@@ -31,7 +31,7 @@ class InventoryController extends Controller
         $totalScanned = 0;
 
         foreach ($barcodes as $barcode) {
-            $product = Product::where('barcode', $barcode)->first();
+            $product = Product::where('id', $barcode)->first();
             if ($product) {
                 $this->scanCounts[$barcode] = ($this->scanCounts[$barcode] ?? 0) + $product->quantity;
                 $totalScanned += $product->quantity;
@@ -39,11 +39,15 @@ class InventoryController extends Controller
         }
 
         // Fetch location dynamically (modify as needed)
-        $location = Location::first();
+        // $location = Location::first();
+        // if (!$location) {
+        //     return response()->json(["error" => "Location not found"], 404);
+        // }
+        $location = Location::where('id', 'L0005')->first();
         if (!$location) {
             return response()->json(["error" => "Location not found"], 404);
         }
-
+        
         // Determine stock status
         $status = ($totalScanned > $location->capacity) ? 'overstock' : (($totalScanned < ($location->capacity * 0.5)) ? 'understock' : 'normal');
 

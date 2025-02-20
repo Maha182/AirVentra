@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Artisan;
 // Packages
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StorageAssignmentController;
+use App\Http\Controllers\InventoryController;
 
 use App\Http\Controllers\PlacementController;
 use App\Http\Controllers\PythonController;
@@ -97,7 +98,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/clear-session', [PythonController::class, 'clearSession'])->name('clearSession');
 
     //inventory level check
-    Route::post('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
+    Route::get('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
 });
 
