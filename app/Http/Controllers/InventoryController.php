@@ -20,7 +20,7 @@ class InventoryController extends Controller
         $client = new Client();
 
         // Fetch barcodes from Python
-        $response = $client->get('http://127.0.0.1:5000/get_barcodes');
+        $response = $client->get('http://127.0.0.1:5000/get_barcode');
         $barcodeData = json_decode($response->getBody()->getContents(), true);
         $barcodes = $barcodeData['barcodes'] ?? [];
 

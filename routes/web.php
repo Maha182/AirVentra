@@ -102,7 +102,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/clear-session', [PythonController::class, 'clearSession'])->name('clearSession');
     
     //inventory level check
-    Route::get('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
+    Route::post('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
 });
 

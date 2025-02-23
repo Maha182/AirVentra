@@ -48,7 +48,12 @@ class PythonController extends Controller
 
         // $result = json_decode($response->getBody()->getContents(), true);
         // $zone_name = $result['zone_name'] ?? null;
-        $zone_name = 'Dry Zone';
+        // Fetch zone name from the location table
+        $zone_name = Location::where('id', $product->location_id)->value('zone_name');
+
+        if (!$zone_name) {
+            return redirect()->route($redirectTo)->with('error', 'Location not found');
+        }
 
         return $this->assignLocation($product, $zone_name, $redirectTo);
     }
