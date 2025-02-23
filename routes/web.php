@@ -92,11 +92,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/lookup/location', [StorageAssignmentController::class, 'lookupLocation'])->name('lookup.location');
     Route::post('/assign/manual', [StorageAssignmentController::class, 'assignManual'])->name('assign.manual');
 
-    Route::get('/send-location-data', [PythonController::class, 'sendLocationData'])->name('sendLocationData');
+    Route::get('/sendLocationData', [PythonController::class, 'sendLocationData'])->name('sendLocationData');
     Route::post('/assign-product', [PythonController::class, 'assignProductToLocation'])->name('assignProduct');
-    Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('checkPlacement');
-    Route::get('/clear-session', [PythonController::class, 'clearSession'])->name('clearSession');
+    // Route::match(['GET', 'POST'], 'checkPlacement', 'PlacementController@checkPlacement');
 
+    Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('checkPlacement');
+    Route::get('/mainPage', [PlacementController::class, 'getErrorReports']);
+
+    Route::get('/clear-session', [PythonController::class, 'clearSession'])->name('clearSession');
+    
     //inventory level check
     Route::get('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');

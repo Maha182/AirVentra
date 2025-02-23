@@ -22,11 +22,14 @@ class PythonController extends Controller
         if (!$productID) {
             // If no barcode, redirect to the specified page and pass error message
             if ($redirectTo == 'mainPage') {
-                return redirect()->route('mainPage')->with('error', 'No barcode detected');
+                return redirect()->route('mainPage');
             }
     
             // Default redirect for other cases
-            return redirect()->route($redirectTo)->with('error', 'No barcode detected');
+            return redirect()->route($redirectTo);
+        }if ($productID) {
+            // Store productID in session
+            session(['productID' => $productID]);
         }
 
         // Fetch product from the database
@@ -77,6 +80,7 @@ class PythonController extends Controller
             'product_name' => $product->title,
             'product_description' => $product->description,
             'product_quantity' => $product->quantity,
+            'location' => $product->location_id,
             'assigned_location' => $location->id,
             'zone_name' => $location->zone_name,
             'aisle' => $location->aisle,
@@ -93,7 +97,11 @@ class PythonController extends Controller
             }),
         ]);
 
-        return redirect()->route($redirectTo);
+        return response()->json([
+            'assigned_product' => session('assigned_product'),
+            'success' => true,
+            'redirect' => route($redirectTo)
+        ]);
     }
 
 
