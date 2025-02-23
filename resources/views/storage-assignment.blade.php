@@ -61,7 +61,7 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-md-6">
-            <div class="bg-light p-4 border" style="height: 330px;">
+            <div class="bg-light p-4 border" style="height: 330px; margin-bottom: 30px;">
                 <h4 class="section-title">(Live Video Feed with Barcode Detection)</h4>
                 <div class="border mt-3" style="height: 220px; background-color: white;">
                     <img src="http://127.0.0.1:5000/video_feed" width="100%" height="100%" alt="Live Video Feed">
@@ -69,21 +69,18 @@
             </div>
         </div>
 
-            <div class="col-md-6">
-                <div class="bg-light p-4 border" style="height: 330px;">
-                    <h4 class="section-title">Scanned Product</h4>
-                    <p>Product ID: <strong>{{ session('assigned_product.product_id') ?? '' }}</strong></p>
-                    <p>Product Name: <strong>{{ session('assigned_product.product_name') ?? '' }}</strong></p>
-                    <p>Product Description: <strong>{{ session('assigned_product.product_description') ?? '' }}</strong></p>
-                    <p>Product Quantity: <strong>{{ session('assigned_product.product_quantity') ?? '' }}</strong></p>
-                    <form action="{{ route('sendLocationData') }}" method="GET">
-                        <input type="hidden" name="redirect_to" value="storage-assignment">
-                        <button id="fetchDataBtn"  type="submit" class="btn btn-primary">Fetch Product Data</button>
-                    </form>
-
+        <div class="col-md-6">
+            <div class="bg-light p-4 border" style="height: 330px;">
+                <h4 class="section-title">Scanned Product</h4>
+                <div class="justify-content-between align-items-start gap-3 col-md-6 p-4">
+                    <p class="mb-4">Product ID: <strong id="product-id">{{ session('assigned_product.product_id') ?? '' }}</strong></p>
+                    <p class="mb-4">Product Name: <strong id="product-name">{{ session('assigned_product.product_name') ?? '' }}</strong></p>
+                    <p class="mb-4">Product Description: <strong id="product-description">{{ session('assigned_product.product_description') ?? '' }}</strong></p>
+                    <p class="mb-4">Product Quantity: <strong id="product-quantity">{{ session('assigned_product.product_quantity') ?? '' }}</strong></p>
                 </div>
             </div>
-            
+        </div>
+
     </div>
 </div>
 
@@ -94,34 +91,27 @@
                 <!-- Header Section -->
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="section-title">Recommended Location #ID: 
-                        <span class="text-primary">{{ session('assigned_product.assigned_location') ?? ' ' }}</span>
+                        <span class="text-primary" id="Location_id">{{ session('assigned_product.location') ?? ' ' }}</span>
                     </h4>
                     <h4 class="section-title align-items-center">Storage Utilization</h4> <!-- Moved Title to Same Line -->
                 </div>
 
-                <div class="d-flex justify-content-between align-items-start gap-3">
+                <div class="d-flex justify-content-between align-items-stretch gap-3">
                     <!-- Left Side: Location Details -->
-                    <div class="col-md-6 border p-5">
-                        <p><strong>Zone Name: </strong> <span id="zone_name">
-                            {{ session('assigned_product.zone_name') ?? ' ' }}
-                        </span></p>
-                        
-                        <p><strong>Aisle Number:</strong> <span id="aisle">
-                            {{ session('assigned_product.aisle') ?? ' ' }}
-                        </span></p>
-                        
-                        <p><strong>Rack Number:</strong> <span id="rack">
-                            {{ session('assigned_product.rack') ?? ' ' }}
-                        </span></p>
+                    <div class="col-md-6 border p-4">
+                        <p class="mb-4">Zone Name: <span id="zone_name">{{ session('assigned_product.zone_name') ?? ' ' }}</span></p>
+                        <p class="mb-4">Aisle Number: <span id="aisle">{{ session('assigned_product.aisle') ?? ' ' }}</span></p>
+                        <p class="mb-4">Rack Number: <span id="rack">{{ session('assigned_product.rack') ?? ' ' }}</span></p>
                     </div>
 
                     <!-- Right Side: Chart -->
                     <div class="col-md-6 card">
-                        <div class="card-body">
+                        <div class="card-body d-flex justify-content-center align-items-center" style="height: 100%;">
                             <canvas id="storageChart" width="400" height="190"></canvas>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -137,43 +127,6 @@
         </div>
     </div>
 </div>
-
-
-
-<!-- Include Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var ctx = document.getElementById('storageChart').getContext('2d');
-
-        // Fetching data from the session
-        var usedCapacity = {{ session('assigned_product.current_capacity')}};
-        var totalCapacity = {{ session('assigned_product.capacity')}};
-        var remainingCapacity = totalCapacity - usedCapacity;
-
-        var data = {
-            labels: ["Used Capacity", "Remaining Capacity"],
-            datasets: [{
-                label: "Storage Utilization",
-                data: [usedCapacity, remainingCapacity],
-                backgroundColor: ["#001F3F", "#28A745"] // Navy Blue & Green
-            }]
-        };
-
-        var options = {
-            responsive: true,
-            maintainAspectRatio: false
-        };
-
-        new Chart(ctx, {
-            type: 'pie',
-            data: data,
-            options: options
-        });
-    });
-</script>
-
-
 
  
 <!-- Manual Storage Assignment Modal -->
@@ -199,9 +152,7 @@
 
                     <!-- Space between button and Zone Name -->
                     <div class="d-grid gap-3 mb-4">
-                        <button type="button" class="btn btn-primary" id="lookupLocation">Look Up Location</button>
-                    </div>
-
+                        <button type="button" class="btn btn-primary" id="Location-id">Look Up Location</button>
                     <!-- Display Data in Labels with Gray Background -->
                     <div class="mb-3">
                         <label class="form-label bg-light p-2 d-block">Zone Name: <span id="zone_name" class="fw-bold text-dark"></span></label>
@@ -224,12 +175,114 @@
     </div>
 </div>
 
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Check if the page is being refreshed
-    if (performance.navigation.type === 1) {
-        fetch("{{ route('clearSession') }}") // Call the route to clear the session only on a refresh
-            .then(response => location.reload()); // Ensure it reloads after clearing
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Clear sessionStorage and product display fields on refresh
+        let lastScannedBarcode = sessionStorage.getItem('lastScannedBarcode') || '';
+        sessionStorage.removeItem('lastScannedBarcode');  // Remove the last scanned barcode
+
+        // Clear product display fields
+        document.getElementById('product-id').innerText = '';
+        document.getElementById('product-name').innerText = '';
+        document.getElementById('product-description').innerText = '';
+        document.getElementById('product-quantity').innerText = '';
+
+        // Clear Rack, Location, Capacity, and Status fields
+        document.getElementById('Location_id').innerText = '';
+        document.getElementById('zone_name').innerText = '';
+        document.getElementById('aisle').innerText = '';
+        document.getElementById('rack').innerText = '';
+
+        // Get the context of the chart
+        var ctx = document.getElementById('storageChart').getContext('2d');
+
+        // Initialize chart data
+        var usedCapacity = {{ session('assigned_product.current_capacity') ?? 0 }};
+        var totalCapacity = {{ session('assigned_product.capacity') ?? 1 }};
+        var remainingCapacity = totalCapacity - usedCapacity;
+
+        // Ensure data is valid before proceeding
+        if (isNaN(usedCapacity) || isNaN(totalCapacity)) {
+            console.error("Invalid capacity values:", usedCapacity, totalCapacity);
+            return;
+        }
+
+        // Chart data
+        var data = {
+            labels: ["Used Capacity", "Remaining Capacity"],
+            datasets: [{
+                label: "Storage Utilization",
+                data: [usedCapacity, remainingCapacity],
+                backgroundColor: ["#001F3F", "#28A745"] // Navy Blue & Green
+            }]
+        };
+
+        // Chart options
+        var options = {
+            responsive: true,
+            maintainAspectRatio: false
+        };
+
+        // Check if Chart.js is loaded and initialize the chart
+        if (typeof Chart !== "undefined") {
+            new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options
+            });
+        } else {
+            console.error("Chart.js is not loaded.");
+        }
+
+        // Fetch product data and update fields
+        function fetchProductData() {
+            fetch('/AirVentra/sendLocationData')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Received data:", data);
+
+                    if (data.success && data.assigned_product) {
+                        let assignedProduct = data.assigned_product;
+                        let newBarcode = assignedProduct.product_id;
+
+                        console.log("New Barcode:", newBarcode);
+
+                        if (newBarcode && newBarcode !== lastScannedBarcode) {
+                            console.log("New barcode detected!");
+
+                            // Update sessionStorage immediately
+                            sessionStorage.setItem('lastScannedBarcode', newBarcode);
+                            lastScannedBarcode = newBarcode; // Update variable
+
+                            // Update the product UI with new data
+                            document.getElementById('product-id').innerText = assignedProduct.product_id || '';
+                            document.getElementById('product-name').innerText = assignedProduct.product_name || '';
+                            document.getElementById('product-description').innerText = assignedProduct.product_description || '';
+                            document.getElementById('product-quantity').innerText = assignedProduct.product_quantity || '';
+
+                            document.getElementById('Location_id').innerText = assignedProduct.location || '';
+                            document.getElementById('zone_name').innerText = assignedProduct.zone_name || '';
+                            document.getElementById('aisle').innerText = assignedProduct.aisle || '';
+                            document.getElementById('rack').innerText = assignedProduct.rack || '';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching product data:", error);
+                });
+        }
+
+        // Fetch product data every 3 seconds (to keep UI updated)
+        setInterval(fetchProductData, 3000);
+    });
 </script>
+
 
 @endsection

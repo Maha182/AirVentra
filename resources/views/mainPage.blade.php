@@ -160,114 +160,137 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    let lastScannedBarcode = sessionStorage.getItem('lastScannedBarcode') || '';
-    let processedProducts = new Set(); // Track processed product IDs
+        let lastScannedBarcode = sessionStorage.getItem('lastScannedBarcode') || '';
+        let processedProducts = new Set(); // Track processed product IDs
 
-    console.log("Last Scanned Barcode from sessionStorage:", lastScannedBarcode);
+        // Remove scanned product details from session storage on refresh
+        sessionStorage.removeItem('lastScannedBarcode');
 
-    function fetchProductData() {
-    fetch('/AirVentra/sendLocationData?redirect_to=mainPage')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Received data:", data);
+        // Clear product display fields
+        document.getElementById('product-id').innerText = '';
+        document.getElementById('product-name').innerText = '';
+        document.getElementById('product-rack').innerText = '';
+        document.getElementById('product-zone').innerText = '';
+        document.getElementById('product-quantity').innerText = '';
 
-            if (data.success && data.assigned_product) {
-                let assignedProduct = data.assigned_product;
-                let newBarcode = assignedProduct.product_id;
-                
+        // Reset progress bar
+        let progressBar = document.getElementById('progress-bar');
+        progressBar.style.width = `0%`;
+        progressBar.setAttribute('aria-valuenow', 0);
+        progressBar.innerText = `0% Scanned`;
 
-                console.log("New Barcode:", newBarcode);
+        // Clear Rack, Location, Capacity, and Status fields
+        document.getElementById('rack-id').innerText = '';
+        document.getElementById('current-location').innerText = '';
+        document.getElementById('rack-capacity').innerText = '';
+        document.getElementById('status').innerText = 'Status: Incomplete'; // Default text
 
-                if (newBarcode && newBarcode !== lastScannedBarcode) {
-                console.log("New barcode detected!");
+        console.log("Last Scanned Barcode from sessionStorage:", lastScannedBarcode);
 
-                // Update sessionStorage immediately
-                sessionStorage.setItem('lastScannedBarcode', newBarcode);
-                lastScannedBarcode = newBarcode; // Update variable
-
-                // First fetch the placement check data
-                fetch('/AirVentra/check-placement', {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' }
-                })
-                .then(response => {
-                    return response.json(); // Return the response data to process errors
-                })
-                .then(() => {
-                    // Fetch the error reports after the placement check
-                    return fetch('/AirVentra/get-placement-error-reports');
-                })
+        function fetchProductData() {
+            fetch('/AirVentra/sendLocationData')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
-                    return response.json(); // Parse the JSON response
+                    return response.json();
                 })
                 .then(data => {
-                    console.log("Received error reports:", data);
-                    
-                    // Dynamically update the UI with the error reports
-                    const tableBody = document.getElementById('error-report-body');
-                    tableBody.innerHTML = ''; // Clear any previous errors
-                    
-                    // Check if there are errors
-                    if (data.length > 0) {
-                        data.forEach(error => {
-                            const row = document.createElement('tr');
+                    console.log("Received data:", data);
 
-                            row.innerHTML = `
-                                <td>${error.product_id}</td>
-                                <td>${error.wrong_location}</td>
-                                <td>${error.correct_location}</td>
-                                <td>${error.status === 'Pending' ? '<button class="btn btn-danger btn-sm">Pending</button>' : '<button class="btn btn-success btn-sm">Corrected</button>'}</td>
-                            `;
-                            
-                            tableBody.appendChild(row);
-                        });
-                    } else {
-                        tableBody.innerHTML = `<tr><td colspan="4">No errors found.</td></tr>`;
+                    if (data.success && data.assigned_product) {
+                        let assignedProduct = data.assigned_product;
+                        let newBarcode = assignedProduct.product_id;
+
+                        console.log("New Barcode:", newBarcode);
+
+                        if (newBarcode && newBarcode !== lastScannedBarcode) {
+                            console.log("New barcode detected!");
+
+                            // Update sessionStorage immediately
+                            sessionStorage.setItem('lastScannedBarcode', newBarcode);
+                            lastScannedBarcode = newBarcode; // Update variable
+
+                            // First fetch the placement check data
+                            fetch('/AirVentra/check-placement', {
+                                method: 'GET',
+                                headers: { 'Content-Type': 'application/json' }
+                            })
+                            .then(response => {
+                                return response.json(); // Return the response data to process errors
+                            })
+                            .then(() => {
+                                // Fetch the error reports after the placement check
+                                return fetch('/AirVentra/mainPage');
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! Status: ${response.status}`);
+                                }
+                                return response.json(); // Parse the JSON response
+                            })
+                            .then(data => {
+                                console.log("Received error reports:", data);
+
+                                // Dynamically update the UI with the error reports
+                                const tableBody = document.getElementById('error-report-body');
+                                tableBody.innerHTML = ''; // Clear any previous errors
+
+                                // Check if there are errors
+                                if (data.length > 0) {
+                                    data.forEach(error => {
+                                        const row = document.createElement('tr');
+
+                                        row.innerHTML = `
+                                            <td>${error.product_id}</td>
+                                            <td>${error.wrong_location}</td>
+                                            <td>${error.correct_location}</td>
+                                            <td>${error.status === 'Pending' ? '<button class="btn btn-danger btn-sm">Pending</button>' : '<button class="btn btn-success btn-sm">Corrected</button>'}</td>
+                                        `;
+
+                                        tableBody.appendChild(row);
+                                    });
+                                } else {
+                                    tableBody.innerHTML = `<tr><td colspan="4">No errors found.</td></tr>`;
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error fetching placement check or error reports:", error);
+                            });
+
+                            // Additional logic for updating the product UI (e.g., product details, progress bar, etc.)
+                            document.getElementById('product-id').innerText = assignedProduct.product_id || '';
+                            document.getElementById('product-name').innerText = assignedProduct.product_name || '';
+                            document.getElementById('product-rack').innerText = assignedProduct.rack || '';
+                            document.getElementById('product-zone').innerText = assignedProduct.zone_name || '';
+                            document.getElementById('product-quantity').innerText = assignedProduct.product_quantity || '';
+
+                            let currentCapacity = assignedProduct.current_capacity || 0;
+                            let totalCapacity = assignedProduct.capacity || 1;
+                            let scanPercentage = (totalCapacity > 0) ? (currentCapacity / totalCapacity) * 100 : 0;
+
+                            progressBar.style.width = `${scanPercentage}%`;
+                            progressBar.setAttribute('aria-valuenow', scanPercentage);
+                            progressBar.innerText = `${Math.round(scanPercentage)}% Scanned`;
+
+                            // Update Rack and Location info
+                            document.getElementById('rack-id').innerText = assignedProduct.location || '';
+                            document.getElementById('current-location').innerText = assignedProduct.zone_name || '';
+                            document.getElementById('rack-capacity').innerText = assignedProduct.capacity || '';
+                            document.getElementById('status').innerText = scanPercentage < 100 ? 'Status: Incomplete' : 'Status: Complete';
+                        }
                     }
                 })
                 .catch(error => {
-                    console.error("Error fetching placement check or error reports:", error);
+                    console.error("Error fetching product data:", error);
                 });
+        }
 
-                // Additional logic for updating the product UI (e.g., product details, progress bar, etc.)
-                document.getElementById('product-id').innerText = assignedProduct.product_id || '';
-                document.getElementById('product-name').innerText = assignedProduct.product_name || '';
-                document.getElementById('product-rack').innerText = assignedProduct.rack || '';
-                document.getElementById('product-zone').innerText = assignedProduct.zone_name || '';
-                document.getElementById('product-quantity').innerText = assignedProduct.product_quantity || '';
-
-                let currentCapacity = assignedProduct.current_capacity || 0;
-                let totalCapacity = assignedProduct.capacity || 1;
-                let scanPercentage = (totalCapacity > 0) ? (currentCapacity / totalCapacity) * 100 : 0;
-
-                let progressBar = document.getElementById('progress-bar');
-                progressBar.style.width = `${scanPercentage}%`;
-                progressBar.setAttribute('aria-valuenow', scanPercentage);
-                progressBar.innerText = `${Math.round(scanPercentage)}% Scanned`;
-            }
-
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching product data:", error);
-        });
-}
-
-// Fetch product data every 5 seconds
-setInterval(fetchProductData, 5000);
-
-});
-
-
+        // Fetch product data every 5 seconds
+        setInterval(fetchProductData, 3000);
+    });
 </script>
+
 
 
 @endsection

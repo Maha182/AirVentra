@@ -11,6 +11,8 @@ CORS(app)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 barcode_model = YOLO('barcode.pt')
 
+# Store unique barcodes
+unique_barcodes = set()
 last_detected_barcode = None  # Store the last detected barcode
 
 def decode_barcodes(image_np):
@@ -25,7 +27,7 @@ def decode_barcodes(image_np):
 
 def process_frame(frame):
     """Process each frame: Detect barcodes using YOLO and decode with Pyzbar."""
-    global last_detected_barcode  # Use global variable
+    global unique_barcodes, last_detected_barcode
     image_np = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     yolo_results = barcode_model(image_np)
     detected_barcodes = []
@@ -43,20 +45,31 @@ def process_frame(frame):
             
             zbar_results = decode_barcodes(cropped)
             for zbar_result in zbar_results:
-                detected_barcodes.append(zbar_result["data"])
+                barcode_data = zbar_result["data"]
+                detected_barcodes.append(barcode_data)
+                
+                # Add barcode to unique set if it's new
+                if barcode_data not in unique_barcodes:
+                    unique_barcodes.add(barcode_data)
+                    print(f"Barcode detected: {barcode_data}")
                 
                 # Save barcode only if it's new
-                if last_detected_barcode != zbar_result["data"]:
-                    last_detected_barcode = zbar_result["data"]
+                if last_detected_barcode != barcode_data:
+                    last_detected_barcode = barcode_data
                     print(f"New Barcode Detected: {last_detected_barcode}")
 
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
     
     return frame, detected_barcodes
 
+@app.route('/get_barcodes', methods=['GET'])
+def get_barcodes():
+    """Return the list of unique detected barcodes."""
+    return jsonify({"barcodes": list(unique_barcodes)})
+
 @app.route('/get_barcode', methods=['GET'])
 def get_barcode():
-    """Return the last detected barcode"""
+    """Return the last detected barcode."""
     return jsonify({"barcode": last_detected_barcode})
 
 def gen():

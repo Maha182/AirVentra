@@ -74,11 +74,10 @@ class PlacementController extends Controller
             $errorReports = PlacementErrorReport::all();
 
             // Return the error reports as a JSON response
-            return response()->json($errorReports);
             return response()->json([
                 'assigned_product' => session('assigned_product'),
                 'success' => true,
-                'error' => 'The product is in the wrong place. Notification sent.',
+                'error' => $errorReports,
                 'wrong_location' => $correctLocation,
                 'correct_location' => $location->id
             ], 400);
@@ -89,10 +88,8 @@ class PlacementController extends Controller
     {
         // Fetch all the error reports from the database
         $errorReports = PlacementErrorReport::all();
-    
-        // Store the data in session so it's available in the view
+        // Pass the error reports to the view
         return view('mainPage', ['errorReports' => $errorReports]);
-
     }
     
 

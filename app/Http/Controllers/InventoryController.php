@@ -20,7 +20,7 @@ class InventoryController extends Controller
         $client = new Client();
 
         // Fetch barcodes from Python
-        $response = $client->get('http://127.0.0.1:5000/get_barcode');
+        $response = $client->get('http://127.0.0.1:5000/get_barcodes');
         $barcodeData = json_decode($response->getBody()->getContents(), true);
         $barcodes = $barcodeData['barcodes'] ?? [];
 
@@ -71,17 +71,21 @@ class InventoryController extends Controller
             Mail::to('maha1822003@gmail.com')->send(new InventoryAlertMail($emailData));
         }
 
-        return response()->json([
-            "message" => "Inventory levels checked",
-            "status" => $status,
-            "total_scanned" => $totalScanned
-        ]);
+        return redirect()->route('mainPage')->with('success', 'Inventory levels checked successfully');
+
+        
     }
 
     // Reset scan counts
     public function resetScans()
     {
         $this->scanCounts = [];
-        return response()->json(["message" => "Scan counts reset"]);
+        response()->json([
+            'message' => "Scan counts reset",
+            'redirect' => route('mainPage')
+        ]);
+
+        return redirect()->route('mainPage')->with('success', 'Scan counts reset');
+
     }
 }

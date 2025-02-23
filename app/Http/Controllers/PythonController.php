@@ -48,12 +48,14 @@ class PythonController extends Controller
 
         // $result = json_decode($response->getBody()->getContents(), true);
         // $zone_name = $result['zone_name'] ?? null;
-        // Fetch zone name from the location table
-        $zone_name = Location::where('id', $product->location_id)->value('zone_name');
 
-        if (!$zone_name) {
-            return redirect()->route($redirectTo)->with('error', 'Location not found');
-        }
+
+        // Fetch zone name from the location table
+        // $zone_name = Location::where('id', $product->location_id);
+        // if (!$zone_name) {
+        //     return redirect()->route($redirectTo)->with('error', 'Location not found');
+        // }
+        $zone_name = 'Dry Zone';
 
         return $this->assignLocation($product, $zone_name, $redirectTo);
     }
@@ -166,10 +168,21 @@ class PythonController extends Controller
 
 
     public function clearSession(Request $request)
-{
-    $request->session()->forget(['assigned_product']);
-    return response()->json(['message' => 'Session cleared']);
-}
+    {
+        $request->session()->forget(['assigned_product']);
+        return response()->json(['message' => 'Session cleared']);
+    }
+
+    public function showScanPage()
+    {
+        // Keep error reports but clear assigned product session
+        $errorReports = ErrorReport::all(); // Fetch error reports from DB
+        
+        session()->forget('assigned_product'); // Clear scanned product data
+
+        return view('mainPage', compact('errorReports'));
+    }
+
 
 }
 
