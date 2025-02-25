@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use App\Models\Product;
 use App\Models\Location;
 use App\Models\LocationCheck;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\PlacementErrorReport;
 use App\Http\Controllers\PythonController;
@@ -19,8 +20,16 @@ class PlacementController extends Controller
     
     public function checkPlacement(Request $request)
     {
-        $productID = session('productID');
-        $product = Product::find($productID);
+        $client = new Client();
+
+        // Fetch barcode from Python
+        $barcodeResponse = $client->get('http://127.0.0.1:5000/get_barcode');
+        $barcodeData = json_decode($barcodeResponse->getBody()->getContents(), true);
+        $productID = $barcodeData['barcode'] ?? null;
+
+
+        // Fetch product from the database
+        $product = Product::where('id', $productID)->first();
 
         if (!$product) {
             \Log::error('Product not found in database', ['product_id' => $productID]);
@@ -29,67 +38,68 @@ class PlacementController extends Controller
 
         // Fetch the fixed location from the database
         $location = Location::find('L0005');
-        $locationCurrentcapacity = $location-> current_capacity;
-        $locationCapacity = $location-> capacity;
-        $locationzone = $location-> zone_name;
+        // $locationCurrentcapacity = $location-> current_capacity;
+        // $locationCapacity = $location-> capacity;
+        // $locationzone = $location-> zone_name;
 
 
         // Correct location for the product
-        $correctLocation = $product->location_id;
+        $correctLocation = Location::find($product->location_id);
 
-        if ($fixedLocationId === $correctLocation) {
+        if ($location->id === $correctLocation->id) {
             // Mark the barcode as processed
-            session()->push('processed_barcodes', $productID);
             return response()->json(['success' => 'The product is in the correct place.']);
         } else {
-            \Log::info('Product in wrong location', ['product_id' => $productID, 'wrong_location' =>  $fixedLocationId, 'correct_location' => $correctLocation]);
+            \Log::info('Product in wrong location', ['product_id' => $productID, 'wrong_location' =>  $location->id, 'correct_location' => $correctLocation->id]);
 
             // Log the error in placement_error table
-            PlacementErrorReport::create([
-                'product_id' => $productID,  // Use correct variable
-                'scan_date' => Carbon::now(),
-                'wrong_location' => $fixedLocationId,
-                'correct_location' =>$correctLocation ,
-                'status' => 'Pending'
+            DB::table('placement_error_report')->insert([
+                'product_id' => $productID,
+                'wrong_location' => $location->id,
+                'correct_location' => $correctLocation->id,
+                'status' => 'Pending',
+                'scan_date' => now(), // Ensure scan_date is included
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
-            
+        
 
             // Send an email notification
             $emailData = [
                 'product' => $product,
-                'wrong_location' => $fixedLocationId,
-                'correct_location' =>$correctLocation ,
+                'wrong_location' => $location->id,
+                'correct_location' =>$correctLocation->id ,
             ];
 
             Mail::to('maha1822003@gmail.com')->send(new PlacementErrorMail($emailData));
 
-            // Fetch any errors related to this product
-            $errors = LocationCheck::where('product_id', $productID)->get();
-
 
             // Mark the barcode as processed
-            session()->push('processed_barcodes', $productID);
             $errorReports = PlacementErrorReport::all();
 
+
+            session()->put('product', [
+                'product_id' => $product->id,
+                'product_name' => $product->title,
+                'product_quantity' => $product->quantity,
+                'zone_name' => $correctLocation->zone_name,
+                'rack' => $correctLocation->rack,
+            ]);
             // Return the error reports as a JSON response
-            response()->json([
-                'assigned_product' => session('assigned_product'),
+            return response()->json([
+                'product' => session('product'),
                 'success' => true,
                 'error' => $errorReports,
-                'wrong_location' => $fixedLocationId,
-                'correct_location' =>$correctLocation,
-            ], 400);
-
-            return view('mainPage', [
-                'location' => $location,
-                'locationCurrentcapacity' => $locationCurrentcapacity,
-                'locationCapacity' => $locationCapacity,
-                'locationzone' => $locationzone,
-                'assigned_product' => session('assigned_product'),
-                'errorReports' => $errorReports,
-                'wrong_location' => $fixedLocationId,
-                'correct_location' => $correctLocation,
+                'location' => $location->id,
+                'locationCurrentcapacity' => $location->current_capacity,
+                'locationCapacity' => $location->capacity,
+                'locationzone' => $location->zone_name,
+                'wrong_location' => $location->id,
+                'correct_location' => $correctLocation->id,
             ]);
+            
+
+            
         
         }
     }

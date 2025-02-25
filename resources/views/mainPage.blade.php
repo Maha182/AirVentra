@@ -60,14 +60,14 @@
             </div>
         </div>
         @php
-            $product = session('assigned_product', []);
+            $product = session('product', []);
         @endphp
         <div class="col-md-6">
             <div class="bg-light p-4 border" style="height: 330px;">
                 <h4 class="section-title">Scanned Product</h4>
                 <p>Product ID: <strong id="product-id">{{ $product['product_id'] ?? '' }}</strong></p>
                 <p>Product Name: <strong id="product-name">{{ $product['product_name'] ?? '' }}</strong></p>
-                <p>Rack Number: <strong id="product-rack">{{ $product['rack'] ?? '' }}</strong></p>
+                <p>Assigned Rack Number: <strong id="product-rack">{{ $product['rack'] ?? '' }}</strong></p>
                 <p>Product Zone: <strong id="product-zone">{{ $product['zone_name'] ?? '' }}</strong></p>
                 <p>Product Quantity: <strong id="product-quantity">{{ $product['product_quantity'] ?? '' }}</strong></p>
 
@@ -92,7 +92,7 @@
         <!-- Scanning Progress -->
         <div class="col-md-6">
             <div class="bg-light p-4 border" style="height: 330px;">
-                <h4 class="section-title">Rack # <span id="rack-id"> {{ $location->id ?? '' }}</span></h4>
+                <h4 class="section-title">Rack # <span id="rack-id"> {{ $location ?? '' }}</span></h4>
                 <div class="progress my-3">
                     <div class="progress-bar" id="progress-bar" role="progressbar" 
                         aria-valuemax="100">
@@ -188,7 +188,7 @@
         console.log("Last Scanned Barcode from sessionStorage:", lastScannedBarcode);
 
         function fetchProductData() {
-            fetch('/AirVentra/sendLocationData')
+            fetch('/AirVentra/check-placement')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -198,29 +198,29 @@
                 .then(data => {
                     console.log("Received data:", data);
 
-                    if (data.success && data.assigned_product) {
-                        let assignedProduct = data.assigned_product;
-                        let newBarcode = assignedProduct.product_id;
+                    if (data.success && data.product) {
+                        let product = data.product;
+                        let newBarcode = product.product_id;
 
                         console.log("New Barcode:", newBarcode);
 
                         if (newBarcode && newBarcode !== lastScannedBarcode) {
-                            console.log("New barcode detected!");
+                        console.log("New barcode detected!");
 
-                            // Update sessionStorage immediately
-                            sessionStorage.setItem('lastScannedBarcode', newBarcode);
-                            lastScannedBarcode = newBarcode; // Update variable
+                        // Update sessionStorage immediately
+                        sessionStorage.setItem('lastScannedBarcode', newBarcode);
+                        lastScannedBarcode = newBarcode; // Update variable
 
-                            // First fetch the placement check data
-                            fetch('/AirVentra/check-placement', {
-                                method: 'GET',
-                                headers: { 'Content-Type': 'application/json' }
-                            })
+                        // First fetch the placement check data
+                        fetch('/AirVentra/check-placement') // Fetch placement check data
                             .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! Status: ${response.status}`);
+                                }
                                 return response.json(); // Return the response data to process errors
                             })
                             .then(() => {
-                                // Fetch the error reports after the placement check
+                                // After the placement check, fetch the error reports
                                 return fetch('/AirVentra/mainPage');
                             })
                             .then(response => {
@@ -258,27 +258,28 @@
                                 console.error("Error fetching placement check or error reports:", error);
                             });
 
-                            // Additional logic for updating the product UI (e.g., product details, progress bar, etc.)
-                            document.getElementById('product-id').innerText = assignedProduct.product_id || '';
-                            document.getElementById('product-name').innerText = assignedProduct.product_name || '';
-                            document.getElementById('product-rack').innerText = assignedProduct.rack || '';
-                            document.getElementById('product-zone').innerText = assignedProduct.zone_name || '';
-                            document.getElementById('product-quantity').innerText = assignedProduct.product_quantity || '';
+                        // Additional logic for updating the product UI (e.g., product details, progress bar, etc.)
+                        document.getElementById('product-id').innerText = product.product_id || '';
+                        document.getElementById('product-name').innerText = product.product_name || '';
+                        document.getElementById('product-rack').innerText = product.rack || '';
+                        document.getElementById('product-zone').innerText = product.zone_name || '';
+                        document.getElementById('product-quantity').innerText = product.product_quantity || '';
 
-                            let currentCapacity = assignedProduct.current_capacity || 0;
-                            let totalCapacity = assignedProduct.capacity || 1;
-                            let scanPercentage = (totalCapacity > 0) ? (currentCapacity / totalCapacity) * 100 : 0;
+                        let currentCapacity = data.locationCurrentcapacity || 0;
+                        let totalCapacity = data.locationCapacity || 1;
+                        let scanPercentage = (totalCapacity > 0) ? (currentCapacity / totalCapacity) * 100 : 0;
 
-                            progressBar.style.width = `${scanPercentage}%`;
-                            progressBar.setAttribute('aria-valuenow', scanPercentage);
-                            progressBar.innerText = `${Math.round(scanPercentage)}% Scanned`;
+                        progressBar.style.width = `${scanPercentage}%`;
+                        progressBar.setAttribute('aria-valuenow', scanPercentage);
+                        progressBar.innerText = `${Math.round(scanPercentage)}% Scanned`;
 
-                            // Update Rack and Location info
-                            document.getElementById('rack-id').innerText = assignedProduct.location || '';
-                            document.getElementById('current-location').innerText = assignedProduct.zone_name || '';
-                            document.getElementById('rack-capacity').innerText = assignedProduct.capacity || '';
-                            document.getElementById('status').innerText = scanPercentage < 100 ? 'Status: Incomplete' : 'Status: Complete';
-                        }
+                        document.getElementById('rack-id').innerText = data.location || '';
+                        document.getElementById('current-location').innerText = data.locationzone || '';
+                        document.getElementById('rack-capacity').innerText = data.locationCapacity || '';
+
+                        document.getElementById('status').innerText = scanPercentage < 100 ? 'Status: Incomplete' : 'Status: Complete';
+                    }
+
                     }
                 })
                 .catch(error => {

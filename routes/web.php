@@ -96,7 +96,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sendLocationData', [PythonController::class, 'sendLocationData'])->name('sendLocationData');
     Route::post('/assign-product', [PythonController::class, 'assignProductToLocation'])->name('assignProduct');
 
-    Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('checkPlacement');
+    Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('check-placement');
     Route::get('/mainPage', [PlacementController::class, 'getErrorReports'])->name('mainPage');
 
     Route::get('/clear-session', [PythonController::class, 'clearSession'])->name('clearSession');
