@@ -73,8 +73,8 @@ def get_barcode():
     return jsonify({"barcode": last_detected_barcode})
 
 def gen():
-    cap = cv2.VideoCapture(0)
-    # cap = cv2.VideoCapture('http://192.168.100.78:8080/video')
+    # cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture('http://10.241.2.51:8080/video')
     if not cap.isOpened():
         print("Error: Cannot open camera")
         return

@@ -27,31 +27,29 @@ class PlacementController extends Controller
             return response()->json(['error' => 'Product not found.'], 400);
         }
 
-        $fixedLocationId = 'L0008'; // Example: 'L0008' is your fixed location ID
-
         // Fetch the fixed location from the database
-        $location = Location::find($fixedLocationId);
-        if (!$location) {
-            \Log::error('Fixed Location not found in database', ['location_id' => $fixedLocationId]);
-            return response()->json(['error' => 'Fixed Location not found.'], 400);
-        }
+        $location = Location::find('L0005');
+        $locationCurrentcapacity = $location-> current_capacity;
+        $locationCapacity = $location-> capacity;
+        $locationzone = $location-> zone_name;
+
 
         // Correct location for the product
         $correctLocation = $product->location_id;
 
-        if ($location->id === $correctLocation) {
+        if ($fixedLocationId === $correctLocation) {
             // Mark the barcode as processed
             session()->push('processed_barcodes', $productID);
             return response()->json(['success' => 'The product is in the correct place.']);
         } else {
-            \Log::info('Product in wrong location', ['product_id' => $productID, 'wrong_location' => $location->id, 'correct_location' => $correctLocation]);
+            \Log::info('Product in wrong location', ['product_id' => $productID, 'wrong_location' =>  $fixedLocationId, 'correct_location' => $correctLocation]);
 
             // Log the error in placement_error table
             PlacementErrorReport::create([
                 'product_id' => $productID,  // Use correct variable
                 'scan_date' => Carbon::now(),
-                'wrong_location' => $correctLocation,
-                'correct_location' =>$location->id ,
+                'wrong_location' => $fixedLocationId,
+                'correct_location' =>$correctLocation ,
                 'status' => 'Pending'
             ]);
             
@@ -59,8 +57,8 @@ class PlacementController extends Controller
             // Send an email notification
             $emailData = [
                 'product' => $product,
-                'wrong_location' => $correctLocation,
-                'correct_location' => $location->id
+                'wrong_location' => $fixedLocationId,
+                'correct_location' =>$correctLocation ,
             ];
 
             Mail::to('maha1822003@gmail.com')->send(new PlacementErrorMail($emailData));
@@ -74,13 +72,25 @@ class PlacementController extends Controller
             $errorReports = PlacementErrorReport::all();
 
             // Return the error reports as a JSON response
-            return response()->json([
+            response()->json([
                 'assigned_product' => session('assigned_product'),
                 'success' => true,
                 'error' => $errorReports,
-                'wrong_location' => $correctLocation,
-                'correct_location' => $location->id
+                'wrong_location' => $fixedLocationId,
+                'correct_location' =>$correctLocation,
             ], 400);
+
+            return view('mainPage', [
+                'location' => $location,
+                'locationCurrentcapacity' => $locationCurrentcapacity,
+                'locationCapacity' => $locationCapacity,
+                'locationzone' => $locationzone,
+                'assigned_product' => session('assigned_product'),
+                'errorReports' => $errorReports,
+                'wrong_location' => $fixedLocationId,
+                'correct_location' => $correctLocation,
+            ]);
+        
         }
     }
 

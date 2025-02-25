@@ -85,9 +85,9 @@ Route::group(['middleware' => 'auth'], function () {
          })->name('storage-assignment');
   
 
-    Route::get('/main-Page', function () {
-        return view('mainPage');  
-        })->name('mainPage');
+    // Route::get('/main-Page', function () {
+    //     return view('mainPage');  
+    //     })->name('mainPage');
 
 
     Route::get('/lookup/location', [StorageAssignmentController::class, 'lookupLocation'])->name('lookup.location');
@@ -97,7 +97,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/assign-product', [PythonController::class, 'assignProductToLocation'])->name('assignProduct');
 
     Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('checkPlacement');
-    Route::get('/mainPage', [PlacementController::class, 'getErrorReports'])->name('getErrorReports');
+    Route::get('/mainPage', [PlacementController::class, 'getErrorReports'])->name('mainPage');
 
     Route::get('/clear-session', [PythonController::class, 'clearSession'])->name('clearSession');
     

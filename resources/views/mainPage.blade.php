@@ -92,19 +92,19 @@
         <!-- Scanning Progress -->
         <div class="col-md-6">
             <div class="bg-light p-4 border" style="height: 330px;">
-                <h4 class="section-title">Rack # <span id="rack-id"> {{ $product['location'] ?? '' }}</span></h4>
+                <h4 class="section-title">Rack # <span id="rack-id"> {{ $location->id ?? '' }}</span></h4>
                 <div class="progress my-3">
                     <div class="progress-bar" id="progress-bar" role="progressbar" 
                         aria-valuemax="100">
-                         0% Scanned <!-- Default text, will be updated by JavaScript -->
+                        0% Scanned <!-- Default text, will be updated by JavaScript -->
                     </div>
                 </div>
                 <div class="border p-3">
                     @php
-                        $scanPercentage = (session('assigned_product.current_capacity') ?? 0) / (session('assigned_product.capacity') ?? 1) * 100;
+                        $scanPercentage = ($locationCurrentcapacity ?? 0) / ($locationCapacity ?? 1) * 100;
                     @endphp
-                    <p>Current Location: <strong id="current-location">{{ session('assigned_product.zone_name') ?? '' }}</strong></p>
-                    <p>Rack Capacity: <strong id="rack-capacity">{{ session('assigned_product.capacity') ?? '' }}</strong></p>
+                    <p>Current Location: <strong id="current-location">{{ $locationzone ?? '' }}</strong></p>
+                    <p>Rack Capacity: <strong id="rack-capacity">{{ $locationCapacity ?? '' }}</strong></p>
                     <p id="status">Status: 
                         @if($scanPercentage < 100)
                             <span class="text-danger">Incomplete</span>

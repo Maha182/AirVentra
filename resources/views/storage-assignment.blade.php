@@ -75,7 +75,6 @@
                 <div class="justify-content-between align-items-start gap-3 col-md-6 p-4">
                     <p class="mb-4">Product ID: <strong id="product-id">{{ session('assigned_product.product_id') ?? '' }}</strong></p>
                     <p class="mb-4">Product Name: <strong id="product-name">{{ session('assigned_product.product_name') ?? '' }}</strong></p>
-                    <p class="mb-4">Product Description: <strong id="product-description">{{ session('assigned_product.product_description') ?? '' }}</strong></p>
                     <p class="mb-4">Product Quantity: <strong id="product-quantity">{{ session('assigned_product.product_quantity') ?? '' }}</strong></p>
                 </div>
             </div>
@@ -91,7 +90,7 @@
                 <!-- Header Section -->
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="section-title">Recommended Location #ID: 
-                        <span class="text-primary" id="Location_id">{{ session('assigned_product.location') ?? ' ' }}</span>
+                        <span class="text-primary" id="Location_id">{{ session('assigned_product.assigned_location') ?? ' ' }}</span>
                     </h4>
                     <h4 class="section-title align-items-center">Storage Utilization</h4> <!-- Moved Title to Same Line -->
                 </div>
@@ -186,7 +185,6 @@
         // Clear product display fields
         document.getElementById('product-id').innerText = '';
         document.getElementById('product-name').innerText = '';
-        document.getElementById('product-description').innerText = '';
         document.getElementById('product-quantity').innerText = '';
 
         // Clear Rack, Location, Capacity, and Status fields
@@ -264,10 +262,9 @@
                             // Update the product UI with new data
                             document.getElementById('product-id').innerText = assignedProduct.product_id || '';
                             document.getElementById('product-name').innerText = assignedProduct.product_name || '';
-                            document.getElementById('product-description').innerText = assignedProduct.product_description || '';
                             document.getElementById('product-quantity').innerText = assignedProduct.product_quantity || '';
 
-                            document.getElementById('Location_id').innerText = assignedProduct.location || '';
+                            document.getElementById('Location_id').innerText = assignedProduct.assigned_location || '';
                             document.getElementById('zone_name').innerText = assignedProduct.zone_name || '';
                             document.getElementById('aisle').innerText = assignedProduct.aisle || '';
                             document.getElementById('rack').innerText = assignedProduct.rack || '';

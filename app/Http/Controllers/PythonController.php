@@ -39,15 +39,15 @@ class PythonController extends Controller
             return redirect()->route($redirectTo)->with('error', 'Product not found');
         }
 
-        // $description = $product->description;
+        $description = $product->description;
 
-        // // // Send description to the Python API
-        // $response = $client->post('http://127.0.0.1:5001/getData', [
-        //     'json' => ['description' => $description]
-        // ]);
+        // // Send description to the Python API
+        $response = $client->post('http://127.0.0.1:5001/getData', [
+            'json' => ['description' => $description]
+        ]);
 
-        // $result = json_decode($response->getBody()->getContents(), true);
-        // $zone_name = $result['zone_name'] ?? null;
+        $result = json_decode($response->getBody()->getContents(), true);
+        $zone_name = $result['zone_name'] ?? null;
 
 
         // Fetch zone name from the location table
@@ -55,7 +55,6 @@ class PythonController extends Controller
         // if (!$zone_name) {
         //     return redirect()->route($redirectTo)->with('error', 'Location not found');
         // }
-        $zone_name = 'Dry Zone';
 
         return $this->assignLocation($product, $zone_name, $redirectTo);
     }
@@ -79,7 +78,7 @@ class PythonController extends Controller
         }
 
 
-            $errors = PlacementErrorReport::with('product')->get();
+        $errors = PlacementErrorReport::with('product')->get();
 
         // Store product assignment in session
         session()->put('assigned_product', [
@@ -94,14 +93,8 @@ class PythonController extends Controller
             'rack' => $location->rack,
             'current_capacity' => $location->current_capacity,
             'capacity' => $location->capacity,
-            'errors' => $errors->map(function ($error) {
-                return [
-                    'wrong_location' => $error->wrong_location,
-                    'correct_location' => $error->correct_location, // Access the correct location here
-                    'product_id' => $error->product->id,
-                    'status' =>$error->status,
-                ];
-            }),
+            // 'errors' => $errors->map(function ($error) {
+            // }),
         ]);
 
         return response()->json([
