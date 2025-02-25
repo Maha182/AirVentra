@@ -113,109 +113,105 @@
       chart.updateOptions(newOpt)
       })
     }
-  if (document.querySelectorAll('#d-main').length) {
-    const options = {
-        series: [{
-            name: 'total',
-            data: [94, 80, 94, 80, 94, 80, 94]
-        }, {
-            name: 'pipline',
-            data: [72, 60, 84, 60, 74, 60, 78]
-        }],
-        chart: {
-            fontFamily: '"Inter", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-            height: 245,
-            type: 'area',
-            toolbar: {
-                show: false
-            },
-            sparkline: {
-                enabled: false,
-            },
-        },
-        colors: ["#3a57e8", "#4bc7d2"],
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth',
-            width: 3,
-        },
-        yaxis: {
-          show: true,
-          labels: {
-            show: true,
-            minWidth: 19,
-            maxWidth: 19,
-            style: {
-              colors: "#8A92A6",
-            },
-            offsetX: -5,
+    if (document.querySelectorAll('#d-main').length) {
+      const options = {
+          series: [{
+              name: 'total',
+              data: [94, 80, 94, 80, 94, 80, 94]
+          }],
+          chart: {
+              fontFamily: '"Inter", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+              height: 245,
+              type: 'area',
+              toolbar: {
+                  show: false
+              },
+              sparkline: {
+                  enabled: false,
+              },
           },
-        },
-        legend: {
-            show: false,
-        },
-        xaxis: {
+          colors: ["#3a57e8"],
+          dataLabels: {
+              enabled: false
+          },
+          stroke: {
+              curve: 'smooth',
+              width: 3,
+          },
+          yaxis: {
+            show: true,
             labels: {
-                minHeight:22,
-                maxHeight:22,
-                show: true,
-                style: {
-                  colors: "#8A92A6",
-                },
+              show: true,
+              minWidth: 19,
+              maxWidth: 19,
+              style: {
+                colors: "#8A92A6",
+              },
+              offsetX: -5,
             },
-            lines: {
-                show: false  //or just here to disable only x axis grids
-            },
-            categories: ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug"]
-        },
-        grid: {
-            show: false,
-        },
-        fill: {
+          },
+          legend: {
+              show: false,
+          },
+          xaxis: {
+              labels: {
+                  minHeight: 22,
+                  maxHeight: 22,
+                  show: true,
+                  style: {
+                    colors: "#8A92A6",
+                  },
+              },
+              lines: {
+                  show: false
+              },
+              categories: ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug"]
+          },
+          grid: {
+              show: false,
+          },
+          fill: {
+              type: 'gradient',
+              gradient: {
+                  shade: 'dark',
+                  type: "vertical",
+                  shadeIntensity: 0,
+                  inverseColors: true,
+                  opacityFrom: .4,
+                  opacityTo: .1,
+                  stops: [0, 50, 80],
+                  colors: ["#3a57e8"]
+              }
+          },
+          tooltip: {
+            enabled: true,
+          },
+      };
+  
+      const chart = new ApexCharts(document.querySelector("#d-main"), options);
+      chart.render();
+  
+      document.addEventListener('ColorChange', (e) => {
+        const newOpt = {
+          colors: [e.detail.detail1],
+          fill: {
             type: 'gradient',
             gradient: {
                 shade: 'dark',
                 type: "vertical",
                 shadeIntensity: 0,
-                gradientToColors: undefined, // optional, if not defined - uses the shades of same color in series
+                gradientToColors: [e.detail.detail1],
                 inverseColors: true,
                 opacityFrom: .4,
                 opacityTo: .1,
-                stops: [0, 50, 80],
-                colors: ["#3a57e8", "#4bc7d2"]
+                stops: [0, 50, 60],
             }
-        },
-        tooltip: {
-          enabled: true,
-        },
-    };
-
-    const chart = new ApexCharts(document.querySelector("#d-main"), options);
-    chart.render();
-    document.addEventListener('ColorChange', (e) => {
-      console.log(e)
-      const newOpt = {
-        colors: [e.detail.detail1, e.detail.detail2],
-        fill: {
-          type: 'gradient',
-          gradient: {
-              shade: 'dark',
-              type: "vertical",
-              shadeIntensity: 0,
-              gradientToColors: [e.detail.detail1, e.detail.detail2], // optional, if not defined - uses the shades of same color in series
-              inverseColors: true,
-              opacityFrom: .4,
-              opacityTo: .1,
-              stops: [0, 50, 60],
-              colors: [e.detail.detail1, e.detail.detail2],
-          }
-      },
-     }
-      chart.updateOptions(newOpt)
-    })
-  }
+          },
+        }
+        chart.updateOptions(newOpt)
+      })
+    }
+  
   if ($('.d-slider1').length > 0) {
       const options = {
           centeredSlides: false,

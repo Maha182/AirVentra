@@ -1,13 +1,11 @@
 <?php
-
 namespace App\DataTables;
 
-use App\Models\User;
+use App\Models\Product;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
-
-class UsersDataTable extends DataTable
+class ProductsDataTable extends DataTable
 {
     /**
      * Build DataTable class.
@@ -19,19 +17,16 @@ class UsersDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            
-            ->addColumn('full_name', function ($query) {
-                return $query->first_name . ' ' . $query->last_name;
-            })
-            ->editColumn('created_at', function ($query) {
-                return date('Y/m/d', strtotime($query->created_at));
-            })
-
-            
-            ->addColumn('action', 'users.action')
+            ->addColumn('action', 'products.action')
             ->rawColumns(['action']);
+            // ->addColumn('action', function ($product) {
+            //     return '<a href="'.route('products.edit', $product->id).'" class="btn btn-sm btn-warning">Edit</a>
+            //             <form action="'.route('products.destroy', $product->id).'" method="POST" style="display:inline-block;">
+            //                 '.csrf_field().method_field('DELETE').'
+            //                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure?\')">Delete</button>
+            //             </form>';
+            // });
     }
-    
 
     /**
      * Get query source of dataTable.
@@ -39,20 +34,15 @@ class UsersDataTable extends DataTable
      * @param \App\Models\User $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    
-    public function query()
+    public function query(Product $model)
     {
-        $model = User::select(['id', 'first_name', 'last_name', 'email', 'role', 'phone_number', 'hire_date', 'supervisor_id', 'created_at']);
-        return $this->applyScopes($model); 
+        return $model->newQuery();
     }
-
-
     /**
      * Optional method if you want to use html builder.
      *
      * @return \Yajra\DataTables\Html\Builder
      */
-    
     public function html()
     {
         return $this->builder()
@@ -74,7 +64,6 @@ class UsersDataTable extends DataTable
                     ]
                 ]);
     }
-
     /**
      * Get columns.
      *
@@ -84,13 +73,14 @@ class UsersDataTable extends DataTable
     {
         return [
             ['data' => 'id', 'name' => 'id', 'title' => 'ID'],
-            ['data' => 'full_name', 'name' => 'full_name', 'title' => 'Full Name', 'orderable' => false],
-            ['data' => 'phone_number', 'name' => 'phone_number', 'title' => 'Phone Number'],
-            ['data' => 'email', 'name' => 'email', 'title' => 'Email'],
-            ['data' => 'role', 'name' => 'role', 'title' => 'Role'],
-            ['data' => 'hire_date', 'name' => 'hire_date', 'title' => 'Hire Date'],
-            ['data' => 'supervisor_id', 'name' => 'supervisor_id', 'title' => 'Supervisor ID'],
-            ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Join Date'],
+            ['data' => 'title', 'name' => 'title', 'title' => 'Title'],
+            ['data' => 'description', 'name' => 'description', 'title' => 'Description'],
+            ['data' => 'main_category', 'name' => 'main_category', 'title' => 'Main Category'],
+            ['data' => 'quantity', 'name' => 'quantity', 'title' => 'Quantity'],
+            ['data' => 'location_id', 'name' => 'location_id', 'title' => 'Location ID'],
+            ['data' => 'barcode_path', 'name' => 'barcode_path', 'title' => 'Barcode Path'],
+            ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Created At'],
+            ['data' => 'updated_at', 'name' => 'updated_at', 'title' => 'Updated At'],
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -99,5 +89,5 @@ class UsersDataTable extends DataTable
                 ->addClass('text-center hide-search'),
         ];
     }
-
+    
 }

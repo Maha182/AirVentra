@@ -7,6 +7,7 @@ use App\Http\Controllers\Security\RolePermission;
 use App\Http\Controllers\Security\RoleController;
 use App\Http\Controllers\Security\PermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Artisan;
 // Packages
 use Illuminate\Support\Facades\Route;
@@ -69,7 +70,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [dashController::class, 'index'])->name('dashboard');
     // Users Module
     Route::resource('users', UserController::class);
-
+    Route::resource('products', ProductController::class);
     // Inside the 'auth' or 'dashboard' middleware group
     Route::get('/options', function () {
     return view('optionspage');  
