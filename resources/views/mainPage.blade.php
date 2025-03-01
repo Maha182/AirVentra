@@ -72,10 +72,8 @@
                 <p>Product Quantity: <strong id="product-quantity">{{ $product['product_quantity'] ?? '' }}</strong></p>
 
                 <div class="d-flex gap-2">
-                    <form action="{{ route('updateInventory') }}" method="POST" class="flex-grow-1">
-                        @csrf
-                        <button type="submit" class="btn btn-primary w-100">Check Rack level</button>
-                    </form>
+                    <button id="checkRackLevelButton" class="btn btn-primary flex-grow-1">Check Rack Level</button>
+
                     <form action="{{ route('Reset') }}" method="POST" class="flex-grow-1">
                         @csrf
                         <button type="submit" class="btn btn-primary w-100">Next Rack</button>
@@ -105,12 +103,8 @@
                     @endphp
                     <p>Current Location: <strong id="current-location">{{ $locationzone ?? '' }}</strong></p>
                     <p>Rack Capacity: <strong id="rack-capacity">{{ $locationCapacity ?? '' }}</strong></p>
-                    <p id="status">Status: 
-                        @if($scanPercentage < 100)
-                            <span class="text-danger">Incomplete</span>
-                        @else
-                            <span class="text-success">Complete</span>
-                        @endif
+                    <p >Status: 
+                    <strong id="status" data-status="{{ session('status') }}">{{ $status ?? '' }}</strong>
                     </p>
                 </div>
             </div>
@@ -130,26 +124,10 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @if($errorReports->isEmpty()) <!-- Check if there are any error reports -->
-                            <tr><td colspan="4">No errors found.</td></tr>
-                        @else
-                            @foreach($errorReports as $error)
-                                <tr>
-                                    <td>{{ $error->product_id }}</td>
-                                    <td>{{ $error->wrong_location }}</td>
-                                    <td>{{ $error->correct_location }}</td>
-                                    <td>
-                                        @if ($error->status == 'Pending')
-                                            <button class="btn btn-danger btn-sm">Pending</button>
-                                        @else
-                                            <button class="btn btn-success btn-sm">Corrected</button>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @endif
+                    <tbody id="error-report-body">
+                        <!-- This will be populated dynamically by JavaScript -->
                     </tbody>
+
                 </table>
 
 
@@ -161,135 +139,114 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         let lastScannedBarcode = sessionStorage.getItem('lastScannedBarcode') || '';
-        let processedProducts = new Set(); // Track processed product IDs
 
-        // Remove scanned product details from session storage on refresh
+        // Clear session storage on refresh
         sessionStorage.removeItem('lastScannedBarcode');
-
-        // Clear product display fields
         document.getElementById('product-id').innerText = '';
         document.getElementById('product-name').innerText = '';
         document.getElementById('product-rack').innerText = '';
         document.getElementById('product-zone').innerText = '';
         document.getElementById('product-quantity').innerText = '';
-
-        // Reset progress bar
+        document.getElementById('rack-id').innerText = '';
+        document.getElementById('current-location').innerText = '';
+        document.getElementById('rack-capacity').innerText = '';
+        
         let progressBar = document.getElementById('progress-bar');
         progressBar.style.width = `0%`;
         progressBar.setAttribute('aria-valuenow', 0);
         progressBar.innerText = `0% Scanned`;
-
-        // Clear Rack, Location, Capacity, and Status fields
-        document.getElementById('rack-id').innerText = '';
-        document.getElementById('current-location').innerText = '';
-        document.getElementById('rack-capacity').innerText = '';
-        document.getElementById('status').innerText = 'Status: Incomplete'; // Default text
-
-        console.log("Last Scanned Barcode from sessionStorage:", lastScannedBarcode);
-
-        function fetchProductData() {
-            fetch('/AirVentra/check-placement')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
+        
+        function fetchBarcodeAndCheckPlacement() {
+            fetch('/AirVentra/getBarcode')
+                .then(response => response.json())
                 .then(data => {
-                    console.log("Received data:", data);
+                    if (data.barcode && data.barcode !== lastScannedBarcode) {
+                        lastScannedBarcode = data.barcode;
+                        sessionStorage.setItem('lastScannedBarcode', lastScannedBarcode);
 
-                    if (data.success && data.product) {
-                        let product = data.product;
-                        let newBarcode = product.product_id;
-
-                        console.log("New Barcode:", newBarcode);
-
-                        if (newBarcode && newBarcode !== lastScannedBarcode) {
-                        console.log("New barcode detected!");
-
-                        // Update sessionStorage immediately
-                        sessionStorage.setItem('lastScannedBarcode', newBarcode);
-                        lastScannedBarcode = newBarcode; // Update variable
-
-                        // First fetch the placement check data
-                        fetch('/AirVentra/check-placement') // Fetch placement check data
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! Status: ${response.status}`);
-                                }
-                                return response.json(); // Return the response data to process errors
-                            })
-                            .then(() => {
-                                // After the placement check, fetch the error reports
-                                return fetch('/AirVentra/mainPage');
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! Status: ${response.status}`);
-                                }
-                                return response.json(); // Parse the JSON response
-                            })
+                        fetch(`/AirVentra/check-placement?barcode=${lastScannedBarcode}`)
+                            .then(response => response.json())
                             .then(data => {
-                                console.log("Received error reports:", data);
+                                let product = data.product;
+                                document.getElementById('product-id').innerText = product.product_id || '';
+                                document.getElementById('product-name').innerText = product.product_name || '';
+                                document.getElementById('product-rack').innerText = product.rack || '';
+                                document.getElementById('product-zone').innerText = product.zone_name || '';
+                                document.getElementById('product-quantity').innerText = product.product_quantity || '';
+                                document.getElementById('rack-id').innerText = data.location || '';
+                                document.getElementById('current-location').innerText = data.locationzone || '';
+                                document.getElementById('rack-capacity').innerText = data.locationCapacity || '';
 
-                                // Dynamically update the UI with the error reports
-                                const tableBody = document.getElementById('error-report-body');
-                                tableBody.innerHTML = ''; // Clear any previous errors
-
-                                // Check if there are errors
-                                if (data.length > 0) {
-                                    data.forEach(error => {
-                                        const row = document.createElement('tr');
-
-                                        row.innerHTML = `
-                                            <td>${error.product_id}</td>
-                                            <td>${error.wrong_location}</td>
-                                            <td>${error.correct_location}</td>
-                                            <td>${error.status === 'Pending' ? '<button class="btn btn-danger btn-sm">Pending</button>' : '<button class="btn btn-success btn-sm">Corrected</button>'}</td>
-                                        `;
-
-                                        tableBody.appendChild(row);
-                                    });
-                                } else {
-                                    tableBody.innerHTML = `<tr><td colspan="4">No errors found.</td></tr>`;
-                                }
-                            })
-                            .catch(error => {
-                                console.error("Error fetching placement check or error reports:", error);
+                                let scanPercentage = data.locationCapacity > 0 ? (data.locationCurrentcapacity / data.locationCapacity) * 100 : 0;
+                                let progressBar = document.getElementById('progress-bar');
+                                progressBar.style.width = `${scanPercentage}%`;
+                                progressBar.setAttribute('aria-valuenow', scanPercentage);
+                                progressBar.innerText = `${Math.round(scanPercentage)}% Scanned`;
                             });
-
-                        // Additional logic for updating the product UI (e.g., product details, progress bar, etc.)
-                        document.getElementById('product-id').innerText = product.product_id || '';
-                        document.getElementById('product-name').innerText = product.product_name || '';
-                        document.getElementById('product-rack').innerText = product.rack || '';
-                        document.getElementById('product-zone').innerText = product.zone_name || '';
-                        document.getElementById('product-quantity').innerText = product.product_quantity || '';
-
-                        let currentCapacity = data.locationCurrentcapacity || 0;
-                        let totalCapacity = data.locationCapacity || 1;
-                        let scanPercentage = (totalCapacity > 0) ? (currentCapacity / totalCapacity) * 100 : 0;
-
-                        progressBar.style.width = `${scanPercentage}%`;
-                        progressBar.setAttribute('aria-valuenow', scanPercentage);
-                        progressBar.innerText = `${Math.round(scanPercentage)}% Scanned`;
-
-                        document.getElementById('rack-id').innerText = data.location || '';
-                        document.getElementById('current-location').innerText = data.locationzone || '';
-                        document.getElementById('rack-capacity').innerText = data.locationCapacity || '';
-
-                        document.getElementById('status').innerText = scanPercentage < 100 ? 'Status: Incomplete' : 'Status: Complete';
-                    }
-
                     }
                 })
-                .catch(error => {
-                    console.error("Error fetching product data:", error);
-                });
+                .catch(error => console.error("Error fetching barcode or checking placement:", error));
         }
 
-        // Fetch product data every 5 seconds
-        setInterval(fetchProductData, 3000);
+        function fetchStatusUpdate() {
+            fetch('/AirVentra/update_inventory')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').innerText = data.status || '';
+            })
+            .catch(error => console.error("Error updating inventory status:", error));
+        }
+
+        const checkButton = document.getElementById('checkRackLevelButton');
+        
+        if (checkButton) {
+            checkButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevents default form submission
+                fetchStatusUpdate();
+            });
+        } else {
+            console.error("Button #checkRackLevelButton not found!");
+        }
+
+
+
+        function fetchErrorReports() {
+        fetch('/AirVentra/getErrorReports')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('error-report-body');
+                tableBody.innerHTML = '';  // Clear existing content
+
+                if (data.errorReports.length > 0) {
+                    // Iterate over the error reports and populate the table
+                    data.errorReports.forEach(error => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${error.product_id}</td>
+                            <td>${error.wrong_location}</td>
+                            <td>${error.correct_location}</td>
+                            <td>
+                                ${error.status === 'Pending' 
+                                    ? '<button class="btn btn-danger btn-sm">Pending</button>' 
+                                    : '<button class="btn btn-success btn-sm">Corrected</button>'}
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    // If no error reports, display a "No errors found" message
+                    tableBody.innerHTML = `<tr><td colspan="4">No errors found.</td></tr>`;
+                }
+            })
+            .catch(error => console.error("Error fetching error reports:", error));
+    }
+
+        fetchErrorReports();
+        setInterval(fetchErrorReports, 3000);
+
+        setInterval(fetchBarcodeAndCheckPlacement, 3000);
     });
+
 </script>
 
 

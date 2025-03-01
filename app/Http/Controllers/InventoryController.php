@@ -71,7 +71,11 @@ class InventoryController extends Controller
             Mail::to('maha1822003@gmail.com')->send(new InventoryAlertMail($emailData));
         }
 
-        return redirect()->route('mainPage')->with('success', 'Inventory levels checked successfully');
+        return response()->json([
+            'status' => $status,
+            'success' => true,
+            'redirect' => route('mainPage',compact('status'))
+        ]);
 
         
     }
