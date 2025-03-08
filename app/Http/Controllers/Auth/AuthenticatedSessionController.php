@@ -18,6 +18,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
+        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'barcode']);
+        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
         return view('auth.login');
     }
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\LocationCheck;
 use App\Models\LocationCapacityCheck;
+use Illuminate\Support\Facades\Http;
+
 class dashController extends Controller
 {
     /*
@@ -12,6 +14,9 @@ class dashController extends Controller
      */
     public function index(Request $request)
     {
+        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'barcode']);
+        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
+
         $locationChecks = LocationCheck::all();
 
         // Fetch all records from the location_capacity_checks table
