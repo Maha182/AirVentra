@@ -1,8 +1,8 @@
 @extends('layouts.home.app')
 @section('content')
 
-<div id="features" class="container-fluid bg-light py-5">
-    <h4 class="display-4">Scan Inventory</h4>
+<div id="features" class="container-fluid bg-light py-4">
+    <h4 class="display-5">Scan Inventory</h4>
 
     <style>
     body {
@@ -18,7 +18,12 @@
         cursor: pointer;
     }
     .section-title {
-        font-size: 24px;
+        font-size: 30px;
+        font-weight: bold;
+        color: navy;
+    }
+    .title {
+        font-size: 22px;
         font-weight: bold;
         color: navy;
     }
@@ -48,36 +53,39 @@
     </div>
 @endif
 
-<!-- Current Location and Product Scan Section -->
-<div class="container my-5">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="bg-light p-4 border" style="height: auto;">
-                <h4 class="section-title">Current Location (Live Video Feed with Barcode Detection)</h4>
-                <div class="border mt-3" style="height: 220px; background-color: white;">
-                    <img src="http://127.0.0.1:5000/video_feed" width="100%" height="100%" alt="Live Video Feed">
+<div class="container my-5"> 
+   
+        <div class="col-md-12 bg-light p-2 border">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="p-3 py-2">
+                    <p class="title">Rack # <span id="rack-id">{{ $location ?? '' }}</span></p>
+
+                        <p class="title">Rack Capacity: <strong id="rack-capacity">mm{{ $locationCapacity ?? '' }}</strong></p>
+                        <p class="title">Status: <strong id="status" data-status="{{ session('status') }}">{{ $status ?? '' }}</strong></p>
+                    </div>
+                </div>
+                <!-- Button Container -->
+                <div class="col-md-6 d-flex  align-items-center gap-2 p-3">
+                    <button id="checkRackLevelButton" class="btn btn-primary w-75 py-2">Check Rack Level</button>
+                    <form action="{{ route('Reset') }}" method="POST" class="w-100 text-center">
+                        @csrf
+                        <button type="submit" class="btn btn-primary w-75 py-2">Next Rack</button>
+                    </form>
                 </div>
             </div>
         </div>
-        @php
-            $product = session('product', []);
-        @endphp
-        <div class="col-md-6">
-            <div class="bg-light p-4 border" style="height: 330px;">
-                <h4 class="section-title">Scanned Product</h4>
-                <p>Product ID: <strong id="product-id">{{ $product['product_id'] ?? '' }}</strong></p>
-                <p>Product Name: <strong id="product-name">{{ $product['product_name'] ?? '' }}</strong></p>
-                <p>Assigned Rack Number: <strong id="product-rack">{{ $product['rack'] ?? '' }}</strong></p>
-                <p>Product Zone: <strong id="product-zone">{{ $product['zone_name'] ?? '' }}</strong></p>
-                <p>Product Quantity: <strong id="product-quantity">{{ $product['product_quantity'] ?? '' }}</strong></p>
+</div>
 
-                <div class="d-flex gap-2">
-                    <button id="checkRackLevelButton" class="btn btn-primary flex-grow-1">Check Rack Level</button>
 
-                    <form action="{{ route('Reset') }}" method="POST" class="flex-grow-1">
-                        @csrf
-                        <button type="submit" class="btn btn-primary w-100">Next Rack</button>
-                    </form>
+<!-- Current Location and Product Scan Section -->
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bg-light p-4 border" style="height: auto;">
+                <h4 class="section-title">Current Location (Live Video Feed with Barcode Detection)</h4>
+                <div class="border mt-3" style="height: 330px; background-color: white;">
+                    <img src="http://127.0.0.1:5000/video_feed" width="100%" height="100%" alt="Live Video Feed">
                 </div>
             </div>
         </div>
@@ -87,33 +95,27 @@
 <!-- Scanning Progress and Error Report -->
 <div class="container my-5">
     <div class="row">
-        <!-- Scanning Progress -->
+        @php
+            $product = session('product', []);
+        @endphp
         <div class="col-md-6">
-            <div class="bg-light p-4 border" style="height: 330px;">
-                <h4 class="section-title">Rack # <span id="rack-id"> {{ $location ?? '' }}</span></h4>
-                <div class="progress my-3">
-                    <div class="progress-bar" id="progress-bar" role="progressbar" 
-                        aria-valuemax="100">
-                        0% Scanned <!-- Default text, will be updated by JavaScript -->
-                    </div>
-                </div>
-                <div class="border p-3">
-                    @php
-                        $scanPercentage = ($locationCurrentcapacity ?? 0) / ($locationCapacity ?? 1) * 100;
-                    @endphp
-                    <p>Current Location: <strong id="current-location">{{ $locationzone ?? '' }}</strong></p>
-                    <p>Rack Capacity: <strong id="rack-capacity">{{ $locationCapacity ?? '' }}</strong></p>
-                    <p >Status: 
-                    <strong id="status" data-status="{{ session('status') }}">{{ $status ?? '' }}</strong>
-                    </p>
-                </div>
+            <div class="bg-light p-4 border" style="height: 300px;">
+                <h4 class="section-title">Scanned Product</h4>
+                <p>Product ID: <strong id="product-id">{{ $product['product_id'] ?? '' }}</strong></p>
+                <p>Product Name: <strong id="product-name">{{ $product['product_name'] ?? '' }}</strong></p>
+                <p>Assigned Rack Number: <strong id="product-rack">{{ $product['rack'] ?? '' }}</strong></p>
+                <p>Product Zone: <strong id="product-zone">{{ $product['zone_name'] ?? '' }}</strong></p>
+                <p>Product Quantity: <strong id="product-quantity">{{ $product['product_quantity'] ?? '' }}</strong></p>
+
+                
             </div>
         </div>
+        
         <!-- Error Report -->
         <div class="col-md-6">
-            <div class="bg-light p-4 border" style="height: 330px;">
+            <div class="bg-light p-4 border" style="height: 300px;">
                 <h4 class="section-title">Error Report</h4>
-                <div style="max-height: 220px; overflow-y: auto;">
+                <div style="max-height: 200px; overflow-y: auto;">
                 
                 <table class="table table-bordered error-report-table">
                     <thead>
@@ -150,7 +152,8 @@
         document.getElementById('rack-id').innerText = '';
         document.getElementById('current-location').innerText = '';
         document.getElementById('rack-capacity').innerText = '';
-        
+
+        const checkButton = document.getElementById('checkRackLevelButton');
         let progressBar = document.getElementById('progress-bar');
         progressBar.style.width = `0%`;
         progressBar.setAttribute('aria-valuenow', 0);
@@ -173,15 +176,20 @@
                                 document.getElementById('product-rack').innerText = product.rack || '';
                                 document.getElementById('product-zone').innerText = product.zone_name || '';
                                 document.getElementById('product-quantity').innerText = product.product_quantity || '';
-                                document.getElementById('rack-id').innerText = data.location || '';
-                                document.getElementById('current-location').innerText = data.locationzone || '';
-                                document.getElementById('rack-capacity').innerText = data.locationCapacity || '';
+                                
+                                if (checkButton) {
+                                    checkButton.addEventListener('click', function (event) {
+                                        document.getElementById('rack-id').innerText = data.location || '';
+                                        document.getElementById('current-location').innerText = data.locationzone || '';
+                                        document.getElementById('rack-capacity').innerText = data.locationCapacity || '';
 
-                                let scanPercentage = data.locationCapacity > 0 ? (data.locationCurrentcapacity / data.locationCapacity) * 100 : 0;
-                                let progressBar = document.getElementById('progress-bar');
-                                progressBar.style.width = `${scanPercentage}%`;
-                                progressBar.setAttribute('aria-valuenow', scanPercentage);
-                                progressBar.innerText = `${Math.round(scanPercentage)}% Scanned`;
+                                        event.preventDefault(); // Prevents default form submission
+                                        fetchStatusUpdate();
+                                    });
+                                } else {
+                                    console.error("Button #checkRackLevelButton not found!");
+                                }
+
                             });
                     }
                 })
@@ -195,17 +203,6 @@
                 document.getElementById('status').innerText = data.status || '';
             })
             .catch(error => console.error("Error updating inventory status:", error));
-        }
-
-        const checkButton = document.getElementById('checkRackLevelButton');
-        
-        if (checkButton) {
-            checkButton.addEventListener('click', function (event) {
-                event.preventDefault(); // Prevents default form submission
-                fetchStatusUpdate();
-            });
-        } else {
-            console.error("Button #checkRackLevelButton not found!");
         }
 
 
