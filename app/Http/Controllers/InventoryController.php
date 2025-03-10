@@ -43,11 +43,18 @@ class InventoryController extends Controller
         // if (!$location) {
         //     return response()->json(["error" => "Location not found"], 404);
         // }
-        $location = Location::where('id', 'L0005')->first();
-        if (!$location) {
-            return response()->json(["error" => "Location not found"], 404);
-        }
+        // $location = Location::where('id', 'L0005')->first();
+        // if (!$location) {
+        //     return response()->json(["error" => "Location not found"], 404);
+        // }
         
+        $locationId = session('current_rack');
+        $location = Location::find($locationId);
+
+        if (!$location) {
+            return response()->json(["error" => "Rack location not found in session"], 404);
+        }
+
         // Determine stock status
         $status = ($totalScanned > $location->capacity) ? 'overstock' : (($totalScanned < ($location->capacity * 0.5)) ? 'understock' : 'normal');
 

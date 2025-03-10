@@ -17,6 +17,8 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PlacementController;
 use App\Http\Controllers\PythonController;
 use App\Http\Controllers\LocationCheckController;
+use App\Http\Controllers\RackScanController;
+
 use Illuminate\Support\Facades\Http;
 
 /*
@@ -88,6 +90,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/getBarcode', [PlacementController::class, 'getBarcode']);
     Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('check-placement');
     //inventory level check
+    Route::get('/scan-shelf', function () {
+        return view('ScanShelf');
+    })->name('ScanShelf');
+    
+    Route::get('/scan-rack', [RackScanController::class, 'scanRack'])->name('scan-rack');
+
     Route::get('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
 });

@@ -27,13 +27,13 @@
                     </div>
                     <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
                         <div class="blog-item">
-                            <a href="{{ route('mainPage') }}">
+                            <a href="{{ route('ScanShelf') }}">
                                 <div class="blog-img">
                                     <img src="img\homepageimg\as.png" class="img-fluid rounded-top w-100" alt="Real-Time Inventory Tracking">
                                 </div>
                             </a>
                             <div class="blog-content p-4">
-                                <a href="{{ route('mainPage') }}" class="h4 d-inline-block mb-3">Scan Inventory</a>
+                                <a href="{{ route('ScanShelf') }}" class="h4 d-inline-block mb-3">Scan Inventory</a>
                                 <p class="mb-3">Verify product placement to minimize costly mistakes. Update inventory levels and detect over/understock issues.</p>
                             </div>
                         </div>
