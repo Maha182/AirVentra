@@ -132,102 +132,87 @@
 }
 
     if (document.querySelectorAll('#d-main').length) {
-      const options = {
-          series: [{
-              name: 'total',
-              data: [94, 80, 94, 80, 94, 80, 94]
-          }],
-          chart: {
-              fontFamily: '"Inter", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-              height: 245,
-              type: 'area',
-              toolbar: {
-                  show: false
-              },
-              sparkline: {
-                  enabled: false,
-              },
-          },
-          colors: ["#3a57e8"],
-          dataLabels: {
-              enabled: false
-          },
-          stroke: {
-              curve: 'smooth',
-              width: 3,
-          },
-          yaxis: {
-            show: true,
-            labels: {
-              show: true,
-              minWidth: 19,
-              maxWidth: 19,
-              style: {
-                colors: "#8A92A6",
-              },
-              offsetX: -5,
+        // Get the data passed from Blade
+        const misplacedData = JSON.parse(document.querySelector('#d-main').getAttribute('data-misplaced'));
+
+        const options = {
+            series: [{
+                name: 'Total Misplaced',
+                data: misplacedData.totals,
+            }],
+            chart: {
+                height: 245,
+                type: 'area',
+                toolbar: {
+                    show: false
+                },
+                sparkline: {
+                    enabled: false,
+                },
             },
-          },
-          legend: {
-              show: false,
-          },
-          xaxis: {
-              labels: {
-                  minHeight: 22,
-                  maxHeight: 22,
-                  show: true,
-                  style: {
-                    colors: "#8A92A6",
-                  },
-              },
-              lines: {
-                  show: false
-              },
-              categories: ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug"]
-          },
-          grid: {
-              show: false,
-          },
-          fill: {
-              type: 'gradient',
-              gradient: {
-                  shade: 'dark',
-                  type: "vertical",
-                  shadeIntensity: 0,
-                  inverseColors: true,
-                  opacityFrom: .4,
-                  opacityTo: .1,
-                  stops: [0, 50, 80],
-                  colors: ["#3a57e8"]
-              }
-          },
-          tooltip: {
-            enabled: true,
-          },
-      };
-  
-      const chart = new ApexCharts(document.querySelector("#d-main"), options);
-      chart.render();
-  
-      document.addEventListener('ColorChange', (e) => {
-        const newOpt = {
-          colors: [e.detail.detail1],
-          fill: {
-            type: 'gradient',
-            gradient: {
-                shade: 'dark',
-                type: "vertical",
-                shadeIntensity: 0,
-                gradientToColors: [e.detail.detail1],
-                inverseColors: true,
-                opacityFrom: .4,
-                opacityTo: .1,
-                stops: [0, 50, 60],
-            }
-          },
-        }
-        chart.updateOptions(newOpt)
-      })
+            colors: ["#3a57e8"],
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 3,
+            },
+            yaxis: {
+                show: true,
+                labels: {
+                    show: true,
+                    minWidth: 19,
+                    maxWidth: 19,
+                    style: {
+                        colors: "#8A92A6",
+                    },
+                    offsetX: -5,
+                    formatter: function (val) {
+                        return Math.floor(val); // Ensure y-axis labels are integers
+                    }
+                },
+            },
+            legend: {
+                show: false,
+            },
+            xaxis: {
+                labels: {
+                    minHeight: 22,
+                    maxHeight: 22,
+                    show: true,
+                    style: {
+                        colors: "#8A92A6",
+                    },
+                },
+                lines: {
+                    show: false
+                },
+                categories: misplacedData.months, // Use the months from the database
+            },
+            grid: {
+                show: false,
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: "vertical",
+                    shadeIntensity: 0,
+                    inverseColors: true,
+                    opacityFrom: .4,
+                    opacityTo: .1,
+                    stops: [0, 50, 80],
+                    colors: ["#3a57e8"]
+                }
+            },
+            tooltip: {
+                enabled: true,
+            },
+        };
+
+        const chart = new ApexCharts(document.querySelector("#d-main"), options);
+        chart.render();
     }
   
   if ($('.d-slider1').length > 0) {
