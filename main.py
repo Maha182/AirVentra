@@ -36,6 +36,11 @@ def kill_process(proc_name):
         if proc_name in proc.info['name']:
             proc.kill()
 
+@app.route('/')
+def home():
+    return "Flask server is running!"
+
+
 @app.route('/start_service', methods=['POST'])
 def start_service():
     """Start a service based on the request."""
