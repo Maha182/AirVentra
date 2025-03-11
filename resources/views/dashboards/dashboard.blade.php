@@ -8,44 +8,8 @@
     <div class="row">
         <div class="col-md-12 col-lg-12">
             <div class="row row-cols-1">
-                 <div class="overflow-hidden d-slider1">
-                    <?php
-                    $data = [
-                        ['id' => '01', 'progress' => 95, 'title' => 'Total Scans', 'amount' => ($totalScans >= 1000 ? number_format($totalScans) . 'K' : '0'), 'delay' => 700, 'color' => 'primary', 'svg' => 'M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z'],
-                        ['id' => '02', 'progress' => 85, 'title' => 'Correct Placement', 'amount' => ($correctPlacements >= 1000 ? number_format($correctPlacements) . 'K' : '0'), 'delay' => 800, 'color' => 'info', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
-                        ['id' => '03', 'progress' => 75, 'title' => 'Misplaced Items', 'amount' => ($misplacedItems >= 1000 ? number_format($misplacedItems) . 'K' : '0'), 'delay' => 900, 'color' => 'primary', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
-                        ['id' => '04', 'progress' => 65, 'title' => 'Rack Capacity', 'amount' => $rackCapacity . '%', 'delay' => 1000, 'color' => 'info', 'svg' => 'M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z'],
-                        ['id' => '05', 'progress' => 55, 'title' => 'Overstocked Racks', 'amount' => number_format($overstockCount), 'delay' => 1100, 'color' => 'primary', 'svg' => 'M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z'],
-                        ['id' => '06', 'progress' => 45, 'title' => 'Understocked Racks', 'amount' => number_format($understockCount), 'delay' => 1200, 'color' => 'info', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
-                        ['id' => '07', 'progress' => 35, 'title' => 'Total Products', 'amount' => ($normalCount >= 1000 ? number_format($normalCount) . 'K' : '0'), 'delay' => 1300, 'color' => 'primary', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z']
-                    ];
-                    ?>
 
-                    <ul class="p-0 m-0 mb-2 swiper-wrapper list-inline">
-                        <?php foreach ($data as $item): ?>
-                            <li class="col-12 col-md-6 col-lg-2 swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="<?= $item['delay']; ?>">
-                                <div class="card-body">
-                                    <div class="progress-widget">
-                                        <div id="circle-progress-<?= $item['id']; ?>"
-                                            class="text-center circle-progress-01 circle-progress circle-progress-<?= $item['color']; ?>"
-                                            data-min-value="0" data-max-value="100" data-value="<?= $item['progress']; ?>" data-type="percent">
-                                            <svg class="card-slie-arrow icon-24" width="24" viewBox="0 0 24 24">
-                                                <path fill="currentColor" d="<?= $item['svg']; ?>" />
-                                            </svg>
-                                        </div>
-                                        <div class="progress-detail">
-                                            <p class="mb-2"><?= $item['title']; ?></p>
-                                            <h4 class="counter text-center" style="min-height: 30px;"><?= $item['amount']; ?></h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-
-                    <div class="swiper-button swiper-button-next"></div>
-                    <div class="swiper-button swiper-button-prev"></div>
-                </div>
+            </div>
         </div>
         <div class="col-md-12 col-lg-12">
             <div class="row">
@@ -97,7 +61,6 @@
                         </div>
                     </div>
                 </div>
-                
 
                 <div class="col-md-12">
                     <div class="row">

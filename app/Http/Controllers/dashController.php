@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use App\Models\LocationCheck;
 use App\Models\LocationCapacityCheck;
@@ -15,55 +14,27 @@ class dashController extends Controller
      */
     public function index(Request $request)
     {
-        // Stop unnecessary services
         Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'barcode']);
-        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
-
-        // Fetch total scans count
-        $totalScans = LocationCheck::count();
-
-        // Fetch correct placements count
-        $correctPlacements = LocationCheck::whereRaw('LOWER(status) = ?', ['corrected'])->count();
-
-        // Fetch misplaced items count
-        $misplacedItems = LocationCheck::whereRaw('LOWER(status) = ?', ['pending'])->count();
-
-        // Fetch location checks data
-        $locationChecks = LocationCheck::all();
-        
-        // Fetch location capacity checks data
+        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);  
         $locationCapacityChecks = LocationCapacityCheck::all();
+        $locationChecks = LocationCheck::all();    
+        // Calculate counts for correct and misplaced items
+       
+        $correctCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Corrected'])->count();
+        $misplacedCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Pending'])->count();
 
-        // Calculate rack capacity percentage
-        $totalRacks = LocationCapacityCheck::count();
-        $filledRacks = LocationCapacityCheck::where('status', '!=', 'empty')->count();
-        $rackCapacity = $totalRacks > 0 ? round(($filledRacks / $totalRacks) * 100, 2) : 0;
-
-        // Fetch inventory level counts
+        // Calculate inventory level counts
         $overstockCount = LocationCapacityCheck::where('status', 'Overstock')->count();
         $understockCount = LocationCapacityCheck::where('status', 'Understock')->count();
         $normalCount = LocationCapacityCheck::where('status', 'Normal')->count();
-        
+    
         $assets = ['chart', 'animation'];
-        
-        // Format numbers for display
-        $formattedTotalScans = number_format($totalScans) . 'K';
-        $formattedCorrectPlacements = number_format($correctPlacements) . 'K';
-        $formattedMisplacedItems = number_format($misplacedItems) . 'K';
-        
-        // Fix variable names before passing to view
-        $correctCount = $correctPlacements;
-        $misplacedCount = $misplacedItems;
-        
-        // Pass data to views
+
         return view('dashboards.dashboard', compact(
-            'assets', 'totalScans', 'correctCount', 'misplacedCount',
-            'rackCapacity', 'overstockCount', 'understockCount', 'normalCount',
-            'correctPlacements', 'misplacedItems', 'locationChecks', 'locationCapacityChecks',
-            'formattedTotalScans', 'formattedCorrectPlacements', 'formattedMisplacedItems'
+            'assets', 'locationChecks', 'locationCapacityChecks',
+            'overstockCount', 'understockCount', 'normalCount','correctCount', 'misplacedCount'
         ));
     }
- 
     
     /*
      * Menu Style Routs
