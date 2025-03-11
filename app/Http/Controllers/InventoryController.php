@@ -48,8 +48,9 @@ class InventoryController extends Controller
         //     return response()->json(["error" => "Location not found"], 404);
         // }
         
-        $locationId = session('current_rack');
-        $location = Location::find($locationId);
+        // $locationId = session('current_rack');
+        // $location = Location::find($locationId);
+        $location = Location::find('L0005');
 
         if (!$location) {
             return response()->json(["error" => "Rack location not found in session"], 404);

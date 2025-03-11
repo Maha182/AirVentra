@@ -17,12 +17,13 @@
 #     # inventory.terminate()
 #     assign_location_process.terminate()
 
-
 from flask import Flask, request, jsonify
 import subprocess
 import psutil
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Allow CORS for all routes
 
 # Track process objects
 processes = {
@@ -34,22 +35,31 @@ def kill_process(proc_name):
     """Kill a process by name."""
     for proc in psutil.process_iter(['pid', 'name']):
         if proc_name in proc.info['name']:
-            proc.kill()
+            try:
+                proc.kill()
+            except psutil.NoSuchProcess:
+                pass  # Process already terminated
 
 @app.route('/start_service', methods=['POST'])
 def start_service():
     """Start a service based on the request."""
     service = request.json.get("service")
     
-    if service == "barcode" and processes["barcode"] is None:
-        processes["barcode"] = subprocess.Popen(["python", "cam_app.py"])
-        return jsonify({"message": "Barcode service started"})
+    if service == "barcode":
+        if processes["barcode"] is None:
+            processes["barcode"] = subprocess.Popen(["python", "cam_app.py"])
+            return jsonify({"message": "Barcode service started"})
+        else:
+            return jsonify({"message": "Barcode service is already running"})
 
-    if service == "assignment" and processes["assignment"] is None:
-        processes["assignment"] = subprocess.Popen(["python", "assign_location.py"])
-        return jsonify({"message": "Storage assignment service started"})
-
-    return jsonify({"message": f"{service} is already running or invalid service."})
+    elif service == "assignment":
+        if processes["assignment"] is None:
+            processes["assignment"] = subprocess.Popen(["python", "assign_location.py"])
+            return jsonify({"message": "Storage assignment service started"})
+        else:
+            return jsonify({"message": "Storage assignment service is already running"})
+    
+    return jsonify({"message": f"{service} is invalid."})
 
 @app.route('/stop_service', methods=['POST'])
 def stop_service():
@@ -57,14 +67,16 @@ def stop_service():
     service = request.json.get("service")
     
     if service in processes and processes[service]:
-        processes[service].terminate()
-        processes[service].wait()
-        processes[service] = None
-        kill_process(service)  # Ensure it's fully killed
-        return jsonify({"message": f"{service} service stopped"})
+        try:
+            processes[service].terminate()
+            processes[service].wait()
+            processes[service] = None
+            kill_process(service)  # Ensure it's fully killed
+            return jsonify({"message": f"{service} service stopped"})
+        except Exception as e:
+            return jsonify({"message": f"Error stopping {service}: {str(e)}"})
     
     return jsonify({"message": f"{service} is not running or invalid service."})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5002)
-
+    app.run(debug=True, host='0.0.0.0', port=5002, use_reloader=False)

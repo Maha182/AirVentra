@@ -28,13 +28,13 @@ class PythonController extends Controller
         // $description = $product->description;
 
         // // Send description to the Python API
-        // $response = $client->post('http://127.0.0.1:5001/getData', [
-        //     'json' => ['description' => $description]
-        // ]);
+        $response = $client->post('http://127.0.0.1:5001/getData', [
+            'json' => ['description' => $description]
+        ]);
 
-        // $result = json_decode($response->getBody()->getContents(), true);
-        // $zone_name = $result['zone_name'] ?? null;
-        $zone_name = 'Dry Zone';
+        $result = json_decode($response->getBody()->getContents(), true);
+        $zone_name = $result['zone_name'] ?? null;
+        // $zone_name = 'Dry Zone';
 
         return $this->assignLocation($product, $zone_name);
     }
