@@ -106,9 +106,10 @@
                     <!-- Right Side: Chart -->
                     <div class="col-md-6 card">
                         <div class="card-body d-flex justify-content-center align-items-center" style="height: 100%;">
-                            <canvas id="storageChart" width="400" height="190"></canvas>
+                            <div id="storageChart" data-used="{{ session('assigned_product.current_capacity') ?? 0 }}" data-total="{{ session('assigned_product.capacity') ?? 1 }}"></div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
@@ -152,7 +153,7 @@
                     <!-- Space between button and Zone Name -->
                     <div class="d-grid gap-3 mb-4">
                         <button type="button" class="btn btn-primary" id="Location-id">Look Up Location</button>
-                    <!-- Display Data in Labels with Gray Background -->
+                    </div>
                     <div class="mb-3">
                         <label class="form-label bg-light p-2 d-block">Zone Name: <span id="zone_name" class="fw-bold text-dark"></span></label>
                     </div>
@@ -193,45 +194,42 @@
         document.getElementById('aisle').innerText = '';
         document.getElementById('rack').innerText = '';
 
-        // Get the context of the chart
-        var ctx = document.getElementById('storageChart').getContext('2d');
+        let chartElement = document.querySelector("#storageChart");
+        let usedCapacity = parseInt(chartElement.getAttribute("data-used")) || 0;
+        let totalCapacity = parseInt(chartElement.getAttribute("data-total")) || 1;
+        let remainingCapacity = totalCapacity - usedCapacity;
+        
+        let usedPercentage = totalCapacity > 0 ? (usedCapacity / totalCapacity) * 100 : 0;
+        let remainingPercentage = totalCapacity > 0 ? (remainingCapacity / totalCapacity) * 100 : 0;
 
-        // Initialize chart data
-        var usedCapacity = {{ session('assigned_product.current_capacity') ?? 0 }};
-        var totalCapacity = {{ session('assigned_product.capacity') ?? 1 }};
-        var remainingCapacity = totalCapacity - usedCapacity;
-
-        // Ensure data is valid before proceeding
-        if (isNaN(usedCapacity) || isNaN(totalCapacity)) {
-            console.error("Invalid capacity values:", usedCapacity, totalCapacity);
-            return;
-        }
-
-        // Chart data
-        var data = {
+        const options = {
+            series: [usedPercentage, remainingPercentage],
+            chart: {
+                height: 230,
+                type: 'radialBar',
+            },
+            colors: ["#4bc7d2", "#3a57e8"], 
             labels: ["Used Capacity", "Remaining Capacity"],
-            datasets: [{
-                label: "Storage Utilization",
-                data: [usedCapacity, remainingCapacity],
-                backgroundColor: ["#001F3F", "#28A745"] // Navy Blue & Green
-            }]
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) {
+                    return val.toFixed(1) + "%";
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val.toFixed(1) + "%";
+                    }
+                }
+            }
         };
 
-        // Chart options
-        var options = {
-            responsive: true,
-            maintainAspectRatio: false
-        };
-
-        // Check if Chart.js is loaded and initialize the chart
-        if (typeof Chart !== "undefined") {
-            new Chart(ctx, {
-                type: 'pie',
-                data: data,
-                options: options
-            });
+        if (ApexCharts !== undefined) {
+            const chart = new ApexCharts(chartElement, options);
+            chart.render();
         } else {
-            console.error("Chart.js is not loaded.");
+            console.error("ApexCharts is not loaded.");
         }
 
         // Fetch product data and update fields

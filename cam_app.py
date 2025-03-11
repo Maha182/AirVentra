@@ -10,7 +10,7 @@ CORS(app)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 barcode_model = YOLO('barcode.pt')
-
+# barcode_model = YOLO('best.pt')
 # Store unique barcodes
 unique_barcodes = set()
 last_detected_barcode = None  # Store the last detected barcode
