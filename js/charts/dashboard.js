@@ -1,118 +1,136 @@
 (function (jQuery) {
     "use strict";
-  if (document.querySelectorAll('#myChart').length) {
-    const options = {
-      series: [55, 75],
-      chart: {
-      height: 230,
-      type: 'radialBar',
-    },
-    colors: ["#4bc7d2", "#3a57e8"],
-    plotOptions: {
-      radialBar: {
-        hollow: {
-            margin: 10,
-            size: "50%",
-        },
-        track: {
-            margin: 10,
-            strokeWidth: '50%',
-        },
-        dataLabels: {
-            show: false,
-        }
-      }
-    },
-    labels: ['Apples', 'Oranges'],
-    };
-    if(ApexCharts !== undefined) {
-      const chart = new ApexCharts(document.querySelector("#myChart"), options);
-      chart.render();
-      document.addEventListener('ColorChange', (e) => {
-          const newOpt = {colors: [e.detail.detail2, e.detail.detail1],}
-          chart.updateOptions(newOpt)
 
-      })
-    }
-  }
-  if (document.querySelectorAll('#d-activity').length) {
+    if (document.querySelectorAll('#myChart').length) {
+      let chartElement = document.querySelector("#myChart");
+      let correctCount = parseInt(chartElement.getAttribute("data-correct")) || 0;
+      let misplacedCount = parseInt(chartElement.getAttribute("data-misplaced")) || 0;
+      let total = correctCount + misplacedCount;
+  
+      let correctPercentage = total > 0 ? (correctCount / total) * 100 : 0;
+      let misplacedPercentage = total > 0 ? (misplacedCount / total) * 100 : 0;
+  
       const options = {
-        series: [{
-          name: 'Successful deals',
-          data: [30, 50, 35, 60, 40, 60, 60, 30, 50, 35,]
-        }, {
-          name: 'Failed deals',
-          data: [40, 50, 55, 50, 30, 80, 30, 40, 50, 55]
-        }],
-        chart: {
-          type: 'bar',
-          height: 230,
-          stacked: true,
-          toolbar: {
-              show:false
-            }
-        },
-        colors: ["#3a57e8", "#4bc7d2"],
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: '28%',
-            endingShape: 'rounded',
-            borderRadius: 5,
+          series: [correctPercentage, misplacedPercentage],
+          chart: {
+              height: 230,
+              type: 'radialBar',
           },
+          colors: ["#3a57e8", "#f44336"], // Blue for Correct, Red for Misplaced
+          labels: ["Correct", "Misplaced"],
+          dataLabels: {
+              enabled: true,
+              formatter: function (val) {
+                  return val.toFixed(1) + "%";
+              }
+          },
+          tooltip: {
+              y: {
+                  formatter: function (val) {
+                      return val.toFixed(1) + "%";
+                  }
+              }
+          }
+      };
+  
+      if (ApexCharts !== undefined) {
+          const chart = new ApexCharts(document.querySelector("#myChart"), options);
+          chart.render();
+  
+          document.addEventListener('ColorChange', (e) => {
+              const newOpt = { colors: [e.detail.detail2, e.detail.detail1] };
+              chart.updateOptions(newOpt);
+          });
+  
+          // Hover effect for fading colors
+          let correctItem = document.querySelector(".d-flex.align-items-start:nth-child(1)"); // Correct
+          let misplacedItem = document.querySelector(".d-flex.align-items-start:nth-child(2)"); // Misplaced
+  
+          correctItem.addEventListener("mouseenter", () => {
+              chart.updateOptions({ colors: ["#3a57e8", "rgba(244, 67, 54, 0.3)"] }); // Fade red (Misplaced)
+          });
+  
+          correctItem.addEventListener("mouseleave", () => {
+              chart.updateOptions({ colors: ["#3a57e8", "#f44336"] }); // Restore original colors
+          });
+  
+          misplacedItem.addEventListener("mouseenter", () => {
+              chart.updateOptions({ colors: ["rgba(58, 87, 232, 0.3)", "#f44336"] }); // Fade blue (Correct)
+          });
+  
+          misplacedItem.addEventListener("mouseleave", () => {
+              chart.updateOptions({ colors: ["#3a57e8", "#f44336"] }); // Restore original colors
+          });
+      }
+  }
+  
+  
+  
+  if (document.querySelectorAll('#d-activity').length) {
+    let chartElement = document.querySelector("#d-activity");
+
+    // Retrieve data from Blade attributes
+    let overstockCount = parseInt(chartElement.getAttribute("data-overstock")) || 0;
+    let understockCount = parseInt(chartElement.getAttribute("data-understock")) || 0;
+    let normalCount = parseInt(chartElement.getAttribute("data-normal")) || 0;
+
+    const options = {
+      series: [{
+          name: 'Count',
+          data: [overstockCount, understockCount, normalCount] // Data aligns with categories
+      }],
+        chart: {
+            type: 'bar',
+            height: 230,
+            toolbar: { show: true },
         },
-        legend: {
-          show: false
+        colors: ["#f44336", "#FFA500", "#3a57e8"], // Overstock = Red, Understock = Orange, Normal = Baby Blue
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '60%',
+                borderRadius: 5,
+                distributed: true,
+            },
         },
-        dataLabels: {
-          enabled: false
-        },
+        legend: { show: false }, // Show legend
+        dataLabels: { enabled: false },
         stroke: {
-          show: true,
-          width: 2,
-          colors: ['transparent']
+            show: true,
+            width: 2,
+            colors: ['transparent']
         },
         xaxis: {
-          categories: ['S', 'M', 'T', 'W', 'T', 'F', 'S', 'M', 'T', 'W'],
-          labels: {
-            minHeight:20,
-            maxHeight:20,
-            style: {
-              colors: "#8A92A6",
-            },
-          }
-        },
-        yaxis: {
-          title: {
-            text: ''
-          },
-          labels: {
-              minWidth: 19,
-              maxWidth: 19,
+            categories: ['Overstock', 'Understock',  'Normal'], // Separate categories for each bar
+            labels: {
+              minHeight:20,
+              maxHeight:20,
               style: {
                 colors: "#8A92A6",
               },
-          }
-        },
-        fill: {
-          opacity: 1
-        },
-        tooltip: {
-          y: {
-            formatter: function (val) {
-              return "$ " + val + " thousands"
             }
-          }
+  
+        },
+        yaxis: {
+            title: { text: 'Count' },
+            labels: {
+                style: { colors: "#8A92A6" },
+            }
+        },
+        fill: { opacity: 1 },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + " items";
+                }
+            }
         }
-      };
+    };
 
-      const chart = new ApexCharts(document.querySelector("#d-activity"), options);
-      chart.render();
-      document.addEventListener('ColorChange', (e) => {
-      const newOpt = {colors: [e.detail.detail1, e.detail.detail2],}
-      chart.updateOptions(newOpt)
-      })
-    }
+    const chart = new ApexCharts(document.querySelector("#d-activity"), options);
+    chart.render();
+}
+
     if (document.querySelectorAll('#d-main').length) {
       const options = {
           series: [{

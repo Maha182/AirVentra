@@ -15,16 +15,27 @@ class dashController extends Controller
     public function index(Request $request)
     {
         Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'barcode']);
-        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
-
-        $locationChecks = LocationCheck::all();
-
-        // Fetch all records from the location_capacity_checks table
+        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);  
         $locationCapacityChecks = LocationCapacityCheck::all();
-        $assets = ['chart', 'animation'];
-        return view('dashboards.dashboard', compact('assets','locationChecks', 'locationCapacityChecks'));
-    }
+        $locationChecks = LocationCheck::all();    
+        // Calculate counts for correct and misplaced items
+       
+        $correctCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Corrected'])->count();
+        $misplacedCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Pending'])->count();
 
+        // Calculate inventory level counts
+        $overstockCount = LocationCapacityCheck::where('status', 'Overstock')->count();
+        $understockCount = LocationCapacityCheck::where('status', 'Understock')->count();
+        $normalCount = LocationCapacityCheck::where('status', 'Normal')->count();
+    
+        $assets = ['chart', 'animation'];
+
+        return view('dashboards.dashboard', compact(
+            'assets', 'locationChecks', 'locationCapacityChecks',
+            'overstockCount', 'understockCount', 'normalCount','correctCount', 'misplacedCount'
+        ));
+    }
+    
     /*
      * Menu Style Routs
      */
