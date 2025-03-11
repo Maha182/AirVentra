@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LocationCheck;
+use App\Models\Product;
 use App\Models\LocationCapacityCheck;
 use Illuminate\Support\Facades\Http;
 
@@ -26,14 +27,37 @@ class dashController extends Controller
         // Calculate inventory level counts
         $overstockCount = LocationCapacityCheck::where('status', 'Overstock')->count();
         $understockCount = LocationCapacityCheck::where('status', 'Understock')->count();
-        $normalCount = LocationCapacityCheck::where('status', 'Normal')->count();
-    
+        $misplacedProducts = LocationCheck::selectRaw('MONTHNAME(scan_date) as month, COUNT(*) as total')
+        ->groupBy('month')
+        ->orderByRaw('MIN(scan_date)')
+        ->get();
+
+        // Prepare the data for the JavaScript
+        $months = $misplacedProducts->pluck('month')->toArray();
+        $totals = $misplacedProducts->pluck('total')->toArray();
+
+        $totalScans = LocationCheck::count();
+        $totalRacks = LocationCapacityCheck::count();
+        $filledRacks = LocationCapacityCheck::where('status', '!=', 'empty')->count();
+        $rackCapacity = $totalRacks > 0 ? round(($filledRacks / $totalRacks) * 100, 2) : 0;
+
+        
+        // Format numbers for display
+        $formattedTotalScans = number_format($totalScans) ;
+        $formattedCorrectPlacements = number_format($correctCount) ;
+        $formattedMisplacedItems = number_format($misplacedCount) ;
+
+        $totalProduct = Product::count();
+
+
         $assets = ['chart', 'animation'];
 
         return view('dashboards.dashboard', compact(
             'assets', 'locationChecks', 'locationCapacityChecks',
-            'overstockCount', 'understockCount', 'normalCount','correctCount', 'misplacedCount'
-        ));
+            'overstockCount', 'understockCount','correctCount', 'misplacedCount','months', 'totals',
+            'totalScans', 
+            'rackCapacity',
+            'formattedTotalScans', 'formattedCorrectPlacements', 'formattedMisplacedItems','totalProduct'));
     }
     
     /*

@@ -3,7 +3,32 @@
 @section('content')
 
 <meta charset="UTF-8">
+<script>
+        // Function to initialize the Python services after page load
+        window.onload = function () {
+            // Start the barcode detection service
+            fetch('http://127.0.0.1:5002/start_service', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ service: 'barcode' })
+            }).then(response => response.json())
+              .then(data => console.log('Barcode service started:', data))
+              .catch(error => console.error('Error starting barcode service:', error));
 
+            // Start the storage assignment service
+            fetch('http://127.0.0.1:5002/start_service', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ service: 'assignment' })
+            }).then(response => response.json())
+              .then(data => console.log('Assignment service started:', data))
+              .catch(error => console.error('Error starting assignment service:', error));
+        };
+</script>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -105,12 +130,40 @@
 
                     <!-- Right Side: Chart -->
                     <div class="col-md-6 card">
-                        <div class="card-body d-flex justify-content-center align-items-center" style="height: 100%;">
+                        <div class="card-body d-flex justify-content-between align-items-center" style="height: 100%;">
+                            <!-- Storage Chart -->
                             <div id="storageChart" data-used="{{ session('assigned_product.current_capacity') ?? 0 }}" data-total="{{ session('assigned_product.capacity') ?? 1 }}"></div>
+
+                            <!-- Capacity Details -->
+                            <div class="d-grid gap-4 ms-4">
+                                <div class="d-flex align-items-start">
+                                    <svg class="mt-2 icon-14" xmlns="http://www.w3.org/2000/svg" width="14"
+                                        viewBox="0 0 24 24" fill="#4bc7d2">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="#4bc7d2"></circle>
+                                        </g>
+                                    </svg>
+                                    <div class="ms-3">
+                                        <span class="text-gray">Used Capacity</span>
+                                        <h6 id="used-capacity">0</h6> <!-- Start with 0 -->
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start">
+                                    <svg class="mt-2 icon-14" xmlns="http://www.w3.org/2000/svg" width="14"
+                                        viewBox="0 0 24 24" fill="#3a57e8">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="#3a57e8"></circle>
+                                        </g>
+                                    </svg>
+                                    <div class="ms-3">
+                                        <span class="text-gray">Remaining Capacity</span>
+                                        <h6 id="remaining-capacity">0</h6> <!-- Start with 0 -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                </div>
 
             </div>
         </div>
@@ -177,6 +230,7 @@
 
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Clear sessionStorage and product display fields on refresh
@@ -198,14 +252,16 @@
         let usedCapacity = parseInt(chartElement.getAttribute("data-used")) || 0;
         let totalCapacity = parseInt(chartElement.getAttribute("data-total")) || 1;
         let remainingCapacity = totalCapacity - usedCapacity;
-        
+        document.getElementById('used-capacity').innerText = usedCapacity;
+        document.getElementById('remaining-capacity').innerText = remainingCapacity;
         let usedPercentage = totalCapacity > 0 ? (usedCapacity / totalCapacity) * 100 : 0;
         let remainingPercentage = totalCapacity > 0 ? (remainingCapacity / totalCapacity) * 100 : 0;
+
 
         const options = {
             series: [usedPercentage, remainingPercentage],
             chart: {
-                height: 230,
+                height: 300,
                 type: 'radialBar',
             },
             colors: ["#4bc7d2", "#3a57e8"], 
@@ -214,6 +270,11 @@
                 enabled: true,
                 formatter: function (val) {
                     return val.toFixed(1) + "%";
+                },
+                style: {
+                    fontSize: '14px', // Adjust font size
+                    fontWeight: 'bold', // Optional: make it bold
+                    colors: ["#000"], // Text color
                 }
             },
             tooltip: {
@@ -222,15 +283,53 @@
                         return val.toFixed(1) + "%";
                     }
                 }
+            },
+            plotOptions: {
+                radialBar: {
+                    hollow: {
+                        margin: 15, // Adjust margin to create space inside
+                        size: '60%', // This controls the hollow size and makes the bar thinner
+                    },
+                    track: {
+                        background: '#e7e7e7', // Track color (light gray)
+                        strokeWidth: '100%', // Make the track visible
+                    },
+                    stroke: {
+                        lineCap: 'round', // Make the stroke ends curvy
+                        width: 10 // Control the thickness of the bar
+                    }
+                }
             }
         };
+
 
         if (ApexCharts !== undefined) {
             const chart = new ApexCharts(chartElement, options);
             chart.render();
+
+            // Hover effect for fading colors
+            let correctItem = document.querySelector(".d-flex.align-items-start:nth-child(1)"); 
+            let misplacedItem = document.querySelector(".d-flex.align-items-start:nth-child(2)");
+
+            correctItem.addEventListener("mouseenter", () => {
+                chart.updateOptions({ colors: ["#4bc7d2", "rgba(50, 53, 223, 0.29)"] }); 
+            });
+
+            correctItem.addEventListener("mouseleave", () => {
+                chart.updateOptions({ colors: ["#4bc7d2", "#3a57e8"]}); 
+            });
+
+            misplacedItem.addEventListener("mouseenter", () => {
+                chart.updateOptions({ colors: ["rgba(58, 232, 223, 0.3)", "#3a57e8"] });
+            });
+
+            misplacedItem.addEventListener("mouseleave", () => {
+                chart.updateOptions({ colors: ["#4bc7d2", "#3a57e8"] }); 
+            });
         } else {
             console.error("ApexCharts is not loaded.");
         }
+
 
         // Fetch product data and update fields
         function fetchProductData() {
