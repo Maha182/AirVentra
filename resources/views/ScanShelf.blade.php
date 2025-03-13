@@ -86,30 +86,27 @@
 
 <!-- JavaScript for Rack Scanning -->
 <script>
-    document.getElementById('scan-rack-btn').addEventListener('click', function() {
-        fetch("{{ route('scan-rack') }}")
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Fill scanned shelf details
-                    document.getElementById('rack-id').innerText = data.rack_id;
-                    document.getElementById('current-location').innerText = data.zone;
-                    document.getElementById('rack-capacity').innerText = data.capacity;
-                    
-                    alert('Rack scanned successfully!');
+    document.addEventListener('DOMContentLoaded', function () {
+        let lastScannedRack = sessionStorage.getItem('lastScannedRack') || '';
 
-                    // Auto-redirect to mainPage after 5 seconds
-                    setTimeout(function() {
-                        window.location.href = "{{ route('mainPage') }}";
-                    }, 5000); // 5-second delay
-                } else {
-                    alert(data.error || 'Failed to scan rack.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while scanning the rack.');
-            });
+        function fetchRackData() {
+            fetch("{{ route('scan-rack') }}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.rack_id !== lastScannedRack) {
+                        lastScannedRack = data.rack_id;
+                        sessionStorage.setItem('lastScannedRack', lastScannedRack);
+
+                        document.getElementById('rack-id').innerText = data.rack_id;
+                        document.getElementById('current-location').innerText = data.zone;
+                        document.getElementById('rack-capacity').innerText = data.capacity;
+                    }
+                })
+                .catch(error => console.error("Error fetching rack data:", error));
+        }
+
+        // Auto-fetch every 3 seconds
+        setInterval(fetchRackData, 3000);
     });
 </script>
 

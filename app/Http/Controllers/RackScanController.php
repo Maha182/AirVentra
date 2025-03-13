@@ -22,7 +22,7 @@ class RackScanController extends Controller
         }
 
         // Find the location using the scanned barcode
-        $location = Location::where('rack', $rackBarcode)->first();
+        $location = Location::where('id', $rackBarcode)->first();
 
         if (!$location) {
             return response()->json(["error" => "Rack location not found"], 404);
