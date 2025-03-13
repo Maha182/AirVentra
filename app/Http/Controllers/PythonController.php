@@ -22,23 +22,32 @@ class PythonController extends Controller
         $product = Product::where('id', $productID)->first();
 
         if (!$product) {
-            return redirect()->route('storage-assignment')->with('error', 'Product not found');
+            return response()->json([
+                'success' => false,
+                'error' => 'Product not found.',
+            ], 404);
         }
 
-        // $description = $product->description;
+        // Fetch the product description
+        $description = $product->description;
 
-        // // Send description to the Python API
+        // Send description to the Python API
         $response = $client->post('http://127.0.0.1:5001/getData', [
             'json' => ['description' => $description]
         ]);
 
         $result = json_decode($response->getBody()->getContents(), true);
         $zone_name = $result['zone_name'] ?? null;
-        // $zone_name = 'Dry Zone';
+
+        if (!$zone_name) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to get zone name from Python API.',
+            ], 500);
+        }
 
         return $this->assignLocation($product, $zone_name);
     }
-
     private function assignLocation($product, $zone_name)
     {
         // Query for an available location in the specified zone
@@ -48,14 +57,14 @@ class PythonController extends Controller
             ->first();
 
         if (!$location) {
-            session()->forget('assigned_product');
-            return redirect()->route('storage-assignment')->with('error', 'No available storage locations in zone: ' . $zone_name);
+            return response()->json([
+                'success' => false,
+                'error' => 'No available storage locations in zone: ' . $zone_name,
+            ], 404);
         }
 
-        $errors = LocationCheck::with('product')->get();
-
         // Store product assignment in session
-        session()->put('assigned_product', [
+        $assignedProduct = [
             'product_id' => $product->id,
             'product_name' => $product->title,
             'product_description' => $product->description,
@@ -67,12 +76,13 @@ class PythonController extends Controller
             'rack' => $location->rack,
             'current_capacity' => $location->current_capacity,
             'capacity' => $location->capacity,
-        ]);
+        ];
+
+        session()->put('assigned_product', $assignedProduct);
 
         return response()->json([
-            'assigned_product' => session('assigned_product'),
+            'assigned_product' => $assignedProduct,
             'success' => true,
-            'redirect' => route('storage-assignment')
         ]);
     }
 

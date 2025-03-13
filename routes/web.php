@@ -65,6 +65,8 @@ Route::group(['middleware' => 'auth'], function () {
     //     })->name('AddEmployee');
 
     Route::get('/storage-assignment', function () {
+        Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
+        Http::post('http://127.0.0.1:5002/start_service',['service' => 'assignment']);
         return view('storage-assignment');
     })->name('storage-assignment');
     

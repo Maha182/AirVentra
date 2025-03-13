@@ -14,8 +14,8 @@
                 },
                 body: JSON.stringify({ service: 'barcode' })
             }).then(response => response.json())
-              .then(data => console.log('Barcode service started:', data))
-              .catch(error => console.error('Error starting barcode service:', error));
+            .then(data => console.log('Barcode service started:', data))
+            .catch(error => console.error('Error starting barcode service:', error));
 
             // Start the storage assignment service
             fetch('http://127.0.0.1:5002/start_service', {
@@ -25,8 +25,8 @@
                 },
                 body: JSON.stringify({ service: 'assignment' })
             }).then(response => response.json())
-              .then(data => console.log('Assignment service started:', data))
-              .catch(error => console.error('Error starting assignment service:', error));
+            .then(data => console.log('Assignment service started:', data))
+            .catch(error => console.error('Error starting assignment service:', error));
         };
 </script>
 <style>
@@ -163,8 +163,7 @@
                             </div>
                         </div>
                     </div>
-
-
+                </div>
             </div>
         </div>
 
@@ -233,103 +232,115 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Clear sessionStorage and product display fields on refresh
         let lastScannedBarcode = sessionStorage.getItem('lastScannedBarcode') || '';
-        sessionStorage.removeItem('lastScannedBarcode');  // Remove the last scanned barcode
+        let chart; // Declare chart variable globally
 
-        // Clear product display fields
+        // Clear sessionStorage and product display fields on refresh
+        sessionStorage.removeItem('lastScannedBarcode');
         document.getElementById('product-id').innerText = '';
         document.getElementById('product-name').innerText = '';
         document.getElementById('product-quantity').innerText = '';
-
-        // Clear Rack, Location, Capacity, and Status fields
         document.getElementById('Location_id').innerText = '';
         document.getElementById('zone_name').innerText = '';
         document.getElementById('aisle').innerText = '';
         document.getElementById('rack').innerText = '';
 
-        let chartElement = document.querySelector("#storageChart");
-        let usedCapacity = parseInt(chartElement.getAttribute("data-used")) || 0;
-        let totalCapacity = parseInt(chartElement.getAttribute("data-total")) || 1;
-        let remainingCapacity = totalCapacity - usedCapacity;
-        document.getElementById('used-capacity').innerText = usedCapacity;
-        document.getElementById('remaining-capacity').innerText = remainingCapacity;
-        let usedPercentage = totalCapacity > 0 ? (usedCapacity / totalCapacity) * 100 : 0;
-        let remainingPercentage = totalCapacity > 0 ? (remainingCapacity / totalCapacity) * 100 : 0;
+        // Initialize the chart
+        function initializeChart() {
+            let chartElement = document.querySelector("#storageChart");
+            let usedCapacity = parseInt(chartElement.getAttribute("data-used")) || 0;
+            let totalCapacity = parseInt(chartElement.getAttribute("data-total")) || 1;
+            let remainingCapacity = totalCapacity - usedCapacity;
 
+            // Calculate percentages
+            let usedPercentage = totalCapacity > 0 ? (usedCapacity / totalCapacity) * 100 : 0;
+            let remainingPercentage = totalCapacity > 0 ? (remainingCapacity / totalCapacity) * 100 : 0;
 
-        const options = {
-            series: [usedPercentage, remainingPercentage],
-            chart: {
-                height: 300,
-                type: 'radialBar',
-            },
-            colors: ["#4bc7d2", "#3a57e8"], 
-            labels: ["Used Capacity", "Remaining Capacity"],
-            dataLabels: {
-                enabled: true,
-                formatter: function (val) {
-                    return val.toFixed(1) + "%";
+            const options = {
+                series: [usedPercentage, remainingPercentage],
+                chart: {
+                    height: 300,
+                    type: 'radialBar',
                 },
-                style: {
-                    fontSize: '14px', // Adjust font size
-                    fontWeight: 'bold', // Optional: make it bold
-                    colors: ["#000"], // Text color
-                }
-            },
-            tooltip: {
-                y: {
+                colors: ["#4bc7d2", "#3a57e8"], 
+                labels: ["Used Capacity", "Remaining Capacity"],
+                dataLabels: {
+                    enabled: true,
                     formatter: function (val) {
                         return val.toFixed(1) + "%";
+                    },
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        colors: ["#000"],
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val.toFixed(1) + "%";
+                        }
+                    }
+                },
+                plotOptions: {
+                    radialBar: {
+                        hollow: {
+                            margin: 15,
+                            size: '60%',
+                        },
+                        track: {
+                            background: '#e7e7e7',
+                            strokeWidth: '100%',
+                        },
+                        stroke: {
+                            lineCap: 'round',
+                            width: 10
+                        }
                     }
                 }
-            },
-            plotOptions: {
-                radialBar: {
-                    hollow: {
-                        margin: 15, // Adjust margin to create space inside
-                        size: '60%', // This controls the hollow size and makes the bar thinner
-                    },
-                    track: {
-                        background: '#e7e7e7', // Track color (light gray)
-                        strokeWidth: '100%', // Make the track visible
-                    },
-                    stroke: {
-                        lineCap: 'round', // Make the stroke ends curvy
-                        width: 10 // Control the thickness of the bar
-                    }
-                }
+            };
+
+            if (ApexCharts !== undefined) {
+                chart = new ApexCharts(chartElement, options);
+                chart.render();
+
+                // Hover effect for fading colors
+                let correctItem = document.querySelector(".d-flex.align-items-start:nth-child(1)"); 
+                let misplacedItem = document.querySelector(".d-flex.align-items-start:nth-child(2)");
+
+                correctItem.addEventListener("mouseenter", () => {
+                    chart.updateOptions({ colors: ["#4bc7d2", "rgba(50, 53, 223, 0.29)"] }); 
+                });
+
+                correctItem.addEventListener("mouseleave", () => {
+                    chart.updateOptions({ colors: ["#4bc7d2", "#3a57e8"]}); 
+                });
+
+                misplacedItem.addEventListener("mouseenter", () => {
+                    chart.updateOptions({ colors: ["rgba(58, 232, 223, 0.3)", "#3a57e8"] });
+                });
+
+                misplacedItem.addEventListener("mouseleave", () => {
+                    chart.updateOptions({ colors: ["#4bc7d2", "#3a57e8"] }); 
+                });
+            } else {
+                console.error("ApexCharts is not loaded.");
             }
-        };
-
-
-        if (ApexCharts !== undefined) {
-            const chart = new ApexCharts(chartElement, options);
-            chart.render();
-
-            // Hover effect for fading colors
-            let correctItem = document.querySelector(".d-flex.align-items-start:nth-child(1)"); 
-            let misplacedItem = document.querySelector(".d-flex.align-items-start:nth-child(2)");
-
-            correctItem.addEventListener("mouseenter", () => {
-                chart.updateOptions({ colors: ["#4bc7d2", "rgba(50, 53, 223, 0.29)"] }); 
-            });
-
-            correctItem.addEventListener("mouseleave", () => {
-                chart.updateOptions({ colors: ["#4bc7d2", "#3a57e8"]}); 
-            });
-
-            misplacedItem.addEventListener("mouseenter", () => {
-                chart.updateOptions({ colors: ["rgba(58, 232, 223, 0.3)", "#3a57e8"] });
-            });
-
-            misplacedItem.addEventListener("mouseleave", () => {
-                chart.updateOptions({ colors: ["#4bc7d2", "#3a57e8"] }); 
-            });
-        } else {
-            console.error("ApexCharts is not loaded.");
         }
 
+        // Function to update the chart
+        function updateChart(usedCapacity, totalCapacity) {
+            let remainingCapacity = totalCapacity - usedCapacity;
+            let usedPercentage = totalCapacity > 0 ? (usedCapacity / totalCapacity) * 100 : 0;
+            let remainingPercentage = totalCapacity > 0 ? (remainingCapacity / totalCapacity) * 100 : 0;
+
+            // Update the chart data
+            chart.updateSeries([usedPercentage, remainingPercentage]);
+
+            // Update the used and remaining capacity display
+            document.getElementById('used-capacity').innerText = usedCapacity;
+            document.getElementById('remaining-capacity').innerText = remainingCapacity;
+        }
 
         // Fetch product data and update fields
         function fetchProductData() {
@@ -365,13 +376,21 @@
                             document.getElementById('zone_name').innerText = assignedProduct.zone_name || '';
                             document.getElementById('aisle').innerText = assignedProduct.aisle || '';
                             document.getElementById('rack').innerText = assignedProduct.rack || '';
+
+                            // Update the chart with new data
+                            updateChart(assignedProduct.current_capacity, assignedProduct.capacity);
                         }
+                    } else {
+                        console.error("Error in response:", data.error);
                     }
                 })
                 .catch(error => {
                     console.error("Error fetching product data:", error);
                 });
         }
+
+        // Initialize the chart when the page loads
+        initializeChart();
 
         // Fetch product data every 3 seconds (to keep UI updated)
         setInterval(fetchProductData, 3000);

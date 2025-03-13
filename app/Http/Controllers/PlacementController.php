@@ -35,14 +35,15 @@ class PlacementController extends Controller
             \Log::error('Product not found', ['product_id' => $productID]);
             return response()->json(['error' => 'Product not found.'], 400);
         }
-
-        $location = Location::find('L0005');
+        
         // $locationId = session('current_rack');
         // $location = Location::find($locationId);
 
+        $location = Location::find('L0005');
         if (!$location) {
             return response()->json(["error" => "Rack location not found in session"], 404);
         }
+
         $correctLocation = Location::find($product->location_id);
 
         if ($location->id !== $correctLocation->id) {
@@ -68,8 +69,6 @@ class PlacementController extends Controller
                 'correct_location' => $correctLocation->id,
             ]));
 
-
-
             // Store product details in session
             session()->put('product', [
                 'product_id' => $product->id,
@@ -93,7 +92,17 @@ class PlacementController extends Controller
             ]);
         }
 
-        return response()->json(['success' => 'Correct placement.']);
+        // Return product details even if placement is correct
+        return response()->json([
+            'product' => [
+                'product_id' => $product->id,
+                'product_name' => $product->title,
+                'product_quantity' => $product->quantity,
+                'zone_name' => $correctLocation->zone_name,
+                'rack' => $correctLocation->rack,
+            ],
+            'success' => 'Correct placement.'
+        ]);
     }
     
     public function getErrorReports(Request $request)
