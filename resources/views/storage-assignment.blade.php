@@ -115,7 +115,7 @@
                 <!-- Header Section -->
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="section-title">Recommended Location #ID: 
-                        <span class="text-primary" id="Location_id">{{ session('assigned_product.assigned_location') ?? ' ' }}</span>
+                        <span class="text-primary" id="Location_id"></span>
                     </h4>
                     <h4 class="section-title align-items-center">Storage Utilization</h4> <!-- Moved Title to Same Line -->
                 </div>
@@ -123,9 +123,12 @@
                 <div class="d-flex justify-content-between align-items-stretch gap-3">
                     <!-- Left Side: Location Details -->
                     <div class="col-md-6 border p-4">
-                        <p class="mb-4">Zone Name: <span id="zone_name">{{ session('assigned_product.zone_name') ?? ' ' }}</span></p>
-                        <p class="mb-4">Aisle Number: <span id="aisle">{{ session('assigned_product.aisle') ?? ' ' }}</span></p>
-                        <p class="mb-4">Rack Number: <span id="rack">{{ session('assigned_product.rack') ?? ' ' }}</span></p>
+                        <label for="locations">Choose a location:</label>
+                        <select name="locations" id="locations" onchange="updateLocationData()">
+                        </select>
+                        <p class="mb-4">Zone Name: <span id="zone_name"></span></p>
+                        <p class="mb-4">Aisle Number: <span id="aisle"></span></p>
+                        <p class="mb-4">Rack Number: <span id="rack"></span></p>
                     </div>
 
                     <!-- Right Side: Chart -->
@@ -372,10 +375,30 @@
                             document.getElementById('product-name').innerText = assignedProduct.product_name || '';
                             document.getElementById('product-quantity').innerText = assignedProduct.product_quantity || '';
 
-                            document.getElementById('Location_id').innerText = assignedProduct.assigned_location || '';
-                            document.getElementById('zone_name').innerText = assignedProduct.zone_name || '';
-                            document.getElementById('aisle').innerText = assignedProduct.aisle || '';
-                            document.getElementById('rack').innerText = assignedProduct.rack || '';
+                            document.getElementById('Location_id').innerText = assignedProduct.assigned_location.id || ''; // Location ID
+                            document.getElementById('zone_name').innerText = assignedProduct.assigned_location.zone_name || '';
+                            document.getElementById('aisle').innerText = assignedProduct.assigned_location.aisle || '';
+                            document.getElementById('rack').innerText = assignedProduct.assigned_location.rack || '';
+
+                            // Update location options
+                            let locationsSelect = document.getElementById('locations');
+                            locationsSelect.innerHTML = ''; // Clear previous options
+
+                            // Create options for the freest and nearest locations within the same zone
+                            let freestOption = document.createElement('option');
+                            freestOption.value = assignedProduct.freest.id || '';
+                            freestOption.textContent = 'Freest Location: ' + assignedProduct.freest.zone_name;
+                            locationsSelect.appendChild(freestOption);
+
+                            let nearestOption = document.createElement('option');
+                            nearestOption.value = assignedProduct.nearest.id || '';
+                            nearestOption.textContent = 'Nearest Location: ' + assignedProduct.nearest.zone_name;
+                            locationsSelect.appendChild(nearestOption);
+
+                            // Add event listener for location change
+                            locationsSelect.addEventListener('change', function() {
+                                updateLocationData(assignedProduct);
+                            });
 
                             // Update the chart with new data
                             updateChart(assignedProduct.current_capacity, assignedProduct.capacity);
@@ -389,6 +412,27 @@
                 });
         }
 
+        // Function to update the UI with the selected location's data
+        function updateLocationData(assignedProduct) {
+            let locationsSelect = document.getElementById('locations');
+            let selectedLocationId = locationsSelect.value;
+            
+            let selectedLocation;
+            
+            if (selectedLocationId == assignedProduct.freest.id) {
+                selectedLocation = assignedProduct.freest;
+            } else if (selectedLocationId == assignedProduct.nearest.id) {
+                selectedLocation = assignedProduct.nearest;
+            }
+
+            // Update UI with the selected location's details
+            if (selectedLocation) {
+                document.getElementById('Location_id').innerText = selectedLocation.assigned_location || '';
+                document.getElementById('zone_name').innerText = selectedLocation.zone_name || '';
+                document.getElementById('aisle').innerText = selectedLocation.aisle || '';
+                document.getElementById('rack').innerText = selectedLocation.rack || '';
+            }
+        }
         // Initialize the chart when the page loads
         initializeChart();
 

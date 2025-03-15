@@ -63,11 +63,24 @@ class PlacementController extends Controller
                 'updated_at' => now(),
             ]);
 
-            Mail::to('maha1822003@gmail.com')->send(new PlacementErrorMail([
+            // Mail::to('maha1822003@gmail.com')->send(new PlacementErrorMail([
+            //     'product' => $product,
+            //     'wrong_location' => $location->id,
+            //     'correct_location' => $correctLocation->id,
+            // ]));
+
+            // Fetch all admin emails
+            $adminEmails = User::where('role', 'admin')->pluck('email')->toArray();
+
+            // Send email to all admins
+            Mail::to($adminEmails)->send(new PlacementErrorMail([
                 'product' => $product,
                 'wrong_location' => $location->id,
                 'correct_location' => $correctLocation->id,
             ]));
+
+            //fix this: Fetch the error reports
+            $errorReports = LocationCheck::where('product_id', $product->id)->get();
 
             // Store product details in session
             session()->put('product', [
@@ -76,6 +89,7 @@ class PlacementController extends Controller
                 'product_quantity' => $product->quantity,
                 'zone_name' => $correctLocation->zone_name,
                 'rack' => $correctLocation->rack,
+                'errorReports' => $errorReports->toArray(),
             ]);
 
             // Return the error reports as a JSON response
@@ -84,6 +98,7 @@ class PlacementController extends Controller
                 'success' => true,
                 'error' => 'Wrong placement detected.',
                 'location' => $location->id,
+                'errorReports' => $errorReports,
                 'locationCurrentcapacity' => $location->current_capacity,
                 'locationCapacity' => $location->capacity,
                 'locationzone' => $location->zone_name,
@@ -104,19 +119,6 @@ class PlacementController extends Controller
             'success' => 'Correct placement.'
         ]);
     }
-    
-    public function getErrorReports(Request $request)
-    {
-        // Fetch all the error reports from the database
-        $errorReports = LocationCheck::all();
-    
-        // Return the error reports to the frontend in JSON format
-        return response()->json([
-            'errorReports' => $errorReports, 
-            'success' => true
-        ]);
-    }
-    
     
 
 

@@ -165,6 +165,7 @@
                             .then(response => response.json())
                             .then(data => {
                                 console.log("API Response:", data); // Log the API response
+
                                 if (data && data.product) {
                                     let product = data.product;
                                     updateElementText('product-id', product.product_id || '');
@@ -175,12 +176,50 @@
                                 } else {
                                     console.error("Product data is undefined or null.");
                                 }
+
+                                // ✅ Use the same response to update error reports
+                                if (data.errorReports) {
+                                    updateErrorReportsTable(data.errorReports);
+                                } else {
+                                    console.error("Error reports data is missing.");
+                                }
                             })
                             .catch(error => console.error("Error fetching product data:", error));
                     }
                 })
                 .catch(error => console.error("Error fetching barcode or checking placement:", error));
         }
+
+        // ✅ Function to update the error reports table
+        function updateErrorReportsTable(errorReports) {
+            const tableBody = document.getElementById('error-report-body');
+            if (!tableBody) {
+                console.error("Element #error-report-body not found.");
+                return;
+            }
+
+            tableBody.innerHTML = ''; // Clear existing content
+
+            if (errorReports.length > 0) {
+                errorReports.forEach(error => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${error.product_id}</td>
+                        <td>${error.wrong_location}</td>
+                        <td>${error.correct_location}</td>
+                        <td>
+                            ${error.status === 'Pending' 
+                                ? '<button class="btn btn-danger btn-sm">Pending</button>' 
+                                : '<button class="btn btn-success btn-sm">Corrected</button>'}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="4">No errors found.</td></tr>`;
+            }
+        }
+
 
         function fetchStatusUpdate() {
             fetch('/AirVentra/update_inventory')
@@ -191,40 +230,6 @@
                 .catch(error => console.error("Error updating inventory status:", error));
         }
 
-        function fetchErrorReports() {
-            fetch('/AirVentra/getErrorReports')
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('error-report-body');
-                    if (tableBody) {
-                        tableBody.innerHTML = '';  // Clear existing content
-
-                        if (data.errorReports && data.errorReports.length > 0) {
-                            // Iterate over the error reports and populate the table
-                            data.errorReports.forEach(error => {
-                                const row = document.createElement('tr');
-                                row.innerHTML = `
-                                    <td>${error.product_id}</td>
-                                    <td>${error.wrong_location}</td>
-                                    <td>${error.correct_location}</td>
-                                    <td>
-                                        ${error.status === 'Pending' 
-                                            ? '<button class="btn btn-danger btn-sm">Pending</button>' 
-                                            : '<button class="btn btn-success btn-sm">Corrected</button>'}
-                                    </td>
-                                `;
-                                tableBody.appendChild(row);
-                            });
-                        } else {
-                            // If no error reports, display a "No errors found" message
-                            tableBody.innerHTML = `<tr><td colspan="4">No errors found.</td></tr>`;
-                        }
-                    } else {
-                        console.error("Element #error-report-body not found.");
-                    }
-                })
-                .catch(error => console.error("Error fetching error reports:", error));
-        }
 
         function updateElementText(elementId, text) {
             const element = document.getElementById(elementId);
@@ -234,9 +239,6 @@
                 console.error(`Element with ID ${elementId} not found.`);
             }
         }
-
-        fetchErrorReports();
-        setInterval(fetchErrorReports, 3000);
 
         setInterval(fetchBarcodeAndCheckPlacement, 3000);
     });

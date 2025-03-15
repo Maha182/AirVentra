@@ -28,17 +28,17 @@ class PythonController extends Controller
             ], 404);
         }
 
-        // Fetch the product description
-        $description = $product->description;
+        // // Fetch the product description
+        // $description = $product->description;
 
-        // Send description to the Python API
-        $response = $client->post('http://127.0.0.1:5001/getData', [
-            'json' => ['description' => $description]
-        ]);
+        // // Send description to the Python API
+        // $response = $client->post('http://127.0.0.1:5001/getData', [
+        //     'json' => ['description' => $description]
+        // ]);
 
-        $result = json_decode($response->getBody()->getContents(), true);
-        $zone_name = $result['zone_name'] ?? null;
-
+        // $result = json_decode($response->getBody()->getContents(), true);
+        // $zone_name = $result['zone_name'] ?? null;
+        $zone_name = 'Dry Zone';
         if (!$zone_name) {
             return response()->json([
                 'success' => false,
@@ -63,6 +63,13 @@ class PythonController extends Controller
             ], 404);
         }
 
+        // Get locations only within the recommended zone
+        $locationsInZone = Location::where('zone_name', $zone_name)->get();
+
+        // Get the freest location (least filled) within the recommended zone
+        $freestLocation = $locationsInZone->sortBy('current_capacity')->first();
+        $nearestLocation = $locationsInZone->first(); // First one by default, or add any other logic if needed
+
         // Store product assignment in session
         $assignedProduct = [
             'product_id' => $product->id,
@@ -70,12 +77,14 @@ class PythonController extends Controller
             'product_description' => $product->description,
             'product_quantity' => $product->quantity,
             'location' => $product->location_id,
-            'assigned_location' => $location->id,
+            'assigned_location' => $location,
             'zone_name' => $location->zone_name,
             'aisle' => $location->aisle,
             'rack' => $location->rack,
             'current_capacity' => $location->current_capacity,
             'capacity' => $location->capacity,
+            'freest' => $freestLocation,
+            'nearest' => $nearestLocation,
         ];
 
         session()->put('assigned_product', $assignedProduct);
@@ -83,6 +92,10 @@ class PythonController extends Controller
         return response()->json([
             'assigned_product' => $assignedProduct,
             'success' => true,
+            'locations' => [
+                'freest' => $freestLocation,
+                'nearest' => $nearestLocation,
+            ]
         ]);
     }
 
@@ -90,49 +103,43 @@ class PythonController extends Controller
     {
         // Retrieve product_id and location_id from session
         $product_id = session('assigned_product.product_id');
-        $location_id = session('assigned_product.assigned_location');
-
-        if (!$product_id || !$location_id) {
+        $location = session('assigned_product.assigned_location');
+        if (!$product_id || !$location) {
             return redirect()->route('storage-assignment')->with('error', 'No assigned product or location found in session.');
         }
-
+    
         $product = Product::find($product_id);
-        $location = Location::find($location_id);
-
+    
         if (!$product) {
             return redirect()->route('storage-assignment')->with('error', 'Product not found.');
-        }
-
-        if (!$location) {
-            return redirect()->route('storage-assignment')->with('error', 'Location not found.');
         }
 
         if ($product->location_id == $location->id) {
             return redirect()->route('storage-assignment')->with('info', 'This product is already assigned to this location.');
         }
-
+    
         if ((int) $location->current_capacity >= (int) $location->capacity) {
             return redirect()->route('storage-assignment')->with('error', 'Location is at full capacity.');
         }
-
+    
         // Assign location to product
         $product->location_id = $location->id;
         $product->save();
         $location->increment('current_capacity');
-
+    
         session()->flash('assigned_product', [
             'product_id' => $product->id,
             'product_name' => $product->title,
             'product_description' => $product->description,
             'product_quantity' => $product->quantity,
-            'assigned_location' => $location->id,
+            'assigned_location' => $location, // Store the full location object in session
             'zone_name' => $location->zone_name,
             'aisle' => $location->aisle,
             'rack' => $location->rack,
             'current_capacity' => $location->current_capacity,
             'capacity' => $location->capacity
         ]);
-
+    
         return redirect()->route('storage-assignment')->with('success', 'Product Assigned Successfully');
     }
 
