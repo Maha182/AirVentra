@@ -15,7 +15,11 @@ class ProductController extends Controller
         $assets = ['data-table'];
         $headerAction = '<a href="'.route('products.create').'" class="btn btn-sm btn-primary">Add New Product</a>';
 
-        return $dataTable->render('global.datatable', compact('pageTitle', 'assets', 'headerAction'));
+        $zoneCapacity = Location::selectRaw("zone_name, SUM(current_capacity) as used_capacity, SUM(capacity - current_capacity) as free_capacity")
+        ->groupBy('zone_name')
+        ->get();
+    
+        return $dataTable->render('global.datatable', compact('pageTitle','zoneCapacity', 'assets', 'headerAction'));
     }
 
     public function create()

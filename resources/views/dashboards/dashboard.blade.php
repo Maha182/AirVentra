@@ -7,43 +7,79 @@
 <x-app-layout :assets="$assets ?? []">
     <div class="row">
     <div class="col-md-12 col-lg-12">
-        <div class="row row-cols-1">
-            <div class="overflow-hidden d-slider1">
-                <ul class="p-0 m-0 mb-2 swiper-wrapper list-inline">
-                    @php
-                        $data = [
-                            ['id' => '01', 'title' => 'Total Scans', 'amount' => ($totalScans >= 1000 ? number_format($totalScans)  : $formattedTotalScans), 'delay' => 700, 'color' => 'primary', 'svg' => 'M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z'],
-                            ['id' => '02', 'title' => 'Correct Placement', 'amount' => ($correctCount >= 1000 ? number_format($correctCount) : $formattedCorrectPlacements), 'delay' => 800, 'color' => 'info', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
-                            ['id' => '03', 'title' => 'Misplaced Items', 'amount' => ($misplacedCount >= 1000 ? number_format($misplacedCount) : $formattedMisplacedItems), 'delay' => 900, 'color' => 'primary', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
-                            ['id' => '05', 'title' => 'Overstocked Racks', 'amount' => number_format($overstockCount), 'delay' => 1100, 'color' => 'primary', 'svg' => 'M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z'],
-                            ['id' => '06', 'title' => 'Understocked Racks', 'amount' => number_format($understockCount), 'delay' => 1200, 'color' => 'info', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z'],
-                            ['id' => '07', 'title' => 'Total Products', 'amount' => ($totalProduct >= 1000 ? number_format($totalProduct)  : $totalProduct), 'delay' => 1300, 'color' => 'primary', 'svg' => 'M19,6.41L17.59,5L7,15.59V9H5V19H15V17H8.41L19,6.41Z']
-                        ];
-                    @endphp
+    <div class="row row-cols-1">
+    <div class="overflow-hidden d-slider1">
+        <ul class="p-0 m-0 mb-2 swiper-wrapper list-inline">
+            @php
+                $data = [
+                    ['id' => '01', 'title' => 'Total Scans', 'amount' => ($totalScans >= 1000 ? number_format($totalScans) : $formattedTotalScans), 'delay' => 700, 'color' => 'primary', 'icon' => 'total_scans_icon.png'],
+                    ['id' => '02', 'title' => 'Correct Placement', 'amount' => ($correctCount >= 1000 ? number_format($correctCount) : $formattedCorrectPlacements), 'delay' => 800, 'color' => 'info', 'icon' => 'correct_placement_icon.png'],
+                    ['id' => '03', 'title' => 'Misplaced Items', 'amount' => ($misplacedCount >= 1000 ? number_format($misplacedCount) : $formattedMisplacedItems), 'delay' => 900, 'color' => 'primary', 'icon' => 'misplaced_items_icon.png'],
+                    ['id' => '05', 'title' => 'Overstocked Racks', 'amount' => number_format($overstockCount), 'delay' => 1100, 'color' => 'primary', 'icon' => 'overstocked_racks_icon.png'],
+                    ['id' => '06', 'title' => 'Understocked Racks', 'amount' => number_format($understockCount), 'delay' => 1200, 'color' => 'info', 'icon' => 'understocked_racks_icon.png'],
+                    ['id' => '07', 'title' => 'Total Products', 'amount' => ($totalProduct >= 1000 ? number_format($totalProduct) : $totalProduct), 'delay' => 1300, 'color' => 'primary', 'icon' => 'total_products_icon.png']
+                ];
+            @endphp
 
-                    @foreach ($data as $item)
-                        <li class="col-12 col-md-6 col-lg-2 swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="{{ $item['delay'] }}">
-                            <div class="card-body">
-                                <div class="progress-widget">
-                                    
-                                    <div class="progress-detail">
-                                        <p class="mb-2">{{ $item['title'] }}</p>
-                                        <h4 class="counter text-center" style="min-height: 30px;">{{ $item['amount'] }}</h4>
-                                    </div>
-                                </div>
+            @foreach ($data as $item)
+                <li class="col-12 col-md-6 col-lg-2 swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="{{ $item['delay'] }}">
+                    <div class="card-body">
+                        <div class="progress-widget">
+                            <!-- Add the icon here -->
+                            <div class="icon-container text-center mb-2">
+                                <img src="{{ asset('images/' . $item['icon']) }}" alt="{{ $item['title'] }} Icon" style="width: 40px; height: 40px;">
                             </div>
-                        </li>
-                    @endforeach
-                </ul>
+                            <div class="progress-detail">
+                                <p class="mb-2">{{ $item['title'] }}</p>
+                                <h4 class="counter text-center" style="min-height: 30px;">{{ $item['amount'] }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            @endforeach
+        </ul>
 
-                <div class="swiper-button swiper-button-next"></div>
-                <div class="swiper-button swiper-button-prev"></div>
-            </div>
-        </div>
+        <div class="swiper-button swiper-button-next"></div>
+        <div class="swiper-button swiper-button-prev"></div>
     </div>
+</div>
+
+</div>
 
         <div class="col-md-12 col-lg-12">
             <div class="row">
+            <div class="col-md-6">
+                <div class="card" data-aos="fade-up" data-aos-delay="1000">
+                    <div class="flex-wrap card-header d-flex justify-content-between">
+                        <div class="header-title">
+                            <h4 class="card-title">Warehouse Capacity Utilization</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="capacityChart" class="capacityChart"
+                            data-used="{{ $currentCapacity }}"
+                            data-free="{{ $totalCapacity - $currentCapacity }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Zone Error Distribution -->
+            <div class="col-md-6">
+                    <div class="card" data-aos="fade-up" data-aos-delay="1200">
+                        <div class="flex-wrap card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Zone Error Distribution</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="zoneErrorChart" class="zoneErrorChart"
+                                data-zone-errors='@json($zoneErrorData)'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="col-md-12">
                     <div class="card" data-aos="fade-up" data-aos-delay="800">
@@ -55,6 +91,21 @@
                         </div>
                         <div class="card-body">
                             <div id="d-main" class="d-main" data-misplaced="{{ json_encode(['months' => $months, 'totals' => $totals]) }}"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="card" data-aos="fade-up" data-aos-delay="1100">
+                            <div class="flex-wrap card-header d-flex justify-content-between">
+                                <div class="header-title">
+                                    <h4 class="card-title">Top Problematic Locations</h4>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="problematicChart" class="problematicChart"
+                                    data-problematic='@json($topProblematicLocations)'>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

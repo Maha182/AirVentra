@@ -257,4 +257,93 @@
       })
   }
 
-  })(jQuery)
+// Additional Chart for Capacity Utilization
+if (document.querySelectorAll('#capacityChart').length) {
+    let chartElement = document.querySelector("#capacityChart");
+    let usedCapacity = parseInt(chartElement.getAttribute("data-used")) || 0;
+    let freeCapacity = parseInt(chartElement.getAttribute("data-free")) || 0;
+
+    const options = {
+        series: [usedCapacity, freeCapacity],
+        chart: {
+            type: 'pie',
+            height: 250,
+        },
+        labels: ['Used Capacity', 'Free Capacity'],
+        colors: ["#3a57e8", "#00E396"],
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + " slots";
+                }
+            }
+        }
+    };
+
+    const chart = new ApexCharts(document.querySelector("#capacityChart"), options);
+    chart.render();
+}
+
+
+// Top Problematic Locations (Bar Chart)
+if (document.querySelectorAll('#problematicChart').length) {
+    let chartElement = document.querySelector("#problematicChart");
+    let problemData = JSON.parse(chartElement.getAttribute("data-problematic"));
+    
+    let locations = problemData.map(entry => entry.wrong_location);
+    let errors = problemData.map(entry => entry.errors);
+    
+    const options = {
+        series: [{ name: 'Errors', data: errors }],
+        chart: {
+            type: 'bar',
+            height: 350
+        },
+        xaxis: {
+            categories: locations
+        },
+        colors: ["#007BFF"],
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + " errors";
+                }
+            }
+        }
+    };
+    
+    const chart = new ApexCharts(document.querySelector("#problematicChart"), options);
+    chart.render();
+}
+
+// Zone Error Distribution (Pie Chart)
+if (document.querySelectorAll('#zoneErrorChart').length) {
+    let chartElement = document.querySelector("#zoneErrorChart");
+    let errorData = JSON.parse(chartElement.getAttribute("data-zone-errors"));
+    
+    let zones = errorData.map(entry => entry.zone_name);
+    let errors = errorData.map(entry => entry.errors);
+    
+    const options = {
+        series: errors,
+        chart: {
+            type: 'pie',
+            height: 250
+        },
+        labels: zones,
+        colors: ["#3a57e8", "#00E396","#FFA500","#007BFF"],
+
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + " errors";
+                }
+            }
+        }
+    };
+    
+    const chart = new ApexCharts(document.querySelector("#zoneErrorChart"), options);
+    chart.render();
+}
+
+})(jQuery);

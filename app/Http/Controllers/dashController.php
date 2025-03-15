@@ -4,60 +4,76 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LocationCheck;
+use App\Models\User;
 use App\Models\Product;
+use App\Models\Location;
+use Carbon\Carbon;
 use App\Models\LocationCapacityCheck;
 use Illuminate\Support\Facades\Http;
 
 class dashController extends Controller
 {
-    /*
-     * Dashboard Pages Routs
-     */
     public function index(Request $request)
     {
         Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'barcode']);
         Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);  
+        
         $locationCapacityChecks = LocationCapacityCheck::all();
         $locationChecks = LocationCheck::all();    
-        // Calculate counts for correct and misplaced items
-       
+        
         $correctCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Corrected'])->count();
         $misplacedCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Pending'])->count();
-
-        // Calculate inventory level counts
+        
         $overstockCount = LocationCapacityCheck::where('status', 'Overstock')->count();
         $understockCount = LocationCapacityCheck::where('status', 'Understock')->count();
+        
         $misplacedProducts = LocationCheck::selectRaw('MONTHNAME(scan_date) as month, COUNT(*) as total')
-        ->groupBy('month')
-        ->orderByRaw('MIN(scan_date)')
-        ->get();
-
-        // Prepare the data for the JavaScript
+            ->groupBy('month')
+            ->orderByRaw('MIN(scan_date)')
+            ->get();
+        
         $months = $misplacedProducts->pluck('month')->toArray();
         $totals = $misplacedProducts->pluck('total')->toArray();
-
+        
         $totalScans = LocationCheck::count();
         $totalRacks = LocationCapacityCheck::count();
         $filledRacks = LocationCapacityCheck::where('status', '!=', 'empty')->count();
         $rackCapacity = $totalRacks > 0 ? round(($filledRacks / $totalRacks) * 100, 2) : 0;
-
         
-        // Format numbers for display
-        $formattedTotalScans = number_format($totalScans) ;
-        $formattedCorrectPlacements = number_format($correctCount) ;
-        $formattedMisplacedItems = number_format($misplacedCount) ;
-
+        $formattedTotalScans = number_format($totalScans);
+        $formattedCorrectPlacements = number_format($correctCount);
+        $formattedMisplacedItems = number_format($misplacedCount);
         $totalProduct = Product::count();
+     
+        $inventoryStats = LocationCapacityCheck::selectRaw("
+            SUM(CASE WHEN status = 'overstock' THEN 1 ELSE 0 END) as overstocked,
+            SUM(CASE WHEN status = 'understock' THEN 1 ELSE 0 END) as understocked,
+            SUM(CASE WHEN status = 'normal' THEN 1 ELSE 0 END) as normal
+        ")->first();
+        
+        $totalCapacity = Location::sum('capacity');
+        $currentCapacity = Location::sum('current_capacity');
+        $capacityUtilization = ($totalCapacity > 0) ? round(($currentCapacity / $totalCapacity) * 100, 2) : 0;
 
 
+        $topProblematicLocations = LocationCheck::selectRaw("wrong_location, COUNT(*) as errors")
+            ->groupBy('wrong_location')
+            ->orderByDesc('errors')
+            ->limit(5)
+            ->get();
+
+        $zoneErrorData = LocationCheck::join('locations', 'placement_error_report.wrong_location', '=', 'locations.id')
+        ->selectRaw('locations.zone_name, COUNT(*) as errors')
+        ->groupBy('locations.zone_name')
+        ->orderByDesc('errors')
+        ->get();
         $assets = ['chart', 'animation'];
-
         return view('dashboards.dashboard', compact(
             'assets', 'locationChecks', 'locationCapacityChecks',
-            'overstockCount', 'understockCount','correctCount', 'misplacedCount','months', 'totals',
-            'totalScans', 
-            'rackCapacity',
-            'formattedTotalScans', 'formattedCorrectPlacements', 'formattedMisplacedItems','totalProduct'));
+            'overstockCount', 'understockCount', 'correctCount', 'misplacedCount', 'months', 'totals',
+            'totalScans','zoneErrorData', 'rackCapacity', 'formattedTotalScans', 'formattedCorrectPlacements', 'formattedMisplacedItems',
+            'totalProduct', 'inventoryStats','totalCapacity','currentCapacity','capacityUtilization','topProblematicLocations'
+        ));
     }
     
     /*
