@@ -8,6 +8,8 @@ use App\Http\Controllers\Security\RoleController;
 use App\Http\Controllers\Security\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TaskController;
+
 use Illuminate\Support\Facades\Artisan;
 // Packages
 use Illuminate\Support\Facades\Route;
@@ -180,3 +182,7 @@ Route::group(['prefix' => 'icons'], function() {
 Route::get('privacy-policy', [dashController::class, 'privacypolicy'])->name('pages.privacy-policy');
 Route::get('terms-of-use', [dashController::class, 'termsofuse'])->name('pages.term-of-use');
 
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::patch('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
+});
