@@ -17,7 +17,6 @@ use App\Http\Controllers\StorageAssignmentController;
 use App\Http\Controllers\InventoryController;
 
 use App\Http\Controllers\PlacementController;
-use App\Http\Controllers\PythonController;
 use App\Http\Controllers\LocationCheckController;
 use App\Http\Controllers\RackScanController;
 
@@ -82,11 +81,11 @@ Route::group(['middleware' => 'auth'], function () {
     })->name('mainPage');
 
 
-    Route::get('/lookup/location', [StorageAssignmentController::class, 'lookupLocation'])->name('lookup.location');
+    Route::get('/lookupLocation', [StorageAssignmentController::class, 'lookupLocation'])->name('lookupLocation');
     Route::post('/assign/manual', [StorageAssignmentController::class, 'assignManual'])->name('assign.manual');
 
-    Route::get('/sendLocationData', [PythonController::class, 'sendLocationData'])->name('sendLocationData');
-    Route::post('/assign-product', [PythonController::class, 'assignProductToLocation'])->name('assignProduct');
+    Route::get('/sendLocationData', [StorageAssignmentController::class, 'sendLocationData'])->name('sendLocationData');
+    Route::post('/assign-product', [StorageAssignmentController::class, 'assignProductToLocation'])->name('assignProduct');
     Route::get('/getErrorReports', [PlacementController::class, 'getErrorReports']);    
 
     Route::get('/getBarcode', [PlacementController::class, 'getBarcode']);

@@ -43,7 +43,7 @@
         cursor: pointer;
     }
     .section-title {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: bold;
         color: navy;
     }
@@ -58,10 +58,62 @@
             background-color: white;
     }
 
+    /* Container styling */
+.custom-location-container {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px; /* Reduced padding for smaller container */
+}
+
+/* Label styling */
+.custom-label {
+    font-weight: bold;
+    font-size: 1rem; /* Smaller font size */
+    color: #333;
+    margin-bottom: 6px; /* Reduced margin for compact layout */
+    display: block;
+}
+
+/* Styling for select dropdown */
+.custom-select {
+    width: 100%;
+    padding: 8px 12px; /* Reduced padding for smaller size */
+    font-size: 0.9rem; /* Smaller font size */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+}
+
+/* Focus effect for select */
+.custom-select:focus {
+    border-color: #3a57e8;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+/* Additional spacing between select dropdown and the following elements */
+.location-details-spacing {
+    margin-bottom: 15px; /* Adjust space as needed */
+}
+
+/* You can also directly adjust the margin-bottom of the select element if preferred */
+.custom-select {
+    margin-bottom: 30px; /* Add space after the select element */
+}
+/* Margin adjustments for spacing between text elements */
+.custom-text + .custom-text {
+    margin-top: 8px; /* Reduced margin */
+}
+
+
+
+
+
 </style>
 
-<div id="features" class="container-fluid bg-light py-5">
-    <h4 class="display-4">Storage Assignment</h4>       
+<div id="features" class="container-fluid bg-light py-4">
+    <h4 class="display-4" style="color: navy">Storage Assignment</h4>       
 </div>
 
     @if (session('warning'))
@@ -122,18 +174,22 @@
 
                 <div class="d-flex justify-content-between align-items-stretch gap-3">
                     <!-- Left Side: Location Details -->
-                    <div class="col-md-6 border p-4">
-                        <label for="locations">Choose a location:</label>
-                        <select name="locations" id="locations" onchange="updateLocationData()">
+                    <div class="col-md-6 border p-4 custom-location-container">
+                        <label for="locations" class="form-label custom-label">Choose a location:</label>
+                        <select name="locations" id="locations" class="form-select custom-select" onchange="updateLocationData()">
+                            <!-- Options will be dynamically added here -->
                         </select>
-                        <p class="mb-4">Zone Name: <span id="zone_name"></span></p>
-                        <p class="mb-4">Aisle Number: <span id="aisle"></span></p>
-                        <p class="mb-4">Rack Number: <span id="rack"></span></p>
-                    </div>
 
+                        <!-- Added a custom class for spacing -->
+                        <div class="location-details-spacing"></div> <!-- This is where extra space is added -->
+
+                        <p class="mb-4">Zone Name: <strong id="zone_name"></strong></p>
+                        <p class="mb-4">Aisle Number: <strong id="aisle"></strong></p>
+                        <p class="mb-4">Rack Number: <strong id="rack"></strong></p>
+                    </div>
                     <!-- Right Side: Chart -->
                     <div class="col-md-6 card">
-                        <div class="card-body d-flex justify-content-between align-items-center" style="height: 100%;">
+                        <div class="card-body d-flex justify-content-between custom-location-container align-items-center" style="height: 100%;">
                             <!-- Storage Chart -->
                             <div id="storageChart" data-used="{{ session('assigned_product.current_capacity') ?? 0 }}" data-total="{{ session('assigned_product.capacity') ?? 1 }}"></div>
 
@@ -172,8 +228,9 @@
 
         <!-- Assign Buttons -->
         <div class="d-flex justify-content-end mt-3 mb-5">
-            <form method="POST" action="{{ route('assignProduct') }}">
+            <form method="POST" action="{{ route('assignProduct') }}" id="assignProductForm">
                 @csrf
+                <input type="hidden" name="selected_location_id" id="selectedLocationInput">
                 <button class="btn btn-primary" type="submit">Assign to Recommended</button>
             </form>
             <button class="btn btn-light border ms-2" data-bs-toggle="modal" data-bs-target="#manualAssignModal">
@@ -202,25 +259,24 @@
                     @csrf
                     <div class="mb-3">
                         <label class="form-label bg-light p-2 d-block">Location ID</label>
-                        <input type="text" class="form-control" id="locationID" name="locationID" required>
-                    </div>
-
-                    <!-- Space between button and Zone Name -->
-                    <div class="d-grid gap-3 mb-4">
-                        <button type="button" class="btn btn-primary" id="Location-id">Look Up Location</button>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label bg-light p-2 d-block">Zone Name: <span id="zone_name" class="fw-bold text-dark"></span></label>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label bg-light p-2 d-block">Aisle Number: <span id="aisle" class="fw-bold text-dark"></span></label>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label bg-light p-2 d-block">Rack Number: <span id="rack" class="fw-bold text-dark"></span></label>
-                    </div>
+                        <input type="text" class="form-control" name="selected_location_id"  id="locationID" required> 
+                        </div>
 
                     <div class="d-grid gap-3 mb-4">
+                    <button type="button" class="btn btn-primary" id="lookupLocationBtn">Look Up Location</button>
+                   </div>
 
+                    <div class="mb-3">
+                        <label class="form-label bg-light p-2 d-block">Zone Name: <span id="zone_name_Modal" class="fw-bold text-dark"></span></label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label bg-light p-2 d-block">Aisle Number: <span id="aisle_Modal" class="fw-bold text-dark"></span></label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label bg-light p-2 d-block">Rack Number: <span id="rack_Modal" class="fw-bold text-dark"></span></label>
+                    </div>
+
+                    <div class="d-grid gap-3 mb-4">
                         <button class="btn btn-primary" type="submit">Assign Location</button>
                     </div>
                 </form>
@@ -237,6 +293,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         let lastScannedBarcode = sessionStorage.getItem('lastScannedBarcode') || '';
         let chart; // Declare chart variable globally
+        let assignedProductData;
 
         // Clear sessionStorage and product display fields on refresh
         sessionStorage.removeItem('lastScannedBarcode');
@@ -273,6 +330,7 @@
                         return val.toFixed(1) + "%";
                     },
                     style: {
+                        
                         fontSize: '14px',
                         fontWeight: 'bold',
                         colors: ["#000"],
@@ -349,94 +407,106 @@
         function fetchProductData() {
             fetch('/AirVentra/sendLocationData')
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     return response.json();
                 })
                 .then(data => {
                     console.log("Received data:", data);
 
                     if (data.success && data.assigned_product) {
-                        let assignedProduct = data.assigned_product;
-                        let newBarcode = assignedProduct.product_id;
-
-                        console.log("New Barcode:", newBarcode);
+                        assignedProductData = data.assigned_product; // Store globally
+                        let newBarcode = assignedProductData.product_id;
 
                         if (newBarcode && newBarcode !== lastScannedBarcode) {
-                            console.log("New barcode detected!");
-
-                            // Update sessionStorage immediately
+                            lastScannedBarcode = newBarcode;
                             sessionStorage.setItem('lastScannedBarcode', newBarcode);
-                            lastScannedBarcode = newBarcode; // Update variable
 
-                            // Update the product UI with new data
-                            document.getElementById('product-id').innerText = assignedProduct.product_id || '';
-                            document.getElementById('product-name').innerText = assignedProduct.product_name || '';
-                            document.getElementById('product-quantity').innerText = assignedProduct.product_quantity || '';
+                            // Update UI fields
+                            document.getElementById('product-id').innerText = assignedProductData.product_id || '';
+                            document.getElementById('product-name').innerText = assignedProductData.product_name || '';
+                            document.getElementById('product-quantity').innerText = assignedProductData.product_quantity || '';
+                            document.getElementById('Location_id').innerText = assignedProductData.assigned_location.id || '';
+                            document.getElementById('zone_name').innerText = assignedProductData.zone_name || '';
+                            document.getElementById('aisle').innerText = assignedProductData.aisle || '';
+                            document.getElementById('rack').innerText = assignedProductData.rack || '';
 
-                            document.getElementById('Location_id').innerText = assignedProduct.assigned_location.id || ''; // Location ID
-                            document.getElementById('zone_name').innerText = assignedProduct.assigned_location.zone_name || '';
-                            document.getElementById('aisle').innerText = assignedProduct.assigned_location.aisle || '';
-                            document.getElementById('rack').innerText = assignedProduct.assigned_location.rack || '';
-
-                            // Update location options
-                            let locationsSelect = document.getElementById('locations');
-                            locationsSelect.innerHTML = ''; // Clear previous options
-
-                            // Create options for the freest and nearest locations within the same zone
-                            let freestOption = document.createElement('option');
-                            freestOption.value = assignedProduct.freest.id || '';
-                            freestOption.textContent = 'Freest Location: ' + assignedProduct.freest.zone_name;
-                            locationsSelect.appendChild(freestOption);
-
-                            let nearestOption = document.createElement('option');
-                            nearestOption.value = assignedProduct.nearest.id || '';
-                            nearestOption.textContent = 'Nearest Location: ' + assignedProduct.nearest.zone_name;
-                            locationsSelect.appendChild(nearestOption);
-
-                            // Add event listener for location change
-                            locationsSelect.addEventListener('change', function() {
-                                updateLocationData(assignedProduct);
-                            });
+                            // Populate the location dropdown
+                            populateLocationDropdown(assignedProductData);
 
                             // Update the chart with new data
-                            updateChart(assignedProduct.current_capacity, assignedProduct.capacity);
+                            updateChart(assignedProductData.current_capacity, assignedProductData.capacity);
                         }
                     } else {
                         console.error("Error in response:", data.error);
                     }
                 })
-                .catch(error => {
-                    console.error("Error fetching product data:", error);
-                });
+                .catch(error => console.error("Error fetching product data:", error));
         }
 
-        // Function to update the UI with the selected location's data
-        function updateLocationData(assignedProduct) {
+        function populateLocationDropdown(assignedProduct) {
             let locationsSelect = document.getElementById('locations');
-            let selectedLocationId = locationsSelect.value;
-            
-            let selectedLocation;
-            
-            if (selectedLocationId == assignedProduct.freest.id) {
-                selectedLocation = assignedProduct.freest;
-            } else if (selectedLocationId == assignedProduct.nearest.id) {
-                selectedLocation = assignedProduct.nearest;
+            locationsSelect.innerHTML = ''; // Clear previous options
+
+            let nearestOption = document.createElement('option');
+            nearestOption.value = assignedProduct.nearest.id || '';
+            nearestOption.textContent = 'Nearest Location: ' + assignedProduct.nearest.zone_name;
+            locationsSelect.appendChild(nearestOption);
+
+            let freestOption = document.createElement('option');
+            freestOption.value = assignedProduct.freest.id || '';
+            freestOption.textContent = 'Freest Location: ' + assignedProduct.freest.zone_name;
+            locationsSelect.appendChild(freestOption);
+
+            locationsSelect.addEventListener('change', updateLocationData);
+        }
+
+        function updateLocationData() {
+            if (!assignedProductData) return;
+
+            let selectedLocationId = document.getElementById('locations').value;
+
+            // Ensure we correctly get the new location
+            let selectedLocation = (selectedLocationId == assignedProductData.freest?.id) ? 
+                assignedProductData.freest : assignedProductData.nearest;
+
+            if (!selectedLocation) {
+                console.error("Selected location not found!");
+                return;
             }
 
             // Update UI with the selected location's details
-            if (selectedLocation) {
-                document.getElementById('Location_id').innerText = selectedLocation.assigned_location || '';
-                document.getElementById('zone_name').innerText = selectedLocation.zone_name || '';
-                document.getElementById('aisle').innerText = selectedLocation.aisle || '';
-                document.getElementById('rack').innerText = selectedLocation.rack || '';
-            }
-        }
-        // Initialize the chart when the page loads
-        initializeChart();
+            document.getElementById('Location_id').innerText = selectedLocation.id || '';
+            document.getElementById('zone_name').innerText = selectedLocation.zone_name || '';
+            document.getElementById('aisle').innerText = selectedLocation.aisle || '';
+            document.getElementById('rack').innerText = selectedLocation.rack || '';
 
-        // Fetch product data every 3 seconds (to keep UI updated)
+            updateChart(selectedLocation.current_capacity, selectedLocation.capacity);
+            sessionStorage.setItem('selectedLocationId', selectedLocation.id);
+            document.getElementById('selectedLocationInput').value = selectedLocation.id;
+
+        }
+
+        document.getElementById('lookupLocationBtn').addEventListener('click', function () {
+            let locationID = document.getElementById('locationID').value;
+            console.log("Location ID:", locationID);  // Check if locationID is being captured correctly
+            fetch('/AirVentra/lookupLocation?locationID=' + locationID)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);  // Debug the response data
+                    if (data.success) {
+                        document.getElementById('zone_name_Modal').textContent = data.data.zone_name;
+                        document.getElementById('aisle_Modal').textContent = data.data.aisle;
+                        document.getElementById('rack_Modal').textContent = data.data.rack;
+                        document.getElementById('lookupError').classList.add('d-none');
+                    } else {
+                        document.getElementById('lookupError').classList.remove('d-none');
+                    }
+                })
+                .catch(error => console.error('Error fetching location:', error));
+        });
+
+        initializeChart();
+        fetchProductData();
         setInterval(fetchProductData, 3000);
     });
 </script>

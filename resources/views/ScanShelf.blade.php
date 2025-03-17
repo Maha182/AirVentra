@@ -2,7 +2,7 @@
 @section('content')
 
 <div id="features" class="container-fluid bg-light py-4">
-    <h4 class="display-5">Scan Shelf</h4>
+    <h4 class="display-4" style="color: navy">Scan Shelf</h4>  
 
     <style>
     body {

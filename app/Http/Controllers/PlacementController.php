@@ -8,7 +8,7 @@ use App\Models\Location;
 use App\Models\LocationCheck;
 use Illuminate\Support\Facades\DB;
 
-use App\Http\Controllers\PythonController;
+use App\Http\Controllers\StorageAssignmentController;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
