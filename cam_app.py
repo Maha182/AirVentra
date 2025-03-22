@@ -1,5 +1,5 @@
 import cv2
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify
 from pyzbar.pyzbar import decode
 from ultralytics import YOLO
 import torch
@@ -18,27 +18,22 @@ last_detected_barcode = None  # Store the last detected barcode
 def decode_barcodes(image_np):
     """Decode barcodes using Pyzbar."""
     barcodes = decode(image_np)
-    decoded_info = []
-    for barcode in barcodes:
-        barcode_data = barcode.data.decode('utf-8')
-        barcode_type = barcode.type
-        decoded_info.append({"data": barcode_data, "type": barcode_type})
-    return decoded_info
+    return [{"data": barcode.data.decode('utf-8'), "type": barcode.type} for barcode in barcodes]
 
 def process_frame(frame):
     """Process each frame: Detect barcodes using YOLO and decode with Pyzbar."""
     global unique_barcodes, last_detected_barcode
     image_np = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    yolo_results = barcode_model(image_np)
+    
+    # Run YOLO detection with verbose=False to suppress unnecessary logs
+    yolo_results = barcode_model(image_np, verbose=False)
+
     detected_barcodes = []
     
-    if not yolo_results:
-        return frame, detected_barcodes
-    
     for result in yolo_results:
-        if not hasattr(result, 'boxes'):
-            continue
-        
+        if not hasattr(result, 'boxes') or not result.boxes:
+            return frame, detected_barcodes  # No detections, return frame immediately
+
         for box in result.boxes:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             cropped = image_np[y1:y2, x1:x2]  # Crop detected barcode region
@@ -47,19 +42,17 @@ def process_frame(frame):
             for zbar_result in zbar_results:
                 barcode_data = zbar_result["data"]
                 detected_barcodes.append(barcode_data)
-                
-                # Add barcode to unique set if it's new
+
                 if barcode_data not in unique_barcodes:
                     unique_barcodes.add(barcode_data)
-                    print(f"Barcode detected: {barcode_data}")
-                
-                # Save barcode only if it's new
+                    print(f"New Barcode Detected: {barcode_data}")  # Print only when a new barcode appears
+
                 if last_detected_barcode != barcode_data:
                     last_detected_barcode = barcode_data
-                    print(f"New Barcode Detected: {last_detected_barcode}")
 
+            # Draw bounding box
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-    
+
     return frame, detected_barcodes
 
 @app.route('/get_barcodes', methods=['GET'])
