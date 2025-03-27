@@ -9,7 +9,7 @@ use App\Http\Controllers\Security\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TaskController;
-
+use App\Http\Controllers\TaskChartController;
 use Illuminate\Support\Facades\Artisan;
 // Packages
 use Illuminate\Support\Facades\Route;
@@ -61,6 +61,25 @@ Route::group(['middleware' => 'auth'], function () {
     return view('optionspage');  
     })->name('OptionsPage');
 
+    
+
+    Route::get('/moniter', function () {
+        return view('analyseTask');  
+    })->name('analyseTask');
+
+
+    Route::prefix('charts')->group(function () {
+        Route::get('/task-completion-trend', [TaskChartController::class, 'taskCompletionTrend']);
+        Route::get('/task-distribution', [TaskChartController::class, 'taskDistributionByEmployee']);
+        Route::get('/task-status', [TaskChartController::class, 'taskStatusBreakdown']);
+        Route::get('/live-updates', [TaskChartController::class, 'liveTaskUpdates']);
+        Route::get('/task-types-distribution', [TaskChartController::class, 'taskTypesDistribution']);
+        Route::get('/task-completion-time', [TaskChartController::class, 'taskCompletionTime']);
+        Route::get('/assigned-vs-completed', [TaskChartController::class, 'assignedVsCompleted']);
+        Route::get('/workload-3d', [TaskChartController::class, 'workload3D']);
+        Route::get('/delayed-vs-on-time', [TaskChartController::class, 'delayedVsOnTime']);
+    });
+    
     // Route::get('/AddEmployee', function () {
     //     return view('AddEmployee');  
     //     })->name('AddEmployee');
