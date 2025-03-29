@@ -204,3 +204,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/tasks', [TaskController::class, 'index']);
     Route::patch('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
 });
+Route::group(['middleware' => 'auth'], function () {
+
+    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::patch('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
+    Route::patch('/tasks/{id}/updateComment', [TaskController::class, 'updateComment'])->name('tasks.updateComment');
+    Route::get('/tasks/{taskId}/details', [TaskController::class, 'details'])->name('tasks.details');
+});
