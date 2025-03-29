@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use App\DataTables\ProductsDataTable;
+use Illuminate\Support\Facades\DB; 
 
 class ProductController extends Controller
 {
@@ -15,13 +16,105 @@ class ProductController extends Controller
         $assets = ['data-table'];
         $headerAction = '<a href="'.route('products.create').'" class="btn btn-sm btn-primary">Add New Product</a>';
 
-        $zoneCapacity = Location::selectRaw("zone_name, SUM(current_capacity) as used_capacity, SUM(capacity - current_capacity) as free_capacity")
-        ->groupBy('zone_name')
-        ->get();
-    
-        return $dataTable->render('global.datatable', compact('pageTitle','zoneCapacity', 'assets', 'headerAction'));
+        return $dataTable->render('global.datatable', compact('pageTitle', 'assets', 'headerAction'));
     }
 
+    public function charts()
+    {
+        // 1. Product Availability (Bubble Chart)
+        $products = Product::select('products.title', 'products.quantity', 'locations.aisle', 'locations.rack', 'locations.zone_name')
+            ->join('locations', 'products.location_id', '=', 'locations.id')
+            ->get();
+    
+        $bubbleData = $products->map(function ($product) {
+            return [
+                'title' => $product->title,
+                'quantity' => $product->quantity,
+                'aisle' => $product->aisle,
+                'rack' => $product->rack,
+                'zone' => $product->zone_name,
+            ];
+        });
+    
+        // 2. Warehouse Capacity Utilization Per Zone
+        $zoneCapacity = Location::selectRaw("zone_name, SUM(current_capacity) as used_capacity, SUM(capacity - current_capacity) as free_capacity")
+            ->groupBy('zone_name')
+            ->get();
+    
+       
+            $zoneProductCount = Location::select(
+                'zone_name', 
+                DB::raw('COALESCE(COUNT(products.id), 0) as product_count') // Ensures NULL is treated as 0
+            )
+            ->leftJoin('products', 'locations.id', '=', 'products.location_id')
+            ->groupBy('zone_name')
+            ->get();
+
+    
+            $zoneCapacity = Location::selectRaw("zone_name, SUM(current_capacity) as used_capacity, SUM(capacity - current_capacity) as free_capacity")
+        ->groupBy('zone_name')
+        ->get();
+
+       
+                // Get all locations
+        $locations = Location::all();
+
+        $chartData = [];
+        $totalWarehouseCapacity = 0;
+        $totalUsedCapacity = 0;
+
+        // Group locations by their zone name
+        $zones = $locations->groupBy('zone_name');
+
+        // Prepare data for each zone (only used capacity)
+        foreach ($zones as $zoneName => $zoneLocations) {
+            $totalUsedCapacityForZone = 0;
+
+            // Sum used capacities for each zone
+            foreach ($zoneLocations as $location) {
+                $usedCapacity = $location->current_capacity;
+                $totalUsedCapacityForZone += $usedCapacity;
+
+                // Sum the total warehouse capacity and used capacity
+                $totalWarehouseCapacity += $location->capacity;
+                $totalUsedCapacity += $usedCapacity;
+            }
+
+            // Prepare the chart data for each zone
+            $chartData[] = [
+                'zone' => $zoneName,
+                'used_capacity' => $totalUsedCapacityForZone,
+            ];
+        }
+
+        // Calculate the free capacity for the whole warehouse
+        $totalFreeCapacity = $totalWarehouseCapacity - $totalUsedCapacity;
+
+        // Add the free capacity for the whole warehouse to the chart data
+        $chartData[] = [
+            'zone' => 'Warehouse Free Capacity',
+            'used_capacity' => $totalFreeCapacity,  // This represents the free capacity
+        ];
+
+        
+
+        
+        
+
+       
+    
+        return view('product_charts', compact(
+            'bubbleData',
+            'zoneCapacity',
+            'zoneProductCount',
+            'chartData'
+        ));
+    }
+    
+    
+    
+    
+    
     public function create()
     {
         $locations = Location::pluck('id'); // Fetch both 'id' and 'name' for dropdown

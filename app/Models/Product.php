@@ -30,7 +30,7 @@ class Product extends Model
 
     public function location()
     {
-        return $this->belongsTo(Location::class, 'location_id', 'locationID');
+        return $this->belongsTo(Location::class, 'location_id', 'id');
     }
     public static function generateProductId($category)
     {
