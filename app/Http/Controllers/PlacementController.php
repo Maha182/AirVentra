@@ -36,10 +36,10 @@ class PlacementController extends Controller
             return response()->json(['error' => 'Product not found.'], 400);
         }
         
-        // $locationId = session('current_rack');
-        // $location = Location::find($locationId);
+        $locationId = session('current_rack');
+        $location = Location::find($locationId);
 
-        $location = Location::find('L0005');
+        // $location = Location::find('L0005');
         if (!$location) {
             return response()->json(["error" => "Rack location not found in session"], 404);
         }
@@ -70,14 +70,26 @@ class PlacementController extends Controller
             // ]));
 
             // Fetch all admin emails
-            $adminEmails = User::where('role', 'admin')->pluck('email')->toArray();
+            // $adminEmails = User::where('role', 'admin')->pluck('email')->toArray();
 
-            // Send email to all admins
-            Mail::to($adminEmails)->send(new PlacementErrorMail([
-                'product' => $product,
-                'wrong_location' => $location->id,
-                'correct_location' => $correctLocation->id,
-            ]));
+            // // Send email to all admins
+            // Mail::to($adminEmails)->send(new PlacementErrorMail([
+            //     'product' => $product,
+            //     'wrong_location' => $location->id,
+            //     'correct_location' => $correctLocation->id,
+            // ]));
+            // Assign the correction task
+            $taskController = new TaskAssignmentController();
+            $assignedEmployee = $taskController->assignTask($errorId);
+
+            if ($assignedEmployee) {
+                // Send email to the assigned employee
+                Mail::to($assignedEmployee->email)->send(new PlacementErrorMail([
+                    'product' => $product,
+                    'wrong_location' => $location->id,
+                    'correct_location' => $correctLocation->id,
+                ]));
+            }
 
             //fix this: Fetch the error reports
             $errorReports = LocationCheck::where('product_id', $product->id)->get();

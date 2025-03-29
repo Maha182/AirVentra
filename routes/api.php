@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PythonController;
-
+use App\Http\Controllers\TaskChartController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,4 +18,4 @@ use App\Http\Controllers\PythonController;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/receive-data', [PythonController::class, 'receiveData']);
+// Route::post('/receive-data', [PythonController::class, 'receiveData']);

@@ -296,7 +296,7 @@
         let assignedProductData;
 
         // Clear sessionStorage and product display fields on refresh
-        sessionStorage.removeItem('lastScannedBarcode');
+        // sessionStorage.removeItem('lastScannedBarcode');
         document.getElementById('product-id').innerText = '';
         document.getElementById('product-name').innerText = '';
         document.getElementById('product-quantity').innerText = '';
@@ -404,7 +404,12 @@
         }
 
         // Fetch product data and update fields
+        let isFetching = false;
+
         function fetchProductData() {
+            if (isFetching) return;
+            isFetching = true;
+
             fetch('/AirVentra/sendLocationData')
                 .then(response => {
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -412,35 +417,36 @@
                 })
                 .then(data => {
                     console.log("Received data:", data);
-
                     if (data.success && data.assigned_product) {
-                        assignedProductData = data.assigned_product; // Store globally
-                        let newBarcode = assignedProductData.product_id;
+                        let newBarcode = data.assigned_product.product_id;
 
                         if (newBarcode && newBarcode !== lastScannedBarcode) {
                             lastScannedBarcode = newBarcode;
                             sessionStorage.setItem('lastScannedBarcode', newBarcode);
 
-                            // Update UI fields
-                            document.getElementById('product-id').innerText = assignedProductData.product_id || '';
-                            document.getElementById('product-name').innerText = assignedProductData.product_name || '';
-                            document.getElementById('product-quantity').innerText = assignedProductData.product_quantity || '';
-                            document.getElementById('Location_id').innerText = assignedProductData.assigned_location.id || '';
-                            document.getElementById('zone_name').innerText = assignedProductData.zone_name || '';
-                            document.getElementById('aisle').innerText = assignedProductData.aisle || '';
-                            document.getElementById('rack').innerText = assignedProductData.rack || '';
-
-                            // Populate the location dropdown
-                            populateLocationDropdown(assignedProductData);
-
-                            // Update the chart with new data
+                            assignedProductData = data.assigned_product; // ✅ Assign product data here
+                            updateProductUI(assignedProductData);
                             updateChart(assignedProductData.current_capacity, assignedProductData.capacity);
+                            populateLocationDropdown(assignedProductData); // ✅ Ensure dropdown updates
                         }
                     } else {
                         console.error("Error in response:", data.error);
                     }
                 })
-                .catch(error => console.error("Error fetching product data:", error));
+                .catch(error => console.error("Error fetching product data:", error))
+                .finally(() => {
+                    isFetching = false;
+                });
+        }
+
+        function updateProductUI(productData) {
+            document.getElementById('product-id').innerText = productData.product_id || '';
+            document.getElementById('product-name').innerText = productData.product_name || '';
+            document.getElementById('product-quantity').innerText = productData.product_quantity || '';
+            document.getElementById('Location_id').innerText = productData.assigned_location.id || '';
+            document.getElementById('zone_name').innerText = productData.zone_name || '';
+            document.getElementById('aisle').innerText = productData.aisle || '';
+            document.getElementById('rack').innerText = productData.rack || '';
         }
 
         function populateLocationDropdown(assignedProduct) {
@@ -507,7 +513,10 @@
 
         initializeChart();
         fetchProductData();
-        setInterval(fetchProductData, 3000);
+        if (!window.fetchIntervalSet) {  // Prevent multiple intervals
+            window.fetchIntervalSet = true;
+            setInterval(fetchProductData, 4000);
+        }
     });
 </script>
 
