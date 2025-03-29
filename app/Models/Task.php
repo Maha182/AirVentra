@@ -11,7 +11,7 @@ class Task extends Model
     use HasFactory;
 
     protected $table = 'tasks';
-    
+
     protected $fillable = [
         'error_type',
         'error_id',
@@ -29,4 +29,16 @@ class Task extends Model
     {
         return $this->morphTo();
     }
+
+    public function placementError(): BelongsTo
+{
+    return $this->belongsTo(PlacementErrorReport::class, 'error_id', 'product_id');
 }
+
+public function inventoryLevel(): BelongsTo
+{
+    return $this->belongsTo(InventoryLevelReport::class, 'error_id', 'product_id');
+}
+
+}
+
