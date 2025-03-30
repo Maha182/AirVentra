@@ -121,6 +121,22 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
+
+    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::get('/tasks/completed', [TaskController::class, 'completedTasks']);
+    Route::post('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
+    Route::get('/tasks/stats', [TaskController::class, 'getTaskStats'])->name('tasks.stats');
+
+    Route::get('/tasks/details/{taskId}', [TaskController::class, 'details'])->name('tasks.details');
+
+    Route::get('/charts', [ProductController::class, 'charts'])->name('product_charts');
+
+    Route::get('/completed-tasks-trend/{filter}', [TaskController::class, 'getCompletedTasksTrend'])
+    ->name('completed-tasks-trend')
+    ->where('filter', 'day|week|month');  // Ensures only valid filters are passed
+
+    Route::get('/task-breakdown', [TaskController::class, 'getTaskBreakdown']);
+
 });
 
 //App Details Page => 'Dashboard'], function() {
@@ -200,14 +216,4 @@ Route::group(['prefix' => 'icons'], function() {
 Route::get('privacy-policy', [dashController::class, 'privacypolicy'])->name('pages.privacy-policy');
 Route::get('terms-of-use', [dashController::class, 'termsofuse'])->name('pages.term-of-use');
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('/tasks', [TaskController::class, 'index']);
-    Route::patch('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
-});
-Route::group(['middleware' => 'auth'], function () {
 
-    Route::get('/tasks', [TaskController::class, 'index']);
-    Route::patch('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
-    Route::patch('/tasks/{id}/updateComment', [TaskController::class, 'updateComment'])->name('tasks.updateComment');
-    Route::get('/tasks/{taskId}/details', [TaskController::class, 'details'])->name('tasks.details');
-});

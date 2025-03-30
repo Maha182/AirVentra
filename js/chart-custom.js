@@ -1131,100 +1131,94 @@ console.log("🚀 Chart script is running!");
 		$.get(window.location.origin + `/AirVentra/charts/delayed-vs-on-time?view_by=${viewBy}`, function(response) {
 			console.log("✅ API Response:", response);
 	
-			Highcharts.chart('high-barwithnagative-chart', {
-				chart: { 
+			let chart = Highcharts.chart('high-barwithnagative-chart', {
+				chart: {
 					type: 'bar',
-					marginBottom: 70 // Space for X-axis labels and legend
+					marginBottom: 70
 				},
 				title: { text: 'Delayed vs On-Time Tasks' },
-				xAxis: [{ 
-					// Bottom X-axis
-					categories: response.categories, 
-					title: { text: viewBy === 'employee' ? 'Employee' : (viewBy === 'month' ? 'Month' : 'Date') },
-					opposite: false
-				}, {
-					// Top X-axis (mirror of bottom)
+				xAxis: {
 					categories: response.categories,
-					opposite: true,
-					linkedTo: 0
-				}],
-				yAxis: { 
 					title: { 
-						text: 'Number of Tasks',
-					},
-					labels: {
-						formatter: function() {
-							return Math.abs(this.value);
-						}
+						text: viewBy === 'employee' ? 'Employee' : (viewBy === 'month' ? 'Month' : 'Date') 
 					}
+				},
+				yAxis: {
+					title: { text: 'Number of Tasks' },
+					labels: { formatter: function() { return Math.abs(this.value); } }
 				},
 				legend: {
 					align: 'center',
 					verticalAlign: 'bottom',
 					layout: 'horizontal',
-					y: 10,           // Pushes legend down
-					margin: 20,      // Space above legend
+					y: 10,
+					margin: 20,
 					itemDistance: 20
 				},
-				plotOptions: { 
-					bar: {
-						stacking: 'normal',
-						borderWidth: 0
-					},
+				plotOptions: {
 					series: {
-						point: {
-							events: {
-								mouseOver: function() {
-									this.y = Math.abs(this.y);
+						stacking: 'normal',
+						events: {
+							legendItemClick: function () {
+								let series = this.chart.series;
+								let visibleSeries = series.filter(s => s.visible);
+	
+								if (visibleSeries.length === 2) {
+									// Hide all except the clicked one
+									series.forEach(s => {
+										if (s !== this) s.setVisible(false, false);
+									});
+								} else {
+									// Restore all series when clicking again
+									series.forEach(s => s.setVisible(true, false));
 								}
+	
+								// Ensure all series are fully processed before redraw
+								setTimeout(() => this.chart.redraw(), 50);
+								return false;
 							}
 						}
 					}
 				},
 				tooltip: {
 					formatter: function() {
-						const value = Math.abs(this.y);
-						return `<b>${this.series.name}</b><br/>${this.key}: ${value}`;
+						return `<b>${this.series.name}</b><br/>${this.key}: ${Math.abs(this.y)}`;
 					}
 				},
 				series: [
 					{ 
 						name: 'Delayed', 
-						data: response.delayed, 
+						data: response.delayed ?? [], // Ensure data is defined
 						color: '#e74c3c',
-						tooltip: { valueDecimals: 0 }
+						visible: true
 					},
 					{ 
 						name: 'On-Time', 
-						data: response.on_time, 
+						data: response.on_time ?? [], // Ensure data is defined
 						color: '#27ae60',
-						tooltip: { valueDecimals: 0 }
+						visible: true
 					}
 				]
 			});
+	
+			// Reset any hidden series if switching views
+			chart.series.forEach(s => s.setVisible(true, false));
+			chart.redraw();
+	
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			console.error("❌ Error:", textStatus, errorThrown);
 		});
 	}
-
-	// Initialize with default 'date' view
+	
+	// Initialize chart
 	fetchChartData();
-
-	// Event listeners for the new dropdown filter
+	
+	// Dropdown event listener
 	$(document).on('click', '.filter-option', function(e) {
 		e.preventDefault();
 		const viewBy = $(this).data('value');
-		const text = $(this).text();
-		
-		// Update the dropdown toggle text
-		$('#dropdownMenuButton22').text(text);
-		
-		// Fetch data with the new filter
+		$('#dropdownMenuButton22').text($(this).text());
 		fetchChartData(viewBy);
 	});
 	
-	
-	
-	
-
 }(jQuery);

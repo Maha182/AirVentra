@@ -6,74 +6,172 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use Carbon\Carbon;
 class TaskController extends Controller
 {
-    public function index()
+    // Display all tasks assigned to the authenticated user
+    public function index(Request $request)
     {
-        // Get tasks assigned to the logged-in user (My Tasks)
-        $tasks = Task::where('assigned_to', auth()->id())->get();
+        $query = Task::where('assigned_to', auth()->id());
 
-        // Get tasks assigned to other employees (Employee Tasks)
-        $employeeTasks = Task::where('assigned_to', '!=', auth()->id())->get();
-
-        // Merge the tasks assigned to the logged-in user and other employees
-        $allTasks = $tasks->merge($employeeTasks);
-
-        // Pass both the tasks and the combined tasks to the view
-        return view('tasks', compact('tasks', 'allTasks'));
-    }
-
-    public function markAsComplete($id)
-    {
-        $task = Task::findOrFail($id); // Find the task by ID
-        $task->status = 'complete';    // Change the status to 'complete'
-        $task->save();                 // Save the updated task
-
-        return response()->json(['success' => true]);  // Return a JSON response
-    }
-
-    public function updateComment(Request $request, $id)
-    {
-        $task = Task::findOrFail($id);
-        $task->comment = $request->comment;
-        $task->save();
-
-        return response()->json(['success' => true]);
-    }
-
-    /**
-     * Fetch task details including misplaced information and stock capacity.
-     */
-    public function details($taskId)
-    {
-        // Fetch the task based on its ID
-        $task = Task::findOrFail($taskId);
-        $response = [];
-
-        // Check if the task's error type is "misplaced"
-        if ($task->error_type == 'misplaced') {
-            // Fetch the placement error report details based on the task's error_id (which relates to product_id in placement_error_report)
-            $placementError = DB::table('placement_error_report')
-                                ->where('product_id', $task->error_id) // We use error_id to get the product_id
-                                ->first();
-
-            if ($placementError) {
-                $response['wrong_location'] = $placementError->wrong_location;
-                $response['correct_location'] = $placementError->correct_location;
+        if ($request->has('status')) {
+            if ($request->status === 'incomplete') {
+                $query->where('status', '!=', 'completed');
+            } elseif (in_array($request->status, ['pending', 'completed'])) {
+                $query->where('status', $request->status);
             }
         }
 
-        // Fetch stock capacity details
-        $inventoryLevel = DB::table('inventory_levels_report')
-                            ->where('product_id', $task->error_id)
-                            ->first();
+        $tasks = $query->get();
 
-        if ($inventoryLevel) {
-            $response['status'] = $inventoryLevel->capacity_status; // Assuming 'capacity_status' stores 'understock' or 'overstock'
-            $response['location_id'] = $inventoryLevel->location_id;
+        return view('tasks', compact('tasks'));
+    }
+
+
+    // API endpoint to fetch task statistics (for widget updates)
+    
+
+    public function getTaskStats()
+    {
+        try {
+            $tasks = Task::where('assigned_to', auth()->id())->get();
+
+            $taskStats = [
+                'all_tasks' => $tasks->count(),
+                'incomplete_tasks' => $tasks->where('status', '!=', 'completed')->count(),
+                'overdue_tasks' => $tasks->filter(function ($task) {
+                    return ($task->status !== 'completed' && Carbon::parse($task->deadline)->isPast()) ||
+                           ($task->status === 'completed' && $task->completed_at && Carbon::parse($task->completed_at)->greaterThan(Carbon::parse($task->deadline)));
+                })->count(),
+                'due_today' => $tasks->filter(function ($task) {
+                    return $task->status !== 'completed' && Carbon::parse($task->deadline)->toDateString() === Carbon::today()->toDateString();
+                })->count(),
+            ];
+
+            return response()->json($taskStats);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in getTaskStats: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong!'], 500);
+        }
+    }
+
+
+    // Update task status via AJAX request
+    public function markAsComplete(Request $request, $id)
+    {
+        $task = Task::findOrFail($id);
+        $task->status = $request->status;
+        $task->completed_at = ($request->status === 'completed') ? now() : null;
+        $task->save();
+
+        return response()->json([
+            'success' => true,
+            'status' => $task->status
+        ]);
+    }
+
+
+    public function getCompletedTasksTrend($filter)  // Get filter from the URL parameter
+    {
+        $userId = auth()->id();
+
+        // Query to get the count of completed tasks by period
+        $query = Task::where('assigned_to', $userId)
+            ->where('status', 'completed') // Only completed tasks
+            ->selectRaw("
+                DATE_FORMAT(completed_at, " . ($filter === 'month' ? "'%Y-%m'" : ($filter === 'week' ? "'%Y-%u'" : "'%Y-%m-%d'")) . ") as period,
+                COUNT(*) as completed
+            ")
+            ->groupBy('period')
+            ->orderBy('period', 'ASC')
+            ->get();
+
+        // Prepare the data for the chart
+        $dates = $query->pluck('period');
+        $completed = $query->pluck('completed');
+
+        return response()->json([
+            'dates' => $dates,
+            'completed' => $completed
+        ]);
+    }
+
+
+
+    
+
+
+
+    public function getTaskBreakdown(Request $request)
+    {
+        $userId = auth()->id();
+
+        // Group tasks by status and count them
+        $query = Task::where('assigned_to', $userId)
+            ->selectRaw("status, COUNT(*) as count")
+            ->groupBy('status')
+            ->get();
+
+        // Format data for Highcharts
+        $data = $query->map(function ($item) {
+            return [
+                'name' => ucfirst($item->status), // Capitalize first letter
+                'y' => (int) $item->count, // Convert to integer
+                'color' => match (strtolower($item->status)) {
+                    'pending' => '#f39c12', // Yellow
+                    'in-progress' => '#3498db', // Blue
+                    'completed' => '#2ecc71', // Green
+                    default => '#95a5a6' // Gray for any other status
+                }
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
+
+
+
+
+
+    public function details($taskId)
+    {
+        $task = Task::findOrFail($taskId); // Find task or return 404
+        $response = [
+            'error_type' => $task->error_type, // Add this line to include the error_type
+        ];
+
+        if ($task->error_type == 'misplaced') {
+            // Fetch misplaced product details from placement_error_report
+            $placementError = DB::table('placement_error_report')
+                                ->where('id', $task->error_id)
+                                ->first();
+
+            if ($placementError) {
+                $response = array_merge($response, [
+                    'type' => 'misplaced',
+                    'wrong_location' => $placementError->wrong_location,
+                    'correct_location' => $placementError->correct_location,
+                ]);
+            }
+        } elseif ($task->error_type == 'capacity') {
+            // Fetch stock capacity details from inventory_levels_report
+            $inventoryLevel = DB::table('inventory_levels_report')
+                                ->where('id', $task->error_id)
+                                ->first();
+
+            if ($inventoryLevel) {
+                $response = array_merge($response, [
+                    'type' => 'capacity',
+                    'status' => $inventoryLevel->status,
+                    'location_id' => $inventoryLevel->location_id,
+                    'detected_capacity' => $inventoryLevel->detected_capacity,
+                ]);
+            }
         }
 
         return response()->json($response ?: ['error' => 'No relevant details found.']);
     }
-}
 
+
+}
