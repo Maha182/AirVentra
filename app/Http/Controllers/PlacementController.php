@@ -53,7 +53,7 @@ class PlacementController extends Controller
                 'correct_location' => $correctLocation->id
             ]);
 
-            DB::table('placement_error_report')->insert([
+            $errorId = DB::table('placement_error_report')->insertGetId([
                 'product_id' => $productID,
                 'wrong_location' => $location->id,
                 'correct_location' => $correctLocation->id,

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('location_id'); // Location ID (foreign key to locations table)
             $table->date('scan_date'); // Date of the scan
             $table->integer('detected_capacity'); // Detected capacity
-            $table->enum('status', ['overstock', 'understock','normal']);
+            $table->enum('status', ['overfilled', 'underfilled','normal']);
             $table->timestamps(); // Adds `created_at` and `updated_at` columns
 
             // Add foreign key constraint for location_id

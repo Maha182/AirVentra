@@ -29,21 +29,40 @@ class InventoryController extends Controller
         }
 
         $totalScanned = 0;
+        $expiredBatches = [];
+        $soonToExpireBatches = [];
+        $unknownBatches = [];
 
         foreach ($barcodes as $barcode) {
-            $product = Product::where('id', $barcode)->first();
-            if ($product) {
-                $this->scanCounts[$barcode] = ($this->scanCounts[$barcode] ?? 0) + $product->quantity;
-                $totalScanned += $product->quantity;
+            $batch = ProductBatch::where('barcode', $barcode)->first();
+
+            if ($batch) {
+                // Sum quantities for shelf check
+                $totalScanned += $batch->quantity;
+
+                // Check expiry
+                if ($batch->expiry_date) {
+                    $today = Carbon::today();
+                    $expiry = Carbon::parse($batch->expiry_date);
+
+                    if ($expiry->lt($today)) {
+                        $batch->status = 'expired';
+                        $expiredBatches[] = $batch;
+                    } elseif ($expiry->diffInDays($today) <= 5) {
+                        $batch->status = 'soon_to_expire';
+                        $soonToExpireBatches[] = $batch;
+                    }
+
+                    $batch->save();
+                }
+
+                $this->scanCounts[$batch->product_id] = ($this->scanCounts[$batch->product_id] ?? 0) + $batch->quantity;
+
+            } else {
+                $unknownBatches[] = $barcode; // Not found in DB
             }
         }
 
-    
-        // $location = Location::where('id', 'L0005')->first();
-        // if (!$location) {
-        //     return response()->json(["error" => "Location not found"], 404);
-        // }
-        
         $locationId = session('current_rack');
         $location = Location::find($locationId);
 
@@ -51,51 +70,55 @@ class InventoryController extends Controller
             return response()->json(["error" => "Rack location not found in session"], 404);
         }
 
-        // Determine stock status
-        $status = ($totalScanned > $location->capacity) ? 'overstock' : (($totalScanned < ($location->capacity * 0.5)) ? 'understock' : 'normal');
+        // Shelf overfill/underfill check
+        $status = ($totalScanned > $location->capacity)
+            ? 'overfilled'
+            : (($totalScanned < ($location->capacity * 0.5)) ? 'underfilled' : 'normal');
 
-        // Store the inventory level check result
-        LocationCapacityCheck::create([
+        $capacityCheck = LocationCapacityCheck::create([
             'location_id' => $location->id,
             'scan_date' => now(),
             'detected_capacity' => $totalScanned,
             'status' => $status
         ]);
 
-        // Send an email alert if needed
+        // Email alert if over/underfilled
         if ($status !== 'normal') {
             $taskController = new TaskAssignmentController();
             $assignedEmployee = $taskController->assignTask($capacityCheck->id);
-        
-            // Send an email to the assigned employee
+
             Mail::to($assignedEmployee->email)->send(new InventoryAlertMail([
                 'location_id' => $location->id,
                 'detected_capacity' => $totalScanned,
                 'rack_capacity' => $location->capacity,
-                'status' => $status
+                'status' => $status,
+                'expired' => $expiredBatches,
+                'soon' => $soonToExpireBatches
             ]));
         }
 
+        // Email alert if there are expired or soon-to-expire batches
+        // if (!empty($expiredBatches) || !empty($soonToExpireBatches)) {
+        //     Mail::to($assignedEmployee)->send(new ExpiryAlertMail([
+        //         'expired' => $expiredBatches,
+        //         'soon' => $soonToExpireBatches
+        //     ]));
+        // }
+
         return response()->json([
             'status' => $status,
+            'expired_batches' => $expiredBatches,
+            'soon_to_expire' => $soonToExpireBatches,
+            'unknown_barcodes' => $unknownBatches,
             'success' => true,
-            'redirect' => route('mainPage',compact('status'))
+            'redirect' => route('mainPage', compact('status'))
         ]);
-
-        
     }
 
     // Reset scan counts
     public function resetScans()
     {
         $this->scanCounts = [];
-        response()->json([
-            'message' => "Scan counts reset",
-            'redirect' => route('mainPage')
-        ]);
-
         return redirect()->route('mainPage')->with('success', 'Scan counts reset');
-
     }
 }
-

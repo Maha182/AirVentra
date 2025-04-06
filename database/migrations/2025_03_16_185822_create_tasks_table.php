@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->enum('error_type', ['misplaced', 'capacity']);
             $table->unsignedBigInteger('error_id');
             $table->foreignId('assigned_to')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['pending', 'in-progress', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'completed'])->default('pending');
             $table->datetime('deadline')->nullable(); // Added deadline column
             $table->datetime('assigned_at')->default(DB::raw('CURRENT_TIMESTAMP')); // Track when task was assigned
             $table->datetime('completed_at')->nullable(); // Track when task was completed

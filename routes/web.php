@@ -122,7 +122,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
 
-    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::get('/tasks', [TaskController::class, 'index'])->name('task');
     Route::get('/tasks/completed', [TaskController::class, 'completedTasks']);
     Route::post('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
     Route::get('/tasks/stats', [TaskController::class, 'getTaskStats'])->name('tasks.stats');

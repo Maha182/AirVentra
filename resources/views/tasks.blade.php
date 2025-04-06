@@ -386,6 +386,7 @@
                                 updateWidgets();
                                 filterTasks();
                                 loadTaskBreakdownChart();
+                                loadCompletedTasksChart(filterType);
                             } else {
                                 console.error("Error: Task status update failed. Response:", response);
                                 alert("An error occurred while updating the task.");

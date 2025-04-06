@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('title'); // Product title
             $table->text('description'); // Product description
             $table->string('main_category'); // Main category (e.g., "Books")
-            $table->integer('quantity'); // Quantity available
-            $table->string('location_id')->nullable(); // Location ID (nullable)
-            $table->string('barcode_path'); // Path to barcode image
+            $table->integer('min_stock')->default(0); // Minimum Stock Threshold
+            $table->integer('max_stock')->nullable(); // Maximum Stock Threshold
             $table->timestamps(); // Adds `created_at` and `updated_at` columns
         });
     }
