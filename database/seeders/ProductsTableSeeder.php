@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -29,9 +28,8 @@ class ProductsTableSeeder extends Seeder
                 'title' => $row[1],
                 'description' => $row[2],
                 'main_category' => $row[3],
-                'quantity' => (int)$row[4],
-                'location_id' => $row[5] ?: null, // Set to null if empty
-                'barcode_path' => $row[6],
+                'min_stock' => (int) $row[4],
+                'max_stock' => $row[5] !== '' ? (int) $row[5] : null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
