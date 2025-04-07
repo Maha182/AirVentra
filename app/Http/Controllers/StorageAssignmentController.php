@@ -8,6 +8,7 @@ use App\Models\Location;
 use App\Models\Product;
 use App\Models\ProductBatch;
 use GuzzleHttp\Client;
+use Illuminate\Support\Carbon;
 
 class StorageAssignmentController extends Controller
 {
@@ -119,7 +120,7 @@ class StorageAssignmentController extends Controller
             'product_id' => $productId,
             'product_name' => optional($batch->product)->title,
             'product_description' => optional($batch->product)->description,
-            'product_quantity' => $batch->quantity,
+            'batch_quantity' => $batch->quantity,
             'location' => $batch->location_id,
             'assigned_location' => $location,
             'zone_name' => $location->zone_name,

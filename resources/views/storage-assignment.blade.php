@@ -134,6 +134,11 @@
             {{ session('error') }}
         </div>
     @endif
+    @if(session('assigned_product.new_batch_message'))
+        <div class="alert alert-info text-center mt-3">
+            {{ session('assigned_product.new_batch_message') }}
+        </div>
+    @endif
 
 <div class="container my-5">
     <div class="row">
@@ -146,13 +151,14 @@
             </div>
         </div>
 
+        <!-- Scanned Batch Section -->
         <div class="col-md-6">
             <div class="bg-light p-4 border" style="height: 330px;">
-                <h4 class="section-title">Scanned Product</h4>
+                <h4 class="section-title">Scanned Batch</h4>
                 <div class="justify-content-between align-items-start gap-3 col-md-6 p-4">
-                    <p class="mb-4">Product ID: <strong id="product-id">{{ session('assigned_product.product_id') ?? '' }}</strong></p>
+                    <p class="mb-4">Batch ID: <strong id="batch-id">{{ session('assigned_product.batch_id') ?? '' }}</strong></p>
                     <p class="mb-4">Product Name: <strong id="product-name">{{ session('assigned_product.product_name') ?? '' }}</strong></p>
-                    <p class="mb-4">Product Quantity: <strong id="product-quantity">{{ session('assigned_product.product_quantity') ?? '' }}</strong></p>
+                    <p class="mb-4">Quantity: <strong id="batch-quantity">{{ session('assigned_product.batch_quantity') ?? '' }}</strong></p>
                 </div>
             </div>
         </div>
@@ -297,9 +303,9 @@
 
         // Clear sessionStorage and product display fields on refresh
         // sessionStorage.removeItem('lastScannedBarcode');
-        document.getElementById('product-id').innerText = '';
+        document.getElementById('batch-id').innerText = '';
         document.getElementById('product-name').innerText = '';
-        document.getElementById('product-quantity').innerText = '';
+        document.getElementById('batch-quantity').innerText = '';
         document.getElementById('Location_id').innerText = '';
         document.getElementById('zone_name').innerText = '';
         document.getElementById('aisle').innerText = '';
@@ -417,8 +423,11 @@
                 })
                 .then(data => {
                     console.log("Received data:", data);
+                    if (data.new_batch_message) {
+                        alert(data.new_batch_message);  // Or use a modal/snackbar/toast
+                    }
                     if (data.success && data.assigned_product) {
-                        let newBarcode = data.assigned_product.product_id;
+                        let newBarcode = data.assigned_product.batch_id;
 
                         if (newBarcode && newBarcode !== lastScannedBarcode) {
                             lastScannedBarcode = newBarcode;
@@ -430,7 +439,7 @@
                             populateLocationDropdown(assignedProductData); // ✅ Ensure dropdown updates
                         }
                     } else {
-                        console.error("Error in response:", data.error);
+                        alert("❌ Unrecognized or invalid barcode. Please try again.");
                     }
                 })
                 .catch(error => console.error("Error fetching product data:", error))
@@ -440,13 +449,14 @@
         }
 
         function updateProductUI(productData) {
-            document.getElementById('product-id').innerText = productData.product_id || '';
+            document.getElementById('batch-id').innerText = productData.batch_id || '';
             document.getElementById('product-name').innerText = productData.product_name || '';
-            document.getElementById('product-quantity').innerText = productData.product_quantity || '';
-            document.getElementById('Location_id').innerText = productData.assigned_location.id || '';
-            document.getElementById('zone_name').innerText = productData.zone_name || '';
-            document.getElementById('aisle').innerText = productData.aisle || '';
-            document.getElementById('rack').innerText = productData.rack || '';
+            document.getElementById('batch-quantity').innerText = productData.batch_quantity || '';
+            document.getElementById('Location_id').innerText = productData.assigned_location?.id || '';
+            document.getElementById('zone_name').innerText = productData.assigned_location?.zone_name || '';
+            document.getElementById('aisle').innerText = productData.assigned_location?.aisle || '';
+            document.getElementById('rack').innerText = productData.assigned_location?.rack || '';
+
         }
 
         function populateLocationDropdown(assignedProduct) {
