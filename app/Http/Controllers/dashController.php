@@ -24,8 +24,8 @@ class dashController extends Controller
         $correctCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Corrected'])->count();
         $misplacedCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Pending'])->count();
         
-        $overstockCount = LocationCapacityCheck::where('status', 'Overstock')->count();
-        $understockCount = LocationCapacityCheck::where('status', 'Understock')->count();
+        $overstockCount = LocationCapacityCheck::where('status', 'overfilled')->count();
+        $understockCount = LocationCapacityCheck::where('status', 'underfilled')->count();
         
         $misplacedProducts = LocationCheck::selectRaw('MONTHNAME(scan_date) as month, COUNT(*) as total')
             ->groupBy('month')
@@ -46,8 +46,8 @@ class dashController extends Controller
         $totalProduct = Product::count();
      
         $inventoryStats = LocationCapacityCheck::selectRaw("
-            SUM(CASE WHEN status = 'overstock' THEN 1 ELSE 0 END) as overstocked,
-            SUM(CASE WHEN status = 'understock' THEN 1 ELSE 0 END) as understocked,
+            SUM(CASE WHEN status = 'overfilled' THEN 1 ELSE 0 END) as overfilled,
+            SUM(CASE WHEN status = 'underfilled' THEN 1 ELSE 0 END) as underfilled,
             SUM(CASE WHEN status = 'normal' THEN 1 ELSE 0 END) as normal
         ")->first();
         

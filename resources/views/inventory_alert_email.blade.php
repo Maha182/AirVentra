@@ -8,43 +8,46 @@
 </head>
 <body style="font-family: Arial, Helvetica, sans-serif; font-size:16px;">
     <h1>Warehouse Inventory Alert</h1>
+
     <p><strong>Rack ID:</strong> {{ $emailData['location_id'] }}</p>
     <p><strong>Current Quantity:</strong> {{ $emailData['detected_capacity'] }}</p>
     <p><strong>Rack Capacity:</strong> {{ $emailData['rack_capacity'] }}</p>
     <p><strong>Status:</strong> 
-        <span style="color: {{ $emailData['status'] == 'overstock' ? 'red' : ($emailData['status'] == 'understock' ? 'orange' : 'green') }};">
+        <span style="color: {{ $emailData['status'] == 'overfilled' ? 'red' : ($emailData['status'] == 'underfilled' ? 'orange' : 'green') }};">
             {{ ucfirst($emailData['status']) }}
         </span>
     </p>
 
-    @if (!empty($emailData['product_alerts']))
-        <h2>Product Alerts:</h2>
-        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-            <thead>
-                <tr>
-                    <th>Product ID</th>
-                    <th>Product Name</th>
-                    <th>Status</th>
-                    <th>Quantity</th>
-                    <th>Stock Limit</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($emailData['product_alerts'] as $alert)
-                    <tr>
-                        <td>{{ $alert['product_id'] }}</td>
-                        <td>{{ $alert['name'] }}</td>
-                        <td style="color: {{ $alert['status'] == 'overstock' ? 'red' : 'orange' }};">
-                            {{ ucfirst($alert['status']) }}
-                        </td>
-                        <td>{{ $alert['quantity'] }}</td>
-                        <td>{{ $alert['status'] == 'understock' ? 'Min: ' . $alert['min_stock'] : 'Max: ' . $alert['max_stock'] }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+    @if(!empty($emailData['expired_batches']))
+        <h2 style="color: red;">⚠️ Expired Batches</h2>
+        <ul>
+            @foreach($emailData['expired_batches'] as $batch)
+                <li>
+                    <strong>Product:</strong> {{ $batch['product'] }} <br>
+                    <strong>Barcode:</strong> {{ $batch['barcode'] }} <br>
+                    <strong>Quantity:</strong> {{ $batch['quantity'] }} <br>
+                    <strong>Expiry Date:</strong> {{ $batch['expiry_date'] }} <br>
+                </li>
+                <hr>
+            @endforeach
+        </ul>
     @endif
 
-    <p>Please review this rack and take the necessary action.</p>
+    @if(!empty($emailData['soon_to_expire_batches']))
+        <h2 style="color: orange;">⚠️ Soon to Expire Batches (within 5 days)</h2>
+        <ul>
+            @foreach($emailData['soon_to_expire_batches'] as $batch)
+                <li>
+                    <strong>Product:</strong> {{ $batch['product'] }} <br>
+                    <strong>Barcode:</strong> {{ $batch['barcode'] }} <br>
+                    <strong>Quantity:</strong> {{ $batch['quantity'] }} <br>
+                    <strong>Expiry Date:</strong> {{ $batch['expiry_date'] }} <br>
+                </li>
+                <hr>
+            @endforeach
+        </ul>
+    @endif
+
+    <p>Please review this rack and take the necessary action immediately.</p>
 </body>
 </html>

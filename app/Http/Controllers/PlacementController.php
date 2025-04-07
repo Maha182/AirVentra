@@ -28,109 +28,97 @@ class PlacementController extends Controller
     
     public function checkPlacement(Request $request)
     {
-        $productID = $request->query('barcode');
+        $barcode = $request->query('barcode');
 
-        $product = Product::where('id', $productID)->first();
+        // Find the batch by its barcode
+        $batch = DB::table('product_batches')->where('barcode', $barcode)->first();
+
+        if (!$batch) {
+            \Log::error('Batch not found for scanned barcode', ['barcode' => $barcode]);
+            return response()->json(['error' => 'Batch not found.'], 400);
+        }
+
+        // Get product info
+        $product = DB::table('products')->where('id', $batch->product_id)->first();
         if (!$product) {
-            \Log::error('Product not found', ['product_id' => $productID]);
+            \Log::error('Product not found for batch', ['product_id' => $batch->product_id]);
             return response()->json(['error' => 'Product not found.'], 400);
         }
-        
-        $locationId = session('current_rack');
-        $location = Location::find($locationId);
 
-        // $location = Location::find('L0005');
-        if (!$location) {
+        $locationId = session('current_rack');
+        $scannedLocation = Location::find($locationId);
+
+        if (!$scannedLocation) {
             return response()->json(["error" => "Rack location not found in session"], 404);
         }
 
-        $correctLocation = Location::find($product->location_id);
+        // Check if batch is in correct location
+        $correctLocation = Location::find($batch->location_id);
 
-        if ($location->id !== $correctLocation->id) {
-            \Log::info('Product in wrong location', [
-                'product_id' => $productID, 
-                'wrong_location' => $location->id, 
-                'correct_location' => $correctLocation->id
+        if ($scannedLocation->id !== $batch->location_id) {
+            \Log::info('Batch in wrong location', [
+                'barcode' => $barcode,
+                'batch_id' => $batch->id,
+                'wrong_location' => $scannedLocation->id,
+                'correct_location' => $batch->location_id,
             ]);
 
+            // Insert into placement error report
             $errorId = DB::table('placement_error_report')->insertGetId([
-                'product_id' => $productID,
-                'wrong_location' => $location->id,
-                'correct_location' => $correctLocation->id,
+                'product_id' => $product->id,
+                'batch_id' => $batch->id,
+                'barcode' => $barcode,
+                'wrong_location' => $scannedLocation->id,
+                'correct_location' => $batch->location_id,
                 'status' => 'Pending',
                 'scan_date' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
-            // Mail::to('maha1822003@gmail.com')->send(new PlacementErrorMail([
-            //     'product' => $product,
-            //     'wrong_location' => $location->id,
-            //     'correct_location' => $correctLocation->id,
-            // ]));
-
-            // Fetch all admin emails
-            // $adminEmails = User::where('role', 'admin')->pluck('email')->toArray();
-
-            // // Send email to all admins
-            // Mail::to($adminEmails)->send(new PlacementErrorMail([
-            //     'product' => $product,
-            //     'wrong_location' => $location->id,
-            //     'correct_location' => $correctLocation->id,
-            // ]));
-            // Assign the correction task
+            // Assign task to employee
             $taskController = new TaskAssignmentController();
             $assignedEmployee = $taskController->assignTask($errorId);
 
+            // Email notification
             if ($assignedEmployee) {
-                // Send email to the assigned employee
                 Mail::to($assignedEmployee->email)->send(new PlacementErrorMail([
                     'product' => $product,
-                    'wrong_location' => $location->id,
-                    'correct_location' => $correctLocation->id,
+                    'barcode' => $barcode,
+                    'wrong_location' => $scannedLocation->id,
+                    'correct_location' => $batch->location_id,
                 ]));
             }
 
-            //fix this: Fetch the error reports
-            $errorReports = LocationCheck::where('product_id', $product->id)->get();
-
-            // Store product details in session
-            session()->put('product', [
-                'product_id' => $product->id,
-                'product_name' => $product->title,
-                'product_quantity' => $product->quantity,
-                'zone_name' => $correctLocation->zone_name,
-                'rack' => $correctLocation->rack,
-                'errorReports' => $errorReports->toArray(),
-            ]);
-
-            // Return the error reports as a JSON response
+            // Return response
             return response()->json([
-                'product' => session('product'),
+                'product' => [
+                    'product_id' => $product->id,
+                    'product_name' => $product->title,
+                    'batch_id' => $batch->id,
+                    'barcode' => $barcode,
+                    'quantity' => $batch->quantity,
+                ],
                 'success' => true,
                 'error' => 'Wrong placement detected.',
-                'location' => $location->id,
-                'errorReports' => $errorReports,
-                'locationCurrentcapacity' => $location->current_capacity,
-                'locationCapacity' => $location->capacity,
-                'locationzone' => $location->zone_name,
-                'wrong_location' => $location->id,
-                'correct_location' => $correctLocation->id,
+                'location' => $scannedLocation->id,
+                'correct_location' => $batch->location_id,
             ]);
         }
 
-        // Return product details even if placement is correct
+        // Correct placement
         return response()->json([
             'product' => [
                 'product_id' => $product->id,
                 'product_name' => $product->title,
-                'product_quantity' => $product->quantity,
-                'zone_name' => $correctLocation->zone_name,
-                'rack' => $correctLocation->rack,
+                'batch_id' => $batch->id,
+                'barcode' => $barcode,
+                'quantity' => $batch->quantity,
             ],
             'success' => 'Correct placement.'
         ]);
     }
+
     
 
 

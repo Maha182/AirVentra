@@ -83,7 +83,9 @@ class InventoryController extends Controller
         ]);
 
         // Email alert if over/underfilled
-        if ($status !== 'normal') {
+        $shouldAlert = $status !== 'normal' || !empty($expiredBatches) || !empty($soonToExpireBatches);
+
+        if ($shouldAlert) {
             $taskController = new TaskAssignmentController();
             $assignedEmployee = $taskController->assignTask($capacityCheck->id);
 
@@ -92,18 +94,11 @@ class InventoryController extends Controller
                 'detected_capacity' => $totalScanned,
                 'rack_capacity' => $location->capacity,
                 'status' => $status,
-                'expired' => $expiredBatches,
-                'soon' => $soonToExpireBatches
+                'expired_batches' => $expiredBatches,
+                'soon_to_expire_batches' => $soonToExpireBatches
             ]));
         }
 
-        // Email alert if there are expired or soon-to-expire batches
-        // if (!empty($expiredBatches) || !empty($soonToExpireBatches)) {
-        //     Mail::to($assignedEmployee)->send(new ExpiryAlertMail([
-        //         'expired' => $expiredBatches,
-        //         'soon' => $soonToExpireBatches
-        //     ]));
-        // }
 
         return response()->json([
             'status' => $status,

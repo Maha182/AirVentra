@@ -65,6 +65,20 @@ class TaskController extends Controller
         $task->completed_at = ($request->status === 'completed') ? now() : null;
         $task->save();
 
+        if ($task->status === 'completed') {
+            if ($task->error_type === 'misplaced') {
+                // Update placement_error_report
+                DB::table('placement_error_report')
+                    ->where('id', $task->error_id)
+                    ->update(['status' => 'Corrected']);
+            } elseif ($task->error_type === 'capacity') {
+                // Update inventory_levels_report
+                DB::table('inventory_levels_report')
+                    ->where('id', $task->error_id)
+                    ->update(['status' => 'normal']);
+            }
+        }
+
         return response()->json([
             'success' => true,
             'status' => $task->status
