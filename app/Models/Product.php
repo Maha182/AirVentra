@@ -13,8 +13,7 @@ class Product extends Model
 
     // Define the primary key for this model
     protected $primaryKey = 'id'; 
-    protected $fillable = ['id', 'title', 'description', 'main_category', 'quantity', 'location_id', 'barcode_path'];
-
+    protected $fillable = ['id', 'title', 'description', 'main_category', 'min_stock', 'max_stock'];
     
     // If your primary key is not auto-incrementing, set this property:
     public $incrementing = false; // Because we're manually setting 'id'
@@ -28,10 +27,6 @@ class Product extends Model
         });
     }
 
-    public function location()
-    {
-        return $this->belongsTo(Location::class, 'location_id', 'id');
-    }
     public static function generateProductId($category)
     {
         // Mapping categories to letters
@@ -54,5 +49,9 @@ class Product extends Model
         }
 
         return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT); // Format as B0051, C0052, etc.
+    }
+    public function latestBatch()
+    {
+        return $this->hasOne(ProductBatch::class)->latestOfMany();
     }
 }

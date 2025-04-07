@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\ProductBatch;
 use App\Models\Product;
 use App\Models\Location;
 use Illuminate\Http\Request;
@@ -22,8 +22,15 @@ class ProductController extends Controller
     public function charts()
     {
         // 1. Product Availability (Bubble Chart)
-        $products = Product::select('products.title', 'products.quantity', 'locations.aisle', 'locations.rack', 'locations.zone_name')
-            ->join('locations', 'products.location_id', '=', 'locations.id')
+        $products = ProductBatch::select(
+                'products.title',
+                'product_batches.quantity',
+                'locations.aisle',
+                'locations.rack',
+                'locations.zone_name'
+            )
+            ->join('products', 'product_batches.product_id', '=', 'products.id')
+            ->leftJoin('locations', 'product_batches.location_id', '=', 'locations.id')
             ->get();
     
         $bubbleData = $products->map(function ($product) {
@@ -36,72 +43,55 @@ class ProductController extends Controller
             ];
         });
     
-        // 2. Warehouse Capacity Utilization Per Zone
-        $zoneCapacity = Location::selectRaw("zone_name, SUM(current_capacity) as used_capacity, SUM(capacity - current_capacity) as free_capacity")
-            ->groupBy('zone_name')
-            ->get();
-    
-       
-            $zoneProductCount = Location::select(
-                'zone_name', 
-                DB::raw('COALESCE(COUNT(products.id), 0) as product_count') // Ensures NULL is treated as 0
-            )
-            ->leftJoin('products', 'locations.id', '=', 'products.location_id')
-            ->groupBy('zone_name')
-            ->get();
-
-    
-            $zoneCapacity = Location::selectRaw("zone_name, SUM(current_capacity) as used_capacity, SUM(capacity - current_capacity) as free_capacity")
-        ->groupBy('zone_name')
-        ->get();
-
-       
-                // Get all locations
+        // 2. Zone Capacity: Used vs Free
         $locations = Location::all();
-
+    
         $chartData = [];
         $totalWarehouseCapacity = 0;
         $totalUsedCapacity = 0;
-
-        // Group locations by their zone name
+    
         $zones = $locations->groupBy('zone_name');
-
-        // Prepare data for each zone (only used capacity)
+    
         foreach ($zones as $zoneName => $zoneLocations) {
             $totalUsedCapacityForZone = 0;
-
-            // Sum used capacities for each zone
+    
             foreach ($zoneLocations as $location) {
                 $usedCapacity = $location->current_capacity;
                 $totalUsedCapacityForZone += $usedCapacity;
-
-                // Sum the total warehouse capacity and used capacity
+    
                 $totalWarehouseCapacity += $location->capacity;
                 $totalUsedCapacity += $usedCapacity;
             }
-
-            // Prepare the chart data for each zone
+    
             $chartData[] = [
                 'zone' => $zoneName,
                 'used_capacity' => $totalUsedCapacityForZone,
             ];
         }
-
-        // Calculate the free capacity for the whole warehouse
+    
         $totalFreeCapacity = $totalWarehouseCapacity - $totalUsedCapacity;
-
-        // Add the free capacity for the whole warehouse to the chart data
+    
         $chartData[] = [
             'zone' => 'Warehouse Free Capacity',
-            'used_capacity' => $totalFreeCapacity,  // This represents the free capacity
+            'used_capacity' => $totalFreeCapacity,
         ];
-
-        
-
-        
-        
-
-       
+    
+        // 3. Product Count Per Zone
+        $zoneProductCount = DB::table('locations')
+            ->select('locations.zone_name', DB::raw('COUNT(DISTINCT product_batches.id) as product_count'))
+            ->leftJoin('product_batches', 'locations.id', '=', 'product_batches.location_id')
+            ->groupBy('locations.zone_name')
+            ->get();
+    
+        // 4. Optional: Zone-wise used vs free breakdown
+        $zoneCapacity = DB::table('locations')
+            ->select(
+                'zone_name',
+                DB::raw('SUM(current_capacity) as used_capacity'),
+                DB::raw('SUM(capacity - current_capacity) as free_capacity')
+            )
+            ->groupBy('zone_name')
+            ->get();
     
         return view('product_charts', compact(
             'bubbleData',
@@ -131,7 +121,6 @@ class ProductController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'main_category' => 'required|string',
-            'quantity' => 'required|integer',
             'location_id' => 'required|integer',
             'barcode_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate image file
         ]);
@@ -167,7 +156,7 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $locations = Location::pluck('id');
+        $locations = Location::pluck('id', 'id'); // ✅ Proper key-value format
         $product = Product::findOrFail($id);
         return view('products.form', compact('product','id','locations'));
     }
@@ -180,9 +169,7 @@ class ProductController extends Controller
             'title'         => 'required|string|max:255',
             'description'   => 'nullable|string',
             'main_category' => 'required|string',
-            'quantity'      => 'required|integer',
             'location_id' => 'required|string|regex:/^L\d{4}$/', // Accepts L0001 format
-            'barcode_path'  => 'nullable|string',
         ]);
 
         $product->update($validated);

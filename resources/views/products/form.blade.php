@@ -68,13 +68,14 @@
                               'Grocery' => 'Grocery'
                            ], old('main_category', $product->main_category ?? ''), ['class' => 'form-control', 'required']) }}
                         </div>
-                        <div class="form-group col-md-6">
-                           <label class="form-label fw-bold">Quantity: <span class="text-danger">*</span></label>
-                           {{ Form::number('quantity', old('quantity', $product->quantity ?? ''), ['class' => 'form-control', 'placeholder' => 'Quantity', 'required']) }}
-                        </div>
+                        
                         <div class="form-group col-md-6">
                            <label class="form-label fw-bold">Location ID: <span class="text-danger">*</span></label>
-                           {{ Form::select('location_id', $locations, old('location_id', $product->location_id ?? null), ['class' => 'form-control', 'required']) }}
+                           @php
+                              $latestBatchLocationId = isset($product->latestBatch) ? $product->latestBatch->location_id : null;
+                           @endphp
+
+                           {{ Form::select('location_id', $locations, old('location_id', $latestBatchLocationId), ['class' => 'form-control', 'required']) }}
 
                         </div>
                         <div class="form-group col-md-12">

@@ -17,15 +17,14 @@ class ProductsDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->editColumn('created_at', function ($product) {
+                return $product->created_at->format('Y-m-d H:i:s');
+            })
+            ->editColumn('updated_at', function ($product) {
+                return $product->updated_at->format('Y-m-d H:i:s');
+            })
             ->addColumn('action', 'products.action')
             ->rawColumns(['action']);
-            // ->addColumn('action', function ($product) {
-            //     return '<a href="'.route('products.edit', $product->id).'" class="btn btn-sm btn-warning">Edit</a>
-            //             <form action="'.route('products.destroy', $product->id).'" method="POST" style="display:inline-block;">
-            //                 '.csrf_field().method_field('DELETE').'
-            //                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Are you sure?\')">Delete</button>
-            //             </form>';
-            // });
     }
 
     /**
@@ -76,9 +75,6 @@ class ProductsDataTable extends DataTable
             ['data' => 'title', 'name' => 'title', 'title' => 'Title'],
             ['data' => 'description', 'name' => 'description', 'title' => 'Description'],
             ['data' => 'main_category', 'name' => 'main_category', 'title' => 'Main Category'],
-            ['data' => 'quantity', 'name' => 'quantity', 'title' => 'Quantity'],
-            ['data' => 'location_id', 'name' => 'location_id', 'title' => 'Location ID'],
-            ['data' => 'barcode_path', 'name' => 'barcode_path', 'title' => 'Barcode Path'],
             ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Created At'],
             ['data' => 'updated_at', 'name' => 'updated_at', 'title' => 'Updated At'],
             Column::computed('action')

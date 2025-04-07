@@ -111,6 +111,7 @@
 
 
 </style>
+<div id="dynamic-success-alert"></div>
 
 <div id="features" class="container-fluid bg-light py-4">
     <h4 class="display-4" style="color: navy">Storage Assignment</h4>       
@@ -134,11 +135,8 @@
             {{ session('error') }}
         </div>
     @endif
-    @if(session('assigned_product.new_batch_message'))
-        <div class="alert alert-info text-center mt-3">
-            {{ session('assigned_product.new_batch_message') }}
-        </div>
-    @endif
+<!-- Place this in your HTML body once -->
+
 
 <div class="container my-5">
     <div class="row">
@@ -412,7 +410,7 @@
         // Fetch product data and update fields
         let isFetching = false;
 
-        function fetchProductData() {
+        function fetchProductData(retries = 3) {
             if (isFetching) return;
             isFetching = true;
 
@@ -423,9 +421,18 @@
                 })
                 .then(data => {
                     console.log("Received data:", data);
-                    if (data.new_batch_message) {
-                        alert(data.new_batch_message);  // Or use a modal/snackbar/toast
+                    if (data.message) {
+                        const alertContainer = document.getElementById('dynamic-success-alert');
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-success text-center" role="alert">
+                                ${data.message}
+                            </div>
+                        `;
+                        setTimeout(() => {
+                            alertContainer.innerHTML = '';
+                        }, 10000);
                     }
+
                     if (data.success && data.assigned_product) {
                         let newBarcode = data.assigned_product.batch_id;
 
@@ -433,21 +440,28 @@
                             lastScannedBarcode = newBarcode;
                             sessionStorage.setItem('lastScannedBarcode', newBarcode);
 
-                            assignedProductData = data.assigned_product; // ✅ Assign product data here
+                            assignedProductData = data.assigned_product;
                             updateProductUI(assignedProductData);
                             updateChart(assignedProductData.current_capacity, assignedProductData.capacity);
-                            populateLocationDropdown(assignedProductData); // ✅ Ensure dropdown updates
+                            populateLocationDropdown(assignedProductData);
                         }
                     } else {
                         alert("❌ Unrecognized or invalid barcode. Please try again.");
                     }
                 })
-                .catch(error => console.error("Error fetching product data:", error))
+                .catch(error => {
+                    console.error("Error fetching product data:", error);
+                    if (retries > 0) {
+                        console.log(`Retrying fetch... attempts left: ${retries - 1}`);
+                        setTimeout(() => fetchProductData(retries - 1), 1500);
+                    }
+                })
                 .finally(() => {
                     isFetching = false;
                 });
         }
 
+   
         function updateProductUI(productData) {
             document.getElementById('batch-id').innerText = productData.batch_id || '';
             document.getElementById('product-name').innerText = productData.product_name || '';
@@ -525,7 +539,7 @@
         fetchProductData();
         if (!window.fetchIntervalSet) {  // Prevent multiple intervals
             window.fetchIntervalSet = true;
-            setInterval(fetchProductData, 4000);
+            setInterval(fetchProductData, 10000);
         }
     });
 </script>
