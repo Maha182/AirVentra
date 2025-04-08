@@ -31,14 +31,20 @@ class Task extends Model
     }
 
     public function placementError(): BelongsTo
-{
-    return $this->belongsTo(PlacementErrorReport::class, 'error_id', 'product_id');
-}
+    {
+        return $this->belongsTo(PlacementErrorReport::class, 'error_id', 'product_id');
+    }
 
-public function inventoryLevel(): BelongsTo
-{
-    return $this->belongsTo(InventoryLevelReport::class, 'error_id', 'product_id');
-}
+    public function inventoryLevel(): BelongsTo
+    {
+        return $this->belongsTo(InventoryLevelReport::class, 'error_id', 'product_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'assigned_to'); // This correctly maps 'assigned_to' to 'id' in 'users'
+    }
+
 
 }
 

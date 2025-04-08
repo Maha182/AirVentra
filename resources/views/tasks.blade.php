@@ -136,7 +136,7 @@
                             <thead>
                                 <tr>
                                     <th></th> <!-- Checkbox -->
-                                    <th>Task Title</th>
+                                    <th>Task Type</th>
                                     <th>Details</th>
                                     <th>Due Date</th>
                                     <th>Status</th>

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StorageAssignmentController;
 use App\Http\Controllers\InventoryController;
-
+use App\Http\Controllers\AdminTaskController;
 use App\Http\Controllers\PlacementController;
 use App\Http\Controllers\LocationCheckController;
 use App\Http\Controllers\RackScanController;
@@ -136,6 +136,11 @@ Route::group(['middleware' => 'auth'], function () {
     ->where('filter', 'day|week|month');  // Ensures only valid filters are passed
 
     Route::get('/task-breakdown', [TaskController::class, 'getTaskBreakdown']);
+
+
+    Route::get('/admin/tasks', [AdminTaskController::class, 'index'])->name('admin.dashboard');
+    Route::post('/admin/tasks/{taskId}/reassign', [AdminTaskController::class, 'reassignTask']);
+
 
 });
 
