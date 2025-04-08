@@ -298,16 +298,15 @@
         let lastScannedBarcode = sessionStorage.getItem('lastScannedBarcode') || '';
         let chart; // Declare chart variable globally
         let assignedProductData;
+        
+        // Optionally reset hidden inputs or dropdowns
+        document.getElementById('selectedLocationInput').value = '';
+        const locationSelect = document.getElementById('locations');
+        if (locationSelect) locationSelect.innerHTML = '';
 
-        // Clear sessionStorage and product display fields on refresh
-        // sessionStorage.removeItem('lastScannedBarcode');
-        document.getElementById('batch-id').innerText = '';
-        document.getElementById('product-name').innerText = '';
-        document.getElementById('batch-quantity').innerText = '';
-        document.getElementById('Location_id').innerText = '';
-        document.getElementById('zone_name').innerText = '';
-        document.getElementById('aisle').innerText = '';
-        document.getElementById('rack').innerText = '';
+        // Clear any alert containers
+        const alertContainer = document.getElementById('dynamic-success-alert');
+        if (alertContainer) alertContainer.innerHTML = '';
 
         // Initialize the chart
         function initializeChart() {
@@ -414,7 +413,7 @@
             if (isFetching) return;
             isFetching = true;
 
-            fetch('/AirVentra/sendLocationData')
+            fetch('/AirVentra/sendLocationData?reset=true')
                 .then(response => {
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     return response.json();
@@ -487,24 +486,35 @@
             freestOption.textContent = 'Freest Location: ' + assignedProduct.freest.zone_name;
             locationsSelect.appendChild(freestOption);
 
+            let preferredLocation = document.createElement('option');
+            preferredLocation.value = assignedProduct.assigned_location?.id || '';
+            preferredLocation.textContent = 'preferred Location: ' + assignedProduct.assigned_location?.zone_name;
+            locationsSelect.appendChild(preferredLocation);
+
             locationsSelect.addEventListener('change', updateLocationData);
         }
 
         function updateLocationData() {
             if (!assignedProductData) return;
 
-            let selectedLocationId = document.getElementById('locations').value;
+            const selectedLocationId = document.getElementById('locations').value;
 
-            // Ensure we correctly get the new location
-            let selectedLocation = (selectedLocationId == assignedProductData.freest?.id) ? 
-                assignedProductData.freest : assignedProductData.nearest;
+            let selectedLocation = null;
+
+            if (selectedLocationId == assignedProductData.freest?.id) {
+                selectedLocation = assignedProductData.freest;
+            } else if (selectedLocationId == assignedProductData.nearest?.id) {
+                selectedLocation = assignedProductData.nearest;
+            } else if (selectedLocationId == assignedProductData.assigned_location?.id) {
+                selectedLocation = assignedProductData.assigned_location;
+            }
 
             if (!selectedLocation) {
                 console.error("Selected location not found!");
                 return;
             }
 
-            // Update UI with the selected location's details
+            // Update the UI
             document.getElementById('Location_id').innerText = selectedLocation.id || '';
             document.getElementById('zone_name').innerText = selectedLocation.zone_name || '';
             document.getElementById('aisle').innerText = selectedLocation.aisle || '';
@@ -513,7 +523,6 @@
             updateChart(selectedLocation.current_capacity, selectedLocation.capacity);
             sessionStorage.setItem('selectedLocationId', selectedLocation.id);
             document.getElementById('selectedLocationInput').value = selectedLocation.id;
-
         }
 
         document.getElementById('lookupLocationBtn').addEventListener('click', function () {

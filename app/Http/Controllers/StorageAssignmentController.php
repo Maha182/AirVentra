@@ -78,7 +78,6 @@ class StorageAssignmentController extends Controller
         if (!$zone_name) {
             return response()->json(['success' => false, 'error' => 'Zone assignment failed.'], 500);
         }
-        // $zone_name = 'Dry Zone';
         $assignment = $this->assignLocation($batch, $zone_name);
     
         // Prepare the data for response
@@ -148,8 +147,7 @@ class StorageAssignmentController extends Controller
         }
 
         // Step 5: Fallback to a default available location if no preferred
-        $location = $preferredLocation ?: $availableLocations->sortBy('aisle')->first();
-
+        $location = $preferredLocation;
         if (!$location) {
             return response()->json([
                 'success' => false,
@@ -167,7 +165,6 @@ class StorageAssignmentController extends Controller
             'product_name' => optional($batch->product)->title,
             'product_description' => optional($batch->product)->description,
             'batch_quantity' => $batch->quantity,
-            'location' => $batch->location_id,
             'assigned_location' => $location,
             'zone_name' => $location->zone_name,
             'aisle' => $location->aisle,
@@ -183,10 +180,11 @@ class StorageAssignmentController extends Controller
         return response()->json([
             'assigned_product' => $assignedProduct,
             'success' => true,
-            'locations' => [
-                'freest' => $freestLocation ?? null,
-                'nearest' => $nearestLocation ?? null,
-            ]
+            // 'locations' => [
+            //     'freest' => $freestLocation ?? null,
+            //     'nearest' => $nearestLocation ?? null,
+            //     'preferred' => $location?? null,
+            // ]
         ]);
     }
 
