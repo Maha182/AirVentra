@@ -138,8 +138,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/task-breakdown', [TaskController::class, 'getTaskBreakdown']);
 
 
-    Route::get('/admin/tasks', [AdminTaskController::class, 'index'])->name('admin.dashboard');
-    Route::post('/admin/tasks/{taskId}/reassign', [AdminTaskController::class, 'reassignTask']);
+    Route::get('/admin', [AdminTaskController::class, 'index'])->name('admin.dashboard');
+    Route::post('/admin/{taskId}/reassign', [AdminTaskController::class, 'reassignTask']);
+    Route::post('/admin/{id}/update-deadline', [AdminTaskController::class, 'updateDeadline'])->name('tasks.update-deadline');
+
 
 
 });

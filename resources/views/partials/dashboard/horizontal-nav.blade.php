@@ -9,7 +9,7 @@
                <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2" transform="rotate(45 10.5562 -0.556152)" fill="currentColor"/>
             </svg>
             <a href="#" class="navbar-brand p-0">
-            <img src="img\logo_b.png" alt="Logo" class="img-fluid" style="max-height: 100px;"> <!-- Adjust max-height as needed -->
+            <img src="AirVentra/img/logo_b.png" alt="Logo" class="img-fluid" style="max-height: 100px;"> <!-- Adjust max-height as needed -->
             </a>
          </div>
          <button class="btn-close float-end"></button>

@@ -102,6 +102,19 @@ class AdminTaskController extends Controller
             'new_assignee' => $task->user->first_name . ' ' . $task->user->last_name
         ]);
     }
+    
+    public function updateDeadline(Request $request, $id)
+    {
+        $request->validate([
+            'deadline' => 'required|date'
+        ]);
+
+        $task = Task::findOrFail($id);
+        $task->deadline = Carbon::parse($request->deadline);
+        $task->save();
+
+        return response()->json(['success' => true]);
+    }
 
 
 }

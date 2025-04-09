@@ -1,26 +1,6 @@
 <!-- Include jQuery before your other scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.29.0"></script>
-<script src="js/jquery.min.js"></script>
-<script src="js/rtl.js"></script>
-<script src="js/customizer.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.appear.js"></script>
-<script src="js/countdown.min.js"></script>
-<script src="js/waypoints.min.js"></script>
-<script src="js/jquery.counterup.min.js"></script>
-<script src="js/wow.min.js"></script>
-<script src="js/apexcharts.js"></script>
-<script src="js/slick.min.js"></script>
-<script src="js/select2.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/jquery.magnific-popup.min.js"></script>
-<script src="js/smooth-scrollbar.js"></script>
-<script src="js/lottie.js"></script>
-<script src="js/highcharts.js"></script>
-<script src="js/highcharts-3d.js"></script>
-<script src="js/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
 
@@ -28,6 +8,7 @@
   <!-- Meta tag for CSRF token -->
    <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
    </head>
 
@@ -97,7 +78,7 @@
                     <th>Task Type</th>
                     <th>Status</th>
                     <th>Due Date</th>
-                    <th>Actions</th>
+                    <th>Re - Assign</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -110,7 +91,14 @@
                             {{ ucfirst($task->status) }}
                         </span>
                         </td>
-                        <td>{{ $task->deadline ? date('d/m/Y', strtotime($task->deadline)) : 'N/A' }}</td>
+                        <td>
+                            <span class="deadline-display" data-task-id="{{ $task->id }}">
+                                {{ $task->deadline ? date('d/m/Y H:i', strtotime($task->deadline)) : 'N/A' }}
+                            </span>
+                            <i class="bi bi-calendar-event edit-deadline-icon" data-task-id="{{ $task->id }}" style="cursor: pointer; margin-left: 5px;"></i>
+                            <input type="datetime-local" class="form-control deadline-input d-none" data-task-id="{{ $task->id }}" value="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d\TH:i') : '' }}">
+                        </td>
+
                         <td>
                             @if($task->status !== 'completed')
                                 <select class="form-select d-inline w-50 reassign-dropdown" data-task-id="{{ $task->id }}">
@@ -161,7 +149,7 @@
             row.css('opacity', '0.5');  // Lower opacity to make it appear "fading"
 
             $.ajax({
-                url: `tasks/${taskId}/reassign`,
+                url: `admin/${taskId}/reassign`,
                 type: 'POST',
                 data: {
                     _token: $('meta[name="csrf-token"]').attr('content'),
@@ -188,6 +176,67 @@
                 }
             });
         });
+
+
+        // Show date input when icon is clicked
+        $('.edit-deadline-icon').on('click', function () {
+            const taskId = $(this).data('task-id');
+            $(`.deadline-display[data-task-id="${taskId}"]`).addClass('d-none');
+            $(this).addClass('d-none');
+            $(`.deadline-input[data-task-id="${taskId}"]`).removeClass('d-none').focus();
+        });
+
+        // Handle change of deadline input with row fade effect
+        $('.deadline-input').on('change', function () {
+            const taskId = $(this).data('task-id');
+            const newDeadline = $(this).val();
+            const row = $(this).closest('tr');
+
+            // Apply fade-out effect
+            row.css('transition', 'opacity 0.3s ease');
+            row.css('opacity', '0.5');
+
+            $.ajax({
+                url: `admin/${taskId}/update-deadline`,
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    deadline: newDeadline
+                },
+                success: function (response) {
+                    if (response.success) {
+                        const formatted = new Date(newDeadline).toLocaleString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        });
+
+                        $(`.deadline-display[data-task-id="${taskId}"]`).text(formatted).removeClass('d-none');
+                        $(`.edit-deadline-icon[data-task-id="${taskId}"]`).removeClass('d-none');
+                        $(`.deadline-input[data-task-id="${taskId}"]`).addClass('d-none');
+
+                        // Optional: Highlight success
+                        row.css('background-color', '#d4edda');
+
+                        // Restore opacity
+                        setTimeout(() => {
+                            row.css('opacity', '1');
+                        }, 200);
+                    } else {
+                        alert('Error updating deadline.');
+                        row.css('opacity', '1');
+                    }
+                },
+                error: function () {
+                    alert('Error occurred while updating deadline.');
+                    row.css('opacity', '1');
+                }
+            });
+        });
+
+
 
 
 
