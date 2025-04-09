@@ -87,6 +87,10 @@
 <!-- JavaScript for Rack Scanning -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(() => {
+            document.querySelector('img[alt="Live Video Feed"]').src = "http://127.0.0.1:5000/video_feed";
+        }, 4000); 
+
         let lastScannedRack = sessionStorage.getItem('lastScannedRack') || '';
 
         function fetchRackData() {

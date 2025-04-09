@@ -154,9 +154,9 @@
             <div class="bg-light p-4 border" style="height: 330px;">
                 <h4 class="section-title">Scanned Batch</h4>
                 <div class="justify-content-between align-items-start gap-3 col-md-6 p-4">
-                    <p class="mb-4">Batch ID: <strong id="batch-id">{{ session('assigned_product.batch_id') ?? '' }}</strong></p>
-                    <p class="mb-4">Product Name: <strong id="product-name">{{ session('assigned_product.product_name') ?? '' }}</strong></p>
-                    <p class="mb-4">Quantity: <strong id="batch-quantity">{{ session('assigned_product.batch_quantity') ?? '' }}</strong></p>
+                    <p class="mb-4">Batch ID: <strong id="batch-id"></strong></p>
+                    <p class="mb-4">Product Name: <strong id="product-name"></strong></p>
+                    <p class="mb-4">Quantity: <strong id="batch-quantity"></strong></p>
                 </div>
             </div>
         </div>
@@ -295,6 +295,10 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(() => {
+            document.querySelector('img[alt="Live Video Feed"]').src = "http://127.0.0.1:5000/video_feed";
+        }, 4000); 
+
         let lastScannedBarcode = sessionStorage.getItem('lastScannedBarcode') || '';
         let chart; // Declare chart variable globally
         let assignedProductData;
@@ -307,6 +311,14 @@
         // Clear any alert containers
         const alertContainer = document.getElementById('dynamic-success-alert');
         if (alertContainer) alertContainer.innerHTML = '';
+
+        if (!data.assigned_product || !data.assigned_product.batch_id) {
+            sessionStorage.removeItem('lastScannedBarcode');
+            updateProductUI({});
+            updateChart(0, 1); // Reset chart
+            return;
+        }
+        
 
         // Initialize the chart
         function initializeChart() {
@@ -543,7 +555,14 @@
                 })
                 .catch(error => console.error('Error fetching location:', error));
         });
-
+        function updateElementText(elementId, text) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerText = text;
+            } else {
+                console.error(`Element with ID ${elementId} not found.`);
+            }
+        }
         initializeChart();
         fetchProductData();
         if (!window.fetchIntervalSet) {  // Prevent multiple intervals
