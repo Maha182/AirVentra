@@ -19,7 +19,8 @@ use App\Http\Controllers\AdminTaskController;
 use App\Http\Controllers\PlacementController;
 use App\Http\Controllers\LocationCheckController;
 use App\Http\Controllers\RackScanController;
-
+use Illuminate\Http\Request;
+use App\Models\Location;
 use Illuminate\Support\Facades\Http;
 
 /*
@@ -51,9 +52,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Dashboard Routes
     Route::get('/dashboard', [dashController::class, 'index'])->name('dashboard');
-    // Users Module
-    Route::resource('users', UserController::class);
-    Route::resource('products', ProductController::class);
+    
+    
     // Inside the 'auth' or 'dashboard' middleware group
     Route::get('/options', function () {
         Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'barcode']);
@@ -63,9 +63,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     
 
-    Route::get('/moniter', function () {
-        return view('analyseTask');  
-    })->name('analyseTask');
 
 
     Route::prefix('charts')->group(function () {
@@ -92,11 +89,27 @@ Route::group(['middleware' => 'auth'], function () {
     
   
 
-    Route::get('/mainPage', function () {
-        Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
-        // Stop assignment service if running
-        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
-    return view('mainPage');  
+    Route::get('/mainPage', function (Request $request) {
+        // Retrieve the rack data from the session
+        $rackData = session('current_rack', null);
+    
+        if ($rackData) {
+            // Start the barcode service
+            Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
+            
+            // Stop the assignment service if running
+            Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
+            
+            // Pass the rack data to the main page view
+            return view('mainPage', [
+                'rackId' => $rackData['rack_id'],
+                'location' => $rackData['zone'],
+                'locationCapacity' => $rackData['capacity'],
+                'status' => 'Active', // Or set it based on your needs
+            ]);
+        } else {
+            return redirect()->route('ScanShelf')->with('error', 'Rack location not found');
+        }
     })->name('mainPage');
 
 
@@ -122,26 +135,39 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
 
-    Route::get('/tasks', [TaskController::class, 'index'])->name('task');
-    Route::get('/tasks/completed', [TaskController::class, 'completedTasks']);
-    Route::post('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
-    Route::get('/tasks/stats', [TaskController::class, 'getTaskStats'])->name('tasks.stats');
+    Route::middleware(['auth', 'isEmployee'])->group(function () {
+        Route::get('/tasks', [TaskController::class, 'index'])->name('task');
+        Route::get('/tasks/completed', [TaskController::class, 'completedTasks']);
+        Route::post('/tasks/{id}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
+        Route::get('/tasks/stats', [TaskController::class, 'getTaskStats'])->name('tasks.stats');
+        Route::get('/tasks/details/{taskId}', [TaskController::class, 'details'])->name('tasks.details');
+        Route::get('/completed-tasks-trend/{filter}', [TaskController::class, 'getCompletedTasksTrend'])
+        ->name('completed-tasks-trend')
+        ->where('filter', 'day|week|month');  // Ensures only valid filters are passed
+    
+        Route::get('/task-breakdown', [TaskController::class, 'getTaskBreakdown']);
+    
+    });
+    
 
-    Route::get('/tasks/details/{taskId}', [TaskController::class, 'details'])->name('tasks.details');
+   
 
-    Route::get('/charts', [ProductController::class, 'charts'])->name('product_charts');
-
-    Route::get('/completed-tasks-trend/{filter}', [TaskController::class, 'getCompletedTasksTrend'])
-    ->name('completed-tasks-trend')
-    ->where('filter', 'day|week|month');  // Ensures only valid filters are passed
-
-    Route::get('/task-breakdown', [TaskController::class, 'getTaskBreakdown']);
-
-
-    Route::get('/admin', [AdminTaskController::class, 'index'])->name('admin.dashboard');
-    Route::post('/admin/{taskId}/reassign', [AdminTaskController::class, 'reassignTask']);
-    Route::post('/admin/{id}/update-deadline', [AdminTaskController::class, 'updateDeadline'])->name('tasks.update-deadline');
-
+    // Routes that require admin access
+    Route::middleware('admin')->group(function () {
+        // Admin only: charts and resources
+        Route::get('/charts', [ProductController::class, 'charts'])->name('product_charts');
+        Route::resource('users', UserController::class);
+        Route::resource('products', ProductController::class);
+    
+        // Admin dashboard and task management
+        Route::get('/moniter', function () {
+                return view('analyseTask');
+        })->name('analyseTask');
+    
+        Route::get('/admin', [AdminTaskController::class, 'index'])->name('admin.dashboard');
+        Route::post('/admin/{taskId}/reassign', [AdminTaskController::class, 'reassignTask']);
+        Route::post('/admin/{id}/update-deadline', [AdminTaskController::class, 'updateDeadline'])->name('tasks.update-deadline');
+    });
 
 
 });

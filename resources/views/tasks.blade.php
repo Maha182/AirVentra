@@ -364,7 +364,7 @@
 
                 $(".complete-checkbox").change(function () {
                     let taskId = $(this).data("task-id");
-                    let newStatus = $(this).is(":checked") ? "completed" : "pending";
+                    let newStatus = $(this).is(":checked") ? "completed" : "pending"; // Update based on checkbox state
                     let statusCell = $(this).closest("tr").find(".state");
                     let row = $(this).closest("tr");
 
@@ -376,7 +376,6 @@
                         },
                         data: { status: newStatus },
                         success: function (response) {
-                            console.log("Success response:", response);
                             if (response.success) {
                                 statusCell.text(newStatus.charAt(0).toUpperCase() + newStatus.slice(1))
                                     .removeClass("bg-warning bg-success")
@@ -388,23 +387,17 @@
                                 loadTaskBreakdownChart();
                                 loadCompletedTasksChart(filterType);
                             } else {
-                                console.error("Error: Task status update failed. Response:", response);
-                                alert("An error occurred while updating the task.");
+                                console.error("Error: " + response.message);
+                                alert("An error occurred while updating the task: " + response.message);
                             }
                         },
-                        error: function (xhr, status, error) {
-                            console.error("AJAX Error: ", error);
-                            console.log("Status: ", status);
-                            console.log("XHR Response: ", xhr);
-
-                            if (xhr.status !== 200) {
-                                alert("An error occurred while updating the task.");
-                            }
+                        error: function (xhr) {
+                            console.error("AJAX Error: ", xhr);
+                            alert("An error occurred while updating the task.");
                         }
-                        
                     });
-
                 });
+
 
                 $(".details-btn").click(function () {
                     let taskId = $(this).data("task-id");

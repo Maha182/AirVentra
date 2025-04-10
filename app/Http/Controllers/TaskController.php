@@ -64,26 +64,60 @@ class TaskController extends Controller
         $task->status = $request->status;
         $task->completed_at = ($request->status === 'completed') ? now() : null;
         $task->save();
-
-        if ($task->status === 'completed') {
-            if ($task->error_type === 'misplaced') {
-                // Update placement_error_report
-                DB::table('placement_error_report')
-                    ->where('id', $task->error_id)
-                    ->update(['status' => 'Corrected']);
-            } elseif ($task->error_type === 'capacity') {
-                // Update inventory_levels_report
+    
+        // Update the inventory_levels_report if the task is related to inventory
+        if ($task->error_type === 'capacity') {
+            $inventoryReport = DB::table('inventory_levels_report')
+                ->where('id', $task->error_id)
+                ->first();
+    
+            // Retrieve the corresponding location to check capacity
+            $location = DB::table('locations')->where('id', $inventoryReport->location_id)->first();
+            $rackCapacity = $location->capacity;
+            $currentCapacity = $location->current_capacity;
+    
+            // Calculate the quarter of the rack's capacity
+            $quarterCapacity = $rackCapacity * 0.25;
+    
+            // Determine the new status based on the current capacity
+            $newStatus = 'normal';
+            if ($currentCapacity < $quarterCapacity) {
+                $newStatus = 'underfilled';
+            } elseif ($currentCapacity >= $rackCapacity) {
+                $newStatus = 'overfilled';
+            }
+    
+            // If the checkbox is checked, set the status to "normal"
+            if ($request->status === 'completed') {
                 DB::table('inventory_levels_report')
-                    ->where('id', $task->error_id)
+                    ->where('id', $inventoryReport->id)
                     ->update(['status' => 'normal']);
+            } else {
+                // If the checkbox is unchecked, revert to the previously calculated status
+                DB::table('inventory_levels_report')
+                    ->where('id', $inventoryReport->id)
+                    ->update(['status' => $newStatus]);
             }
         }
-
+    
+        if ($task->status === 'completed') {
+            // Update placement_error_report to "Corrected"
+            DB::table('placement_error_report')
+                ->where('id', $task->error_id)
+                ->update(['status' => 'Corrected']);
+        } elseif ($task->status === 'pending') {
+            // Revert status to "Pending" in placement_error_report
+            DB::table('placement_error_report')
+                ->where('id', $task->error_id)
+                ->update(['status' => 'Pending']);
+        }
+    
         return response()->json([
             'success' => true,
             'status' => $task->status
         ]);
     }
+    
 
 
     public function getCompletedTasksTrend($filter)  // Get filter from the URL parameter
