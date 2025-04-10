@@ -34,6 +34,6 @@ class TaskAssignmentController extends Controller
             'completed_at' => null, // Ensure completed_at is null initially
         ]);
 
-        return response()->json($task, 201); // Return the created task with assigned details
+        return $employee; // Return the created task with assigned details
     }
 }

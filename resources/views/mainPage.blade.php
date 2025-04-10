@@ -58,9 +58,9 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="p-3 py-2">
-                    <p class="title">Rack # <span id="rack-id">{{ $location ?? '' }}</span></p>
-                    <p class="title">Rack Capacity: <strong id="rack-capacity">{{ $locationCapacity ?? '' }}</strong></p>
-                    <p class="title">Status: <strong id="status" data-status="{{ session('status') }}">{{ $status ?? '' }}</strong></p>
+                <p class="title">Rack # <span id="rack-id">{{ $rackId ?? '' }}</span></p>
+                <p class="title">Rack Capacity: <strong id="rack-capacity">{{ $locationCapacity ?? '' }}</strong></p>
+                <p class="title">Status: <strong id="status" data-status="{{ session('status') }}">{{ $status ?? '' }}</strong></p>
                 </div>
             </div>
             <!-- Button Container -->
@@ -155,6 +155,14 @@
             progressBar.style.width = `0%`;
             progressBar.setAttribute('aria-valuenow', 0);
             progressBar.innerText = `0% Scanned`;
+        }
+
+
+        const rackData = @json(session('current_rack', [])); // Get the rack data from the session
+        if (rackData && rackData.rack_id) {
+            updateElementText('rack-id', rackData.rack_id);
+            updateElementText('rack-capacity', rackData.capacity);
+            updateElementText('status', 'Active'); // You can modify this based on actual status
         }
         
         function fetchBarcodeAndCheckPlacement() {

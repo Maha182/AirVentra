@@ -67,52 +67,36 @@
     </div>
 </div>
 
-<!-- Scanning Progress and Error Report -->
-<div class="container my-5">
-    <div class="row">
-        <!-- Scanning Progress -->
-        <div class="col-md-12">
-            <div class="bg-light p-4 border" style="height: auto;">
-                <div class="p-3">
-                    <p class="title">Rack # <span id="rack-id">{{ session('current_rack') ?? 'Not Scanned' }}</span></p>
-                    <p class="title">Current Location: <strong id="current-location">{{ session('location_zone') ?? 'Unknown' }}</strong></p>
-                    <p class="title">Rack Capacity: <strong id="rack-capacity">{{ $locationCapacity ?? '' }}</strong></p>
-                </div>
-                <!-- <button id="scan-rack-btn" class="control-panel-btn">Scan Shelf</button> -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- JavaScript for Rack Scanning -->
+<!-- JavaScript for Rack Scanning and Redirection -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => {
             document.querySelector('img[alt="Live Video Feed"]').src = "http://127.0.0.1:5000/video_feed";
         }, 4000); 
 
-        let lastScannedRack = sessionStorage.getItem('lastScannedRack') || '';
-
         function fetchRackData() {
-            fetch("{{ route('scan-rack') }}")
+            fetch("{{ url('scan-rack') }}")
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success && data.rack_id !== lastScannedRack) {
-                        lastScannedRack = data.rack_id;
-                        sessionStorage.setItem('lastScannedRack', lastScannedRack);
-
-                        document.getElementById('rack-id').innerText = data.rack_id;
-                        document.getElementById('current-location').innerText = data.zone;
-                        document.getElementById('rack-capacity').innerText = data.capacity;
+                    console.log(data);  // Log the data to check for any issues
+                    if (data.success && data.rack_id) {
+                        console.log("Valid rack scanned:", data.rack_id); // Log new rack
+                        // Redirect to mainPage immediately after valid rack is scanned
+                        setTimeout(function() {
+                            const redirectUrl = "{{ url('mainPage') }}" + "?rack_id=" + data.rack_id;
+                            console.log("Redirecting to:", redirectUrl);
+                            window.location.href = redirectUrl;  // Trigger redirection
+                        }, 2000); // Delay for the shelf video to load or any other purpose
                     }
                 })
                 .catch(error => console.error("Error fetching rack data:", error));
         }
 
-        // Auto-fetch every 3 seconds
+        // Auto-fetch every 3 seconds to check for a new scan
         setInterval(fetchRackData, 3000);
     });
-</script>
 
+
+</script>
 
 @endsection

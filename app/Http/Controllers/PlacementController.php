@@ -45,8 +45,11 @@ class PlacementController extends Controller
             return response()->json(['error' => 'Product not found.'], 400);
         }
 
-        $locationId = session('current_rack');
-        $scannedLocation = Location::find($locationId);
+        $locationData = session('current_rack');  // Get the full session data
+        $locationId = $locationData['rack_id'];   // Extract just the rack_id
+
+        $scannedLocation = Location::find($locationId);  // Find the location by the rack_id
+
 
         if (!$scannedLocation) {
             return response()->json(["error" => "Rack location not found in session"], 404);

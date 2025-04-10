@@ -28,15 +28,19 @@ class RackScanController extends Controller
             return response()->json(["error" => "Rack location not found"], 404);
         }
 
-        // Store the current rack in session
-        session()->put('current_rack', $location->id);
+        // Store the current rack data in session
+        session()->put('current_rack', [
+            'rack_id' => $location->id,
+            'zone' => $location->zone_name,
+            'capacity' => $location->capacity,
+        ]);
 
         return response()->json([
             'success' => true,
             'rack_id' => $location->id,
             'zone' => $location->zone_name,
-            'capacity' => $location->capacity
-            
+            'capacity' => $location->capacity,
         ]);
     }
+
 }
