@@ -154,9 +154,9 @@
             <div class="bg-light p-4 border" style="height: 330px;">
                 <h4 class="section-title">Scanned Batch</h4>
                 <div class="justify-content-between align-items-start gap-3 col-md-6 p-4">
-                    <p class="mb-4">Batch ID: <strong id="batch-id"></strong></p>
-                    <p class="mb-4">Product Name: <strong id="product-name"></strong></p>
-                    <p class="mb-4">Quantity: <strong id="batch-quantity"></strong></p>
+                    <p class="mb-4">Batch ID: <strong id="batch-id">{{ session('assigned_product.batch_id') ?? '' }}</strong></p>
+                    <p class="mb-4">Product Name: <strong id="product-name">{{ session('assigned_product.product_name') ?? '' }}</strong></p>
+                    <p class="mb-4">Quantity: <strong id="batch-quantity">{{ session('assigned_product.batch_quantity') ?? '' }}</strong></p>
                 </div>
             </div>
         </div>
@@ -303,21 +303,6 @@
         let chart; // Declare chart variable globally
         let assignedProductData;
         
-        // Optionally reset hidden inputs or dropdowns
-        document.getElementById('selectedLocationInput').value = '';
-        const locationSelect = document.getElementById('locations');
-        if (locationSelect) locationSelect.innerHTML = '';
-
-        // Clear any alert containers
-        const alertContainer = document.getElementById('dynamic-success-alert');
-        if (alertContainer) alertContainer.innerHTML = '';
-
-        if (!data.assigned_product || !data.assigned_product.batch_id) {
-            sessionStorage.removeItem('lastScannedBarcode');
-            updateProductUI({});
-            updateChart(0, 1); // Reset chart
-            return;
-        }
         
 
         // Initialize the chart
@@ -425,7 +410,7 @@
             if (isFetching) return;
             isFetching = true;
 
-            fetch('/AirVentra/sendLocationData?reset=true')
+            fetch('/AirVentra/sendLocationData')
                 .then(response => {
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     return response.json();
@@ -460,13 +445,8 @@
                         alert("❌ Unrecognized or invalid barcode. Please try again.");
                     }
                 })
-                .catch(error => {
-                    console.error("Error fetching product data:", error);
-                    if (retries > 0) {
-                        console.log(`Retrying fetch... attempts left: ${retries - 1}`);
-                        setTimeout(() => fetchProductData(retries - 1), 1500);
-                    }
-                })
+                .catch(error => console.error("Error fetching product data:", error))
+
                 .finally(() => {
                     isFetching = false;
                 });
@@ -555,14 +535,7 @@
                 })
                 .catch(error => console.error('Error fetching location:', error));
         });
-        function updateElementText(elementId, text) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.innerText = text;
-            } else {
-                console.error(`Element with ID ${elementId} not found.`);
-            }
-        }
+       
         initializeChart();
         fetchProductData();
         if (!window.fetchIntervalSet) {  // Prevent multiple intervals

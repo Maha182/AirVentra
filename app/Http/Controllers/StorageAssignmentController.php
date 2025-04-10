@@ -31,6 +31,7 @@ class StorageAssignmentController extends Controller
     
         // If batch doesn't exist, parse and add it
         if (!$batch) {
+            \Log::info("⚠️ Batch is new: $barcode");
             // Parse barcode
             preg_match('/^([A-Za-z0-9]+)-(\d{2}\/\d{2}\/\d{2})-(\d+)$/', $barcode, $matches);
     
@@ -78,25 +79,18 @@ class StorageAssignmentController extends Controller
         if (!$zone_name) {
             return response()->json(['success' => false, 'error' => 'Zone assignment failed.'], 500);
         }
-        $assignment = $this->assignLocation($batch, $zone_name);
-    
-        // Prepare the data for response
-        // $data = $assignment->getData(true);
-        $data['assigned_product'] = $assignment->original['assigned_product'] ?? null;
+        $data = $this->assignLocation($batch, $zone_name);
 
-        // If the batch is new, add the message to the response
-        $data['success'] = true;
-
+        // Add extra message if batch was new
         if ($batchWasNew) {
             $data['message'] = '✅ The product was not in the stock of the warehouse and has been added.';
-        } 
-
+        }
+        
         return response()->json($data);
+        
+
+        
     }
-    
-
-
-
 
     private function assignLocation($batch, $zone_name)
     {
@@ -147,13 +141,14 @@ class StorageAssignmentController extends Controller
         }
 
         // Step 5: Fallback to a default available location if no preferred
-        $location = $preferredLocation;
+        $location = $preferredLocation ?: $availableLocations->sortBy('current_capacity')->first();
         if (!$location) {
-            return response()->json([
+            return [
                 'success' => false,
                 'error' => 'No available storage locations in zone: ' . $zone_name,
-            ], 404);
+            ];
         }
+        
 
         // Step 6: Prepare session data
         $freestLocation = $availableLocations->sortBy('current_capacity')->first();
@@ -162,8 +157,7 @@ class StorageAssignmentController extends Controller
         $assignedProduct = [
             'batch_id' => $batch->id,
             'product_id' => $productId,
-            'product_name' => optional($batch->product)->title,
-            'product_description' => optional($batch->product)->description,
+            'product_name' => $batch->product->title,
             'batch_quantity' => $batch->quantity,
             'assigned_location' => $location,
             'zone_name' => $location->zone_name,
@@ -177,15 +171,11 @@ class StorageAssignmentController extends Controller
 
         session()->put('assigned_product', $assignedProduct);
 
-        return response()->json([
+        return [
             'assigned_product' => $assignedProduct,
             'success' => true,
-            // 'locations' => [
-            //     'freest' => $freestLocation ?? null,
-            //     'nearest' => $nearestLocation ?? null,
-            //     'preferred' => $location?? null,
-            // ]
-        ]);
+        ];
+        
     }
 
     public function assignProductToLocation(Request $request)
