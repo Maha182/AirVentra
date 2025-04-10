@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UserTableSeeder::class,
             LocationsTableSeeder::class,
             ProductsTableSeeder::class,
+            ProductBatchSeeder::class,
         ]);
         
     }
