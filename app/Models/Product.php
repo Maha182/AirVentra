@@ -54,4 +54,10 @@ class Product extends Model
     {
         return $this->hasOne(ProductBatch::class)->latestOfMany();
     }
+
+    public function batches()
+    {
+        return $this->hasMany(ProductBatch::class);
+    }
+
 }

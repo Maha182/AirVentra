@@ -144,7 +144,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/completed-tasks-trend/{filter}', [TaskController::class, 'getCompletedTasksTrend'])
         ->name('completed-tasks-trend')
         ->where('filter', 'day|week|month');  // Ensures only valid filters are passed
-    
+        
         Route::get('/task-breakdown', [TaskController::class, 'getTaskBreakdown']);
     
     });
@@ -167,6 +167,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/admin', [AdminTaskController::class, 'index'])->name('admin.dashboard');
         Route::post('/admin/{taskId}/reassign', [AdminTaskController::class, 'reassignTask']);
         Route::post('/admin/{id}/update-deadline', [AdminTaskController::class, 'updateDeadline'])->name('tasks.update-deadline');
+
+        // Route::get('/products/stock-levels', [ProductController::class, 'stockLevels'])
+        // ->name('products.stock-levels');
     });
 
 

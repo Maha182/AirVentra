@@ -92,8 +92,34 @@ class ProductController extends Controller
             )
             ->groupBy('zone_name')
             ->get();
+
+
+
+        // Get all products with their batches
+        $products = Product::with(['batches' => function($query) {
+            $query->where('status', 'in_stock');
+        }])->get();
+        
+        // Calculate stock status for each product
+        $products->each(function($product) {
+            $totalStock = $product->batches->sum('quantity');
+            $product->total_stock = $totalStock;
+            
+            // Determine stock status
+            if ($product->max_stock !== null && $totalStock > $product->max_stock) {
+                $product->stock_status = 'overstock';
+                $product->status_class = 'bg-danger'; // Red for overstock
+            } elseif ($totalStock < $product->min_stock) {
+                $product->stock_status = 'understock';
+                $product->status_class = 'bg-warning'; // Yellow for understock
+            } else {
+                $product->stock_status = 'normal';
+                $product->status_class = 'bg-success'; // Green for normal
+            }
+        });
     
         return view('product_charts', compact(
+            'products',
             'bubbleData',
             'zoneCapacity',
             'zoneProductCount',
@@ -101,8 +127,36 @@ class ProductController extends Controller
         ));
     }
     
-    
-    
+
+
+    // public function stockLevels()
+    // {
+    //     // Get all products with their batches
+    //     $products = Product::with(['batches' => function($query) {
+    //         $query->where('status', 'in_stock');
+    //     }])->get();
+        
+    //     // Calculate stock status for each product
+    //     $products->each(function($product) {
+    //         $totalStock = $product->batches->sum('quantity');
+    //         $product->total_stock = $totalStock;
+            
+    //         // Determine stock status
+    //         if ($product->max_stock !== null && $totalStock > $product->max_stock) {
+    //             $product->stock_status = 'overstock';
+    //             $product->status_class = 'bg-danger'; // Red for overstock
+    //         } elseif ($totalStock < $product->min_stock) {
+    //             $product->stock_status = 'understock';
+    //             $product->status_class = 'bg-warning'; // Yellow for understock
+    //         } else {
+    //             $product->stock_status = 'normal';
+    //             $product->status_class = 'bg-success'; // Green for normal
+    //         }
+    //     });
+        
+    //     return view('product_charts', compact('products'));
+    // }
+
     
     
     public function create()
@@ -183,4 +237,7 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('products.index')->withSuccess('Product deleted successfully!');
     }
+
+
+
 }

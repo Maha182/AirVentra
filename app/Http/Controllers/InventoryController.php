@@ -63,7 +63,9 @@ class InventoryController extends Controller
             }
         }
 
-        $locationId = session('current_rack');
+        $locationData = session('current_rack');  // Get the full session data
+        $locationId = $locationData['rack_id'];   // Extract just the rack_id
+
         $location = Location::find($locationId);
 
         if (!$location) {
