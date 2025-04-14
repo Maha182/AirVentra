@@ -79,6 +79,8 @@ class PlacementController extends Controller
                 'updated_at' => now(),
             ]);
 
+            $errorReports = LocationCheck::where('batch_id', $batch->id)->get();
+
             // Assign task to employee
             $taskController = new TaskAssignmentController();
             $assignedEmployee = $taskController->assignTask($errorId, 'misplaced');
@@ -101,11 +103,14 @@ class PlacementController extends Controller
                     'batch_id' => $batch->id,
                     'barcode' => $barcode,
                     'quantity' => $batch->quantity,
+                    'zone_name'=>$correctLocation->zone_name,
                 ],
+
+                'errorReports' => $errorReports->toArray(),
+
                 'success' => true,
                 'error' => 'Wrong placement detected.',
-                'location' => $scannedLocation->id,
-                'correct_location' => $batch->location_id,
+                
             ]);
         }
 
@@ -117,6 +122,7 @@ class PlacementController extends Controller
                 'batch_id' => $batch->id,
                 'barcode' => $barcode,
                 'quantity' => $batch->quantity,
+                'zone_name'=>$correctLocation->zone_name,
             ],
             'success' => 'Correct placement.'
         ]);

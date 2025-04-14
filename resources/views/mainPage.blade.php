@@ -104,9 +104,7 @@
                 <h4 class="section-title">Scanned Product</h4>
                 <p>Product ID: <strong id="product-id">{{ $product['product_id'] ?? '' }}</strong></p>
                 <p>Product Name: <strong id="product-name">{{ $product['product_name'] ?? '' }}</strong></p>
-                <p>Assigned Rack Number: <strong id="product-rack">{{ $product['rack'] ?? '' }}</strong></p>
                 <p>Product Zone: <strong id="product-zone">{{ $product['zone_name'] ?? '' }}</strong></p>
-                <p>Product Quantity: <strong id="product-quantity">{{ $product['product_quantity'] ?? '' }}</strong></p>
             </div>
         </div>
         
@@ -210,7 +208,7 @@
                                     updateElementText('product-name', product.product_name || '');
                                     updateElementText('product-rack', product.rack || '');
                                     updateElementText('product-zone', product.zone_name || '');
-                                    updateElementText('product-quantity', product.product_quantity || '');
+                                    updateElementText('product-quantity', product.quantity || '');
                                 } else {
                                     console.error("Product data is undefined or null.");
                                 }
