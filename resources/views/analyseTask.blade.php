@@ -110,25 +110,25 @@
 
             <!-- Delayed vs On-Time Tasks (Bar Chart) -->
             <div class="card">
-                <div class="card-header d-flex justify-content-between">
-                    <div class="iq-header-title">
-                        <h4 class="card-title">Delayed vs On-Time Tasks</h4>
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="iq-header-title">
+                            <h4 class="card-title">Delayed vs On-Time Tasks</h4>
+                        </div>
+                        <div id="filterOptions" class="dropdown">
+                            <a href="#" class="text-gray dropdown-toggle" id="dropdownMenuButton22" data-bs-toggle="dropdown" aria-expanded="false">
+                                By Date
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu-end" aria-labelledby="dropdownMenuButton22">
+                                <li><a class="dropdown-item filter-option" href="#" data-value="date">By Date</a></li>
+                                <li><a class="dropdown-item filter-option" href="#" data-value="month">By Month</a></li>
+                                <li><a class="dropdown-item filter-option" href="#" data-value="employee">By Employee</a></li>
+                            </ul>
+                        </div>
                     </div>
-                    <div id="filterOptions" class="dropdown">
-                        <a href="#" class="text-gray dropdown-toggle" id="dropdownMenuButton22" data-bs-toggle="dropdown" aria-expanded="false">
-                            By Date
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu-end" aria-labelledby="dropdownMenuButton22">
-                            <li><a class="dropdown-item filter-option" href="#" data-value="date">By Date</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-value="month">By Month</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-value="employee">By Employee</a></li>
-                        </ul>
+                    <div class="iq-card-body">
+                        <div id="high-barwithnagative-chart" style="height: 400px;"></div>
                     </div>
                 </div>
-                <div class="iq-card-body">
-                    <div id="high-barwithnagative-chart"></div>
-                </div>
-            </div>
 
         </div>
     </div>

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class TaskAssignmentController extends Controller
 {
-    public function assignTask($errorId)
+    public function assignTask($errorId, $errortype)
     {
         // Find the employee with the least number of assigned tasks
         $employee = User::where('role', 'employee')
@@ -25,7 +25,7 @@ class TaskAssignmentController extends Controller
 
         // Create the task with assigned_at timestamp
         $task = Task::create([
-            'error_type' => 'misplaced',
+            'error_type' => $errortype,
             'error_id' => $errorId,
             'assigned_to' => $employee->id,
             'status' => 'pending',

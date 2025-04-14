@@ -167,6 +167,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/admin', [AdminTaskController::class, 'index'])->name('admin.dashboard');
         Route::post('/admin/{taskId}/reassign', [AdminTaskController::class, 'reassignTask']);
         Route::post('/admin/{id}/update-deadline', [AdminTaskController::class, 'updateDeadline'])->name('tasks.update-deadline');
+        Route::get('/admin/delayed-vs-on-time', [AdminTaskController::class, 'delayedVsOnTimeChart']);
 
         // Route::get('/products/stock-levels', [ProductController::class, 'stockLevels'])
         // ->name('products.stock-levels');

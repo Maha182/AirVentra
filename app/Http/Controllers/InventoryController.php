@@ -91,7 +91,7 @@ class InventoryController extends Controller
 
         if ($shouldAlert) {
             $taskController = new TaskAssignmentController();
-            $assignedEmployee = $taskController->assignTask($capacityCheck->id);
+            $assignedEmployee = $taskController->assignTask($capacityCheck->id, 'capacity');
 
             Mail::to($assignedEmployee->email)->send(new InventoryAlertMail([
                 'location_id' => $location->id,

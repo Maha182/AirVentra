@@ -117,5 +117,48 @@ class AdminTaskController extends Controller
     }
 
 
+    // Delayed vs On-Time (Bar Chart with Negative Values)
+    public function delayedVsOnTime(Request $request)
+    {
+        $viewBy = $request->query('view_by', 'date');
+
+        if ($viewBy === 'employee') {
+            $tasks = DB::table('tasks')
+                ->join('users', 'tasks.assigned_to', '=', 'users.id')
+                ->selectRaw("
+                    users.first_name as task_group,
+                    SUM(CASE WHEN completed_at <= deadline THEN 1 ELSE 0 END) AS on_time,
+                    SUM(CASE WHEN completed_at > deadline THEN 1 ELSE 0 END) * -1 AS delayed_tasks
+                ")
+                ->whereNotNull('completed_at')
+                ->groupBy('users.first_name')
+                ->orderBy('task_group', 'ASC')
+                ->get();
+        } else {
+            $groupByColumn = match ($viewBy) {
+                'month' => 'DATE_FORMAT(completed_at, "%Y-%m")',
+                default => 'DATE(completed_at)'
+            };
+
+            $tasks = DB::table('tasks')
+                ->selectRaw("
+                    $groupByColumn as task_group,
+                    SUM(CASE WHEN completed_at <= deadline THEN 1 ELSE 0 END) AS on_time,
+                    SUM(CASE WHEN completed_at > deadline THEN 1 ELSE 0 END) * -1 AS delayed_tasks
+                ")
+                ->whereNotNull('completed_at')
+                ->groupBy(DB::raw($groupByColumn))
+                ->orderBy('task_group', 'ASC')
+                ->get();
+        }
+
+        return response()->json([
+            'categories' => $tasks->pluck('task_group'),
+            'on_time' => $tasks->pluck('on_time')->map(fn($val) => (int) $val),
+            'delayed' => $tasks->pluck('delayed_tasks')->map(fn($val) => (int) $val)
+        ]);
+    }
+
+
 }
 

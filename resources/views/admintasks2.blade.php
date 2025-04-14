@@ -4,6 +4,29 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
 
+<script src="js/jquery.min.js"></script>
+<script src="js/rtl.js"></script>
+<script src="js/customizer.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.appear.js"></script>
+<script src="js/countdown.min.js"></script>
+<script src="js/waypoints.min.js"></script>
+<script src="js/jquery.counterup.min.js"></script>
+<script src="js/wow.min.js"></script>
+<script src="js/apexcharts.js"></script>
+<script src="js/slick.min.js"></script>
+<script src="js/select2.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/smooth-scrollbar.js"></script>
+<script src="js/lottie.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/highcharts-3d.js"></script>
+<script src="js/highcharts-more.js"></script>
+<script src="js/chart-custom.js"></script>
+<script src="js/custom.js"></script>
+
 <x-app-layout :assets="$assets ?? []">
   <!-- Meta tag for CSRF token -->
    <head>
@@ -45,22 +68,40 @@
 
         <!-- Charts -->
         <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-            <div class="card-header">Task Completion Trend</div>
-            <div class="card-body">
-                <div id="taskCompletionChart" style="height: 300px;"></div>
+            <div class="col-md-6">
+                <!-- Delayed vs On-Time Tasks (Bar Chart) -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="iq-header-title">
+                            <h4 class="card-title">Delayed vs On-Time Tasks</h4>
+                        </div>
+                        <div id="filterOptions" class="dropdown">
+                            <a href="#" class="text-gray dropdown-toggle" id="dropdownMenuButton22" data-bs-toggle="dropdown" aria-expanded="false">
+                                By Date
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu-end" aria-labelledby="dropdownMenuButton22">
+                                <li><a class="dropdown-item filter-option" href="#" data-value="date">By Date</a></li>
+                                <li><a class="dropdown-item filter-option" href="#" data-value="month">By Month</a></li>
+                                <li><a class="dropdown-item filter-option" href="#" data-value="employee">By Employee</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="iq-card-body">
+                        <div id="high-barwithnagative-chart" style="height: 400px;"></div>
+                    </div>
+                </div>
             </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h4 class="card-title">Task Breakdown</h4>
+                </div>
+                <div class="iq-card-body">
+                    <div id="taskBreakdownChart" style="height: 400px;"></div>
+                </div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-            <div class="card-header">Task Breakdown</div>
-            <div class="card-body">
-                <div id="taskBreakdownChart" style="height: 300px;"></div>
-            </div>
-            </div>
-        </div>
         </div>
 
         <!-- Task Table with Search -->
@@ -249,9 +290,9 @@
                 name: 'Tasks',
                 colorByPoint: true,
                 data: [
-                    { name: 'Completed', y: {{ $completedTasks }} },
-                    { name: 'Pending', y: {{ $pendingTasks }} },
-                    { name: 'Overdue', y: {{ $overdueTasks }} }
+                    { name: 'Completed', y: {{ $completedTasks }}, color: '#28a745' }, // green
+                    { name: 'Pending', y: {{ $pendingTasks }}, color: '#00b4d8' },   // yellow
+                    { name: 'Overdue', y: {{ $overdueTasks }}, color: '#dc3545' }    // red
                 ]
             }]
         });

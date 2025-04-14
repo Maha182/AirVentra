@@ -81,7 +81,7 @@ class PlacementController extends Controller
 
             // Assign task to employee
             $taskController = new TaskAssignmentController();
-            $assignedEmployee = $taskController->assignTask($errorId);
+            $assignedEmployee = $taskController->assignTask($errorId, 'misplaced');
 
             // Email notification
             if ($assignedEmployee) {
