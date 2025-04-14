@@ -1,5 +1,6 @@
 @extends('layouts.home.app')
 @section('content')
+
         <!-- Carousel Start -->
         <div id="home" class="header-carousel owl-carousel">
             <div class="header-carousel-item bg-primary">
@@ -59,61 +60,63 @@
                     <p class="mb-0">Airventra is an innovative warehouse management solution designed to streamline operations through intelligent storage assignment and drone-powered inventory tracking. Our software combines cutting-edge AI algorithms with autonomous drone technology to reduce errors, improve efficiency, and make warehouse management smarter than ever.
                     </p>
                 </div>
-            <div class="container-fluid blog py-5">
+            </div>
+        </div>
+        <div class="container-fluid blog py-5">
 
             <div class="container py-5">
-            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-                    <h1 class="display-4 mb-4"> Our Features  </h1>
-                </div> 
-                <div class="row g-4 justify-content-center">
-                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="blog-item">
-                            <div class="blog-img">
-                                <img src="img\homepageimg\Smart Storage Assignment1.png" class="img-fluid rounded-top w-100" alt="">
-                                
-                            </div>
-                            <div class="blog-content p-4">
-                            <div class="blog-content p-4">
-                                <a href="#" class="h4 d-inline-block mb-3">Smart Storage Assignment</a>
-                                <p class="mb-3">Automatically assign storage zones and racks using AI-powered algorithms.</p>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="blog-item">
-                            <div class="blog-img">
-                                <img src="img\homepageimg\Real-Time Inventory Tracking1.png " class="img-fluid rounded-top w-100" alt="">
-                            </div>
-                            <div class="blog-content p-4">
-                                <div class="blog-comment d-flex justify-content-between mb-3">
-                                <div class="blog-content p-4">
-                                    <a href="#" class="h4 d-inline-block mb-3"> Real-Time Inventory Tracking</a>
-                                    <p class="mb-3">Keep your inventory accurate with autonomous drone scans.</p>
+                    <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
+                        <h1 class="display-4 mb-4"> Our Features  </h1>
+                    </div> 
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
+                            <div class="blog-item">
+                                <div class="blog-img">
+                                    <img src="img\homepageimg\Smart Storage Assignment1.png" class="img-fluid rounded-top w-100" alt="">
+                                    
                                 </div>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="blog-item">
-                            <div class="blog-img">
-                                <img src="img\homepageimg\Error Detection1.png" class="img-fluid rounded-top w-100" alt="">
-                                
-                            </div>
-                            <div class="blog-content p-4">
-                                <div class="blog-comment d-flex justify-content-between mb-3">
                                 <div class="blog-content p-4">
-                                    <a href="#" class="h4 d-inline-block mb-3">Error Detection</a>
-                                    <p class="mb-3">Verify product placement to minimize costly mistakes.</p>
+                                    <div class="blog-content p-4">
+                                        <a href="#" class="h4 d-inline-block mb-3">Smart Storage Assignment</a>
+                                        <p class="mb-3">Automatically assign storage zones and racks using AI-powered algorithms.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
+                            <div class="blog-item">
+                                <div class="blog-img">
+                                    <img src="img\homepageimg\Real-Time Inventory Tracking1.png " class="img-fluid rounded-top w-100" alt="">
+                                </div>
+                                <div class="blog-content p-4">
+                                    <div class="blog-comment d-flex justify-content-between mb-3">
+                                        <div class="blog-content p-4">
+                                            <a href="#" class="h4 d-inline-block mb-3"> Real-Time Inventory Tracking</a>
+                                            <p class="mb-3">Keep your inventory accurate with autonomous drone scans.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
+                            <div class="blog-item">
+                                <div class="blog-img">
+                                    <img src="img\homepageimg\Error Detection1.png" class="img-fluid rounded-top w-100" alt="">
+                                    
+                                </div>
+                                <div class="blog-content p-4">
+                                    <div class="blog-comment d-flex justify-content-between mb-3">
+                                        <div class="blog-content p-4">
+                                            <a href="#" class="h4 d-inline-block mb-3">Error Detection</a>
+                                            <p class="mb-3">Verify product placement to minimize costly mistakes.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-        </div>
+                </div>
             </div>
         </div>
         <!-- Feature End -->
@@ -125,36 +128,36 @@
 
 
             <div class="container-fluid blog py-5">
-    <div class="container py-5">
-        <div class="row g-4 justify-content-center">
-            <?php
-            $cards = [
-                ["img\homepageimg\Streamlined Operations1.png", "Streamlined Operations", "Simplify warehouse processes with intelligent storage assignment and automation."],
-                ["img\homepageimg\Real-Time Accuracy1.png", "Real-Time Accuracy", "Keep your inventory updated instantly with drone-powered tracking."],
-                ["img\homepageimg\Error Reduction1.png", "Error Reduction", "Detect misplaced products and prevent costly human errors."],
-                ["img\homepageimg\o3.png", "Optimized Storage", "Maximize space usage by assigning products to the right zones and racks."],
-                ["img\homepageimg\c2.png", "Cost Efficiency", "Reduce operational costs by improving accuracy and saving time on manual checks."],
-                ["img\homepageimg\s1.png", "Sustainability", "Embrace smarter resource use and energy-efficient drones to reduce waste."]
-            ];
+                <div class="container py-5">
+                    <div class="row g-4 justify-content-center">
+                        <?php
+                        $cards = [
+                            ["img\homepageimg\Streamlined Operations1.png", "Streamlined Operations", "Simplify warehouse processes with intelligent storage assignment and automation."],
+                            ["img\homepageimg\Real-Time Accuracy1.png", "Real-Time Accuracy", "Keep your inventory updated instantly with drone-powered tracking."],
+                            ["img\homepageimg\Error Reduction1.png", "Error Reduction", "Detect misplaced products and prevent costly human errors."],
+                            ["img\homepageimg\o3.png", "Optimized Storage", "Maximize space usage by assigning products to the right zones and racks."],
+                            ["img\homepageimg\c2.png", "Cost Efficiency", "Reduce operational costs by improving accuracy and saving time on manual checks."],
+                            ["img\homepageimg\s1.png", "Sustainability", "Embrace smarter resource use and energy-efficient drones to reduce waste."]
+                        ];
 
-            foreach ($cards as $index => $card) {
-                $delay = 0.2 + ($index * 0.2);
-            ?>
-                <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="<?= $delay ?>s">
-                    <div class="blog-item">
-                        <div class="blog-img">
-                            <img src="<?= $card[0] ?>" class="img-fluid rounded-top w-100" alt="">
-                        </div>
-                        <div class="blog-content p-4">
-                            <a href="#" class="h4 d-inline-block mb-3"><?= $card[1] ?></a>
-                            <p class="mb-3"><?= $card[2] ?></p>
-                        </div>
+                        foreach ($cards as $index => $card) {
+                            $delay = 0.2 + ($index * 0.2);
+                        ?>
+                            <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="<?= $delay ?>s">
+                                <div class="blog-item">
+                                    <div class="blog-img">
+                                        <img src="<?= $card[0] ?>" class="img-fluid rounded-top w-100" alt="">
+                                    </div>
+                                    <div class="blog-content p-4">
+                                        <a href="#" class="h4 d-inline-block mb-3"><?= $card[1] ?></a>
+                                        <p class="mb-3"><?= $card[2] ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
-            <?php } ?>
-        </div>
-    </div>
-</div>
+            </div>
 
         </div>
         <!-- About End -->
