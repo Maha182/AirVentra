@@ -58,14 +58,18 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="p-3 py-2">
-                <p class="title">Rack # <span id="rack-id">{{ $rackId ?? '' }}</span></p>
-                <p class="title">Rack Capacity: <strong id="rack-capacity">{{ $locationCapacity ?? '' }}</strong></p>
-                <p class="title">Status: <strong id="status" data-status="{{ session('status') }}">{{ $status ?? '' }}</strong></p>
+                    <p class="title">Rack # <span id="rack-id">{{ $rackId ?? '' }}</span></p>
+                    <p class="title">Rack Capacity: <strong id="rack-capacity">{{ $locationCapacity ?? '' }}</strong></p>
+                    <p class="title">Status: 
+                        <strong id="status">{{ $status ?? '' }}</strong>
+                    </p>
                 </div>
             </div>
             <!-- Button Container -->
             <div class="col-md-6 d-flex align-items-center gap-2 p-3">
                 <button id="checkRackLevelButton" class="btn btn-primary w-75 py-2">Check Rack Level</button>
+
+                
                 <form action="{{ route('Reset') }}" method="POST" class="w-100 text-center">
                     @csrf
                     <button type="submit" class="btn btn-primary w-75 py-2">Next Rack</button>
@@ -131,6 +135,28 @@
 </div>
 
 <script>
+
+    document.getElementById('checkRackLevelButton').addEventListener('click', function () {
+        fetch("{{ route('updateInventory') }}", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Something went wrong");
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('status').textContent = data.status;
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Failed to update rack status.");
+        });
+    });
     document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => {
             document.querySelector('img[alt="Live Video Feed"]').src = "http://127.0.0.1:5000/video_feed";
@@ -162,7 +188,7 @@
         if (rackData && rackData.rack_id) {
             updateElementText('rack-id', rackData.rack_id);
             updateElementText('rack-capacity', rackData.capacity);
-            updateElementText('status', 'Active'); // You can modify this based on actual status
+            // updateElementText('status', 'Active'); // You can modify this based on actual status
         }
         
         function fetchBarcodeAndCheckPlacement() {

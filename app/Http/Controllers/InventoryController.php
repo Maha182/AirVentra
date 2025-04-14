@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Models\LocationCapacityCheck;
 use App\Models\Product;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Mail;
+use App\Models\ProductBatch;
 
 class InventoryController extends Controller
 {
@@ -101,21 +103,16 @@ class InventoryController extends Controller
             ]));
         }
 
-
         return response()->json([
             'status' => $status,
-            'expired_batches' => $expiredBatches,
-            'soon_to_expire' => $soonToExpireBatches,
-            'unknown_barcodes' => $unknownBatches,
-            'success' => true,
-            'redirect' => route('mainPage', compact('status'))
         ]);
+     
     }
 
     // Reset scan counts
     public function resetScans()
     {
         $this->scanCounts = [];
-        return redirect()->route('mainPage')->with('success', 'Scan counts reset');
+        return redirect()->route('ScanShelf')->with('success', 'Scan counts reset');
     }
 }

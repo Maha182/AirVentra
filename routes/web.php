@@ -132,7 +132,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('/scan-rack', [RackScanController::class, 'scanRack'])->name('scan-rack');
 
-    Route::get('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
+    Route::post('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
 
     Route::middleware(['auth', 'isEmployee'])->group(function () {

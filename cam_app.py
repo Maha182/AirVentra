@@ -67,7 +67,7 @@ def get_barcode():
 
 def gen():
     # cap = cv2.VideoCapture(0)
-    cap = cv2.VideoCapture('http://10.241.4.108:8080/video')
+    cap = cv2.VideoCapture('http://10.241.0.57:8080/video')
     if not cap.isOpened():
         print("Error: Cannot open camera")
         return
