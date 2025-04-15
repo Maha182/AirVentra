@@ -96,15 +96,12 @@
 <!-- Scanning Progress and Error Report -->
 <div class="container my-5">
     <div class="row">
-        @php
-            $product = session('product', []);
-        @endphp
         <div class="col-md-6">
             <div class="bg-light p-4 border" style="height: 300px;">
                 <h4 class="section-title">Scanned Product</h4>
-                <p>Product ID: <strong id="product-id">{{ $product['product_id'] ?? '' }}</strong></p>
-                <p>Product Name: <strong id="product-name">{{ $product['product_name'] ?? '' }}</strong></p>
-                <p>Product Zone: <strong id="product-zone">{{ $product['zone_name'] ?? '' }}</strong></p>
+                <p>Product ID: <strong id="product-id"></strong></p>
+                <p>Product Name: <strong id="product-name"></strong></p>
+                <p>Product Zone: <strong id="product-zone"></strong></p>
             </div>
         </div>
         
@@ -166,9 +163,7 @@
         sessionStorage.removeItem('lastScannedBarcode');
         updateElementText('product-id', '');
         updateElementText('product-name', '');
-        updateElementText('product-rack', '');
         updateElementText('product-zone', '');
-        updateElementText('product-quantity', '');
         updateElementText('rack-id', '');
         updateElementText('rack-capacity', '');
         updateElementText('status', '');
@@ -206,18 +201,9 @@
                                     let product = data.product;
                                     updateElementText('product-id', product.product_id || '');
                                     updateElementText('product-name', product.product_name || '');
-                                    updateElementText('product-rack', product.rack || '');
                                     updateElementText('product-zone', product.zone_name || '');
-                                    updateElementText('product-quantity', product.quantity || '');
                                 } else {
                                     console.error("Product data is undefined or null.");
-                                }
-
-                                // ✅ Use the same response to update error reports
-                                if (data.errorReports) {
-                                    updateErrorReportsTable(data.errorReports);
-                                } else {
-                                    console.error("Error reports data is missing.");
                                 }
                             })
                             .catch(error => console.error("Error fetching product data:", error));
@@ -226,6 +212,21 @@
                 .catch(error => console.error("Error fetching barcode or checking placement:", error));
         }
 
+        
+        fetchErrorReports();
+
+        // Auto-refresh every 10 seconds (10000 ms)
+        setInterval(fetchErrorReports, 10000);
+
+        // ✅ Function to fetch and update the table
+        function fetchErrorReports() {
+            fetch('/AirVentra/error-reports/today')
+                .then(response => response.json())
+                .then(data => updateErrorReportsTable(data))
+                .catch(error => {
+                    console.error('Error fetching error reports:', error);
+                });
+        }
         // ✅ Function to update the error reports table
         function updateErrorReportsTable(errorReports) {
             const tableBody = document.getElementById('error-report-body');

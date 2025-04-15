@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\StorageAssignmentController;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PlacementErrorMail;
 
@@ -105,9 +105,7 @@ class PlacementController extends Controller
                     'quantity' => $batch->quantity,
                     'zone_name'=>$correctLocation->zone_name,
                 ],
-
                 'errorReports' => $errorReports->toArray(),
-
                 'success' => true,
                 'error' => 'Wrong placement detected.',
                 
@@ -127,7 +125,18 @@ class PlacementController extends Controller
             'success' => 'Correct placement.'
         ]);
     }
-
+    
+    public function getTodayErrorReports()
+    {
+        $today = Carbon::today();
+    
+        $errors = DB::table('placement_error_report')
+            ->whereDate('scan_date', $today)
+            ->select('product_id', 'wrong_location', 'correct_location', 'status')
+            ->get();
+    
+        return response()->json($errors);
+    }
     
 
 

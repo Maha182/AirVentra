@@ -122,6 +122,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/getBarcode', [PlacementController::class, 'getBarcode']);
     Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('check-placement');
+    Route::get('/error-reports/today', [PlacementController::class, 'getTodayErrorReports']);
+    
     //inventory level check
     Route::get('/scan-shelf', function () {
         Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
@@ -134,6 +136,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/update_inventory', [InventoryController::class, 'updateInventory'])->name('updateInventory');
     Route::post('/reset_scans', [InventoryController::class, 'resetScans'])->name('Reset');
+
+    
+
 
     Route::middleware(['auth', 'isEmployee'])->group(function () {
         Route::get('/tasks', [TaskController::class, 'index'])->name('task');
