@@ -161,52 +161,36 @@ class ProductController extends Controller
     
     public function create()
     {
-        $locations = Location::pluck('id'); // Fetch both 'id' and 'name' for dropdown
         return view('products.form', [
             "product" => new Product(),
-            "locations" => $locations, // Pass locations to the view
         ]);
     }
+    
 
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+        $validated = $request->validate([
+            'title'         => 'required|string|max:255',
+            'description'   => 'required|string',
             'main_category' => 'required|string',
-            'location_id' => 'required|integer',
-            'barcode_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate image file
+            'min_stock'     => 'required|integer|min:0',
+            'max_stock'     => 'nullable|integer|gt:min_stock', // Optional but must be greater than min_stock
         ]);
-
-        // Generate product ID
+    
         $product = new Product();
-        $product->title = $request->title;
-        $product->description = $request->description;
-        $product->main_category = $request->main_category;
-        $product->quantity = $request->quantity;
-        $product->location_id = $request->location_id;
-        $product->id = Product::generateProductId($request->main_category); // Call ID generator
-
-        // Handle file upload
-        if ($request->hasFile('barcode_image')) {
-            $file = $request->file('barcode_image');
-            $categoryFolder = strtolower($request->main_category); // Convert category to lowercase
-            $fileName = $product->id . '.' . $file->getClientOriginalExtension(); // Rename file with product ID
-            $filePath = "images/{$categoryFolder}/{$fileName}";
-
-            // Save file in storage (public/images/{category}/)
-            $file->storeAs("{$filePath}");
-
-            // Save path in DB
-            $product->barcode_path = $filePath;
-        }
-
+        $product->id            = Product::generateProductId($request->main_category);
+        $product->title         = $validated['title'];
+        $product->description   = $validated['description'];
+        $product->main_category = $validated['main_category'];
+        $product->min_stock     = $validated['min_stock'];
+        $product->max_stock     = $validated['max_stock'];
+    
         $product->save();
-
-        // return response()->json(['message' => 'Product created successfully', 'product' => $product]);
+    
         return redirect()->route('products.index')->withSuccess(__('Product added successfully!'));
     }
+    
 
     public function edit($id)
     {
@@ -218,14 +202,16 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-
+    
         $validated = $request->validate([
             'title'         => 'required|string|max:255',
             'description'   => 'nullable|string',
             'main_category' => 'required|string',
-            'location_id' => 'required|string|regex:/^L\d{4}$/', // Accepts L0001 format
+            'min_stock'     => 'required|integer|min:0',
+            'max_stock'     => 'required|integer|min:1|gte:min_stock',
+            'stock_status'  => 'nullable|string',
         ]);
-
+    
         $product->update($validated);
 
         return redirect()->route('products.index')->withSuccess('Product updated successfully!');

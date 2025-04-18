@@ -70,15 +70,20 @@
                         </div>
                         
                         <div class="form-group col-md-6">
-                           <label class="form-label fw-bold">Location ID: <span class="text-danger">*</span></label>
-                           @php
-                              $latestBatchLocationId = isset($product->latestBatch) ? $product->latestBatch->location_id : null;
-                           @endphp
-
-                           {{ Form::select('location_id', $locations, old('location_id', $latestBatchLocationId), ['class' => 'form-control', 'required']) }}
-
+                           <label class="form-label fw-bold">Minimum Stock: <span class="text-danger">*</span></label>
+                           {{ Form::number('min_stock', old('min_stock', $product->min_stock ?? ''), ['class' => 'form-control', 'placeholder' => 'Min Stock', 'required']) }}
                         </div>
-                        <div class="form-group col-md-12">
+
+                        <div class="form-group col-md-6">
+                           <label class="form-label fw-bold">Maximum Stock: <span class="text-danger">*</span></label>
+                           {{ Form::number('max_stock', old('max_stock', $product->max_stock ?? ''), ['class' => 'form-control', 'placeholder' => 'Max Stock', 'required']) }}
+                        </div>
+
+                        <div class="form-group col-md-6">
+                           <label class="form-label fw-bold">Stock Status:</label>
+                           {{ Form::text('stock_status', old('stock_status', $product->stock_status ?? ''), ['class' => 'form-control', 'placeholder' => 'e.g., Normal, Overstocked, Understocked']) }}
+                        </div>
+                        <div class="form-group col-md-6">
                            <label class="form-label fw-bold">Description:</label>
                            {{ Form::textarea('description', old('description', $product->description ?? ''), ['class' => 'form-control', 'placeholder' => 'Product Description', 'rows' => 3]) }}
                         </div>

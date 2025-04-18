@@ -5,6 +5,7 @@
 <script src="{{ asset('js/charts/dashboard.js') }}"></script>
 
 <x-app-layout :assets="$assets ?? []">
+
     <div class="row">
         <div class="col-md-12 col-lg-12">
             <div class="row row-cols-1">
@@ -13,10 +14,9 @@
                         @php
                             $data = [
                                 ['id' => '01', 'title' => 'Total Scans', 'amount' => ($totalScans >= 1000 ? number_format($totalScans) : $formattedTotalScans), 'delay' => 700, 'color' => 'primary', 'icon' => 'total_scans_icon.png'],
-                                ['id' => '02', 'title' => 'Correct Placement', 'amount' => ($correctCount >= 1000 ? number_format($correctCount) : $formattedCorrectPlacements), 'delay' => 800, 'color' => 'info', 'icon' => 'correct_placement_icon.png'],
                                 ['id' => '03', 'title' => 'Misplaced Items', 'amount' => ($misplacedCount >= 1000 ? number_format($misplacedCount) : $formattedMisplacedItems), 'delay' => 900, 'color' => 'primary', 'icon' => 'misplaced_items_icon.png'],
-                                ['id' => '05', 'title' => 'Overstocked Racks', 'amount' => number_format($overstockCount), 'delay' => 1100, 'color' => 'primary', 'icon' => 'overstocked_racks_icon.png'],
-                                ['id' => '06', 'title' => 'Understocked Racks', 'amount' => number_format($understockCount), 'delay' => 1200, 'color' => 'info', 'icon' => 'understocked_racks_icon.png'],
+                                ['id' => '05', 'title' => 'Overstocked Racks', 'amount' => number_format($inventoryStats->overfilled ), 'delay' => 1100, 'color' => 'primary', 'icon' => 'overstocked_racks_icon.png'],
+                                ['id' => '06', 'title' => 'Understocked Racks', 'amount' => number_format($inventoryStats->underfilled ), 'delay' => 1200, 'color' => 'info', 'icon' => 'understocked_racks_icon.png'],
                                 ['id' => '07', 'title' => 'Total Products', 'amount' => ($totalProduct >= 1000 ? number_format($totalProduct) : $totalProduct), 'delay' => 1300, 'color' => 'primary', 'icon' => 'total_products_icon.png']
                             ];
                         @endphp
@@ -87,7 +87,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div id="d-main" class="d-main" data-misplaced="{{ json_encode(['months' => $months, 'totals' => $totals]) }}"></div>
+                                <div id="d-main" class="d-main" data-misplaced='@json(["months" => $months, "totals" => $totals])'></div>
                             </div>
                         </div>
 
@@ -164,8 +164,10 @@
                                     <div class="card-body">
                                         <div id="d-activity" 
                                             class="d-activity"
-                                            data-overstock="{{ $overstockCount }}" 
-                                            data-understock="{{ $understockCount }}">
+                                            data-overstock="{{ $inventoryStats->overfilled }}"
+                                            data-understock="{{ $inventoryStats->underfilled }}"
+                                            data-normal="{{ $inventoryStats->normal }}">
+                                            
                                         </div>
                                     </div>
                                 </div>

@@ -101,7 +101,7 @@
             colors: ['transparent']
         },
         xaxis: {
-            categories: ['Overstock', 'Understock',  'Normal'], // Separate categories for each bar
+            categories: ['overfilled', 'Underfilled',  'Normal'], // Separate categories for each bar
             labels: {
               minHeight:20,
               maxHeight:20,

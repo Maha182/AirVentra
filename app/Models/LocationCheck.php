@@ -9,5 +9,5 @@ class LocationCheck extends Model
 {
     use HasFactory;
     protected $table = 'placement_error_report'; // Specify the table name
-    protected $fillable = ['product_id', 'scan_date', 'wrong_location', 'correct_location', 'status']; // Define fillable fields
+    protected $fillable = ['batch_id','product_id', 'scan_date', 'wrong_location', 'correct_location', 'status']; // Define fillable fields
 }

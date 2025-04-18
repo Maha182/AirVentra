@@ -7,6 +7,7 @@ use App\Models\LocationCheck;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Location;
+use App\Models\ProductBatch;
 use Carbon\Carbon;
 use App\Models\LocationCapacityCheck;
 use Illuminate\Support\Facades\Http;
@@ -24,10 +25,9 @@ class dashController extends Controller
         $correctCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Corrected'])->count();
         $misplacedCount = LocationCheck::whereRaw('LOWER(status) = ?', ['Pending'])->count();
         
-        $overstockCount = LocationCapacityCheck::where('status', 'overfilled')->count();
-        $understockCount = LocationCapacityCheck::where('status', 'underfilled')->count();
-        
+
         $misplacedProducts = LocationCheck::selectRaw('MONTHNAME(scan_date) as month, COUNT(*) as total')
+            ->whereRaw('LOWER(status) = ?', ['Pending'])
             ->groupBy('month')
             ->orderByRaw('MIN(scan_date)')
             ->get();
@@ -70,7 +70,7 @@ class dashController extends Controller
         $assets = ['chart', 'animation'];
         return view('dashboards.dashboard', compact(
             'assets', 'locationChecks', 'locationCapacityChecks',
-            'overstockCount', 'understockCount', 'correctCount', 'misplacedCount', 'months', 'totals',
+             'correctCount', 'misplacedCount', 'months', 'totals',
             'totalScans','zoneErrorData', 'rackCapacity', 'formattedTotalScans', 'formattedCorrectPlacements', 'formattedMisplacedItems',
             'totalProduct', 'inventoryStats','totalCapacity','currentCapacity','capacityUtilization','topProblematicLocations'
         ));
