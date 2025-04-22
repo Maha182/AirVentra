@@ -470,7 +470,7 @@
 
             let nearestOption = document.createElement('option');
             nearestOption.value = assignedProduct.nearest.id || '';
-            nearestOption.textContent = 'Nearest Location: ' + assignedProduct.nearest.zone_name;
+            nearestOption.textContent = 'First Available Location: ' + assignedProduct.nearest.zone_name;
             locationsSelect.appendChild(nearestOption);
 
             let freestOption = document.createElement('option');
@@ -480,7 +480,7 @@
 
             let preferredLocation = document.createElement('option');
             preferredLocation.value = assignedProduct.assigned_location?.id || '';
-            preferredLocation.textContent = 'preferred Location: ' + assignedProduct.assigned_location?.zone_name;
+            preferredLocation.textContent = 'Same Product Type Location: ' + assignedProduct.assigned_location?.zone_name;
             locationsSelect.appendChild(preferredLocation);
 
             locationsSelect.addEventListener('change', updateLocationData);

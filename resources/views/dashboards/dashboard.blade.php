@@ -113,7 +113,7 @@
                                 <div class="card" data-aos="fade-up" data-aos-delay="900">
                                     <div class="flex-wrap card-header d-flex justify-content-between">
                                         <div class="header-title">
-                                            <h4 class="card-title">Placement Accuracy</h4>
+                                            <h4 class="card-title">Misplaced Product Status </h4>
                                         </div>
                                     </div>
                                     <div class="card-body">
