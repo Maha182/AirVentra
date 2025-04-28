@@ -81,6 +81,7 @@ class InventoryController extends Controller
 
 
         $location->current_capacity = $totalScanned;
+        $location->save();
 
         $capacityCheck = LocationCapacityCheck::create([
             'location_id' => $location->id,
