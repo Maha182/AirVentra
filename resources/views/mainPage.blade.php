@@ -70,7 +70,7 @@
                 <button id="checkRackLevelButton" class="btn btn-primary w-75 py-2">Check Rack Level</button>
 
                 
-                <form action="{{ route('Reset') }}" method="POST" class="w-100 text-center">
+                <form  id="reset-form" action="{{ route('Reset') }}" method="POST" class="w-100 text-center">
                     @csrf
                     <button type="submit" class="btn btn-primary w-75 py-2">Next Rack</button>
                 </form>
@@ -130,7 +130,22 @@
 </div>
 
 <script>
+    document.getElementById('reset-form').addEventListener('submit', async function (e) {
+        e.preventDefault(); // Stop the form from submitting immediately
 
+        try {
+            // First, reset barcodes on the Flask server
+            await fetch('http://127.0.0.1:5000/reset_barcodes', {
+                method: 'POST'
+            });
+
+            // Then, submit the Laravel reset form to clear session and PHP side
+            this.submit();
+        } catch (error) {
+            console.error("Error resetting barcodes:", error);
+            alert("Failed to reset barcode scanner.");
+        }
+    });
     document.getElementById('checkRackLevelButton').addEventListener('click', function () {
         fetch("{{ route('updateInventory') }}", {
             method: "POST",

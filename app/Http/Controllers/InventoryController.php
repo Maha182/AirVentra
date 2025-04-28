@@ -79,6 +79,9 @@ class InventoryController extends Controller
             ? 'overfilled'
             : (($totalScanned < ($location->capacity * 0.5)) ? 'underfilled' : 'normal');
 
+
+        $location->current_capacity = $totalScanned;
+
         $capacityCheck = LocationCapacityCheck::create([
             'location_id' => $location->id,
             'scan_date' => now(),
@@ -110,9 +113,12 @@ class InventoryController extends Controller
     }
 
     // Reset scan counts
+    // Reset scan counts and clear rack session
     public function resetScans()
     {
         $this->scanCounts = [];
-        return redirect()->route('ScanShelf')->with('success', 'Scan counts reset');
+
+        return redirect()->route('ScanShelf')->with('success', 'Scan counts and rack session reset');
     }
+
 }

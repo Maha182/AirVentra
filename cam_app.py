@@ -64,6 +64,13 @@ def get_barcodes():
 def get_barcode():
     """Return the last detected barcode."""
     return jsonify({"barcode": last_detected_barcode})
+@app.route('/reset_barcodes', methods=['POST'])
+def reset_barcodes():
+    """Reset the detected barcodes."""
+    global unique_barcodes, last_detected_barcode
+    unique_barcodes.clear()
+    last_detected_barcode = None
+    return jsonify({"message": "Barcodes reset successfully"})
 
 def gen():
     # cap = cv2.VideoCapture(0)
