@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-barcode_model = YOLO('barcode.pt')
+barcode_model = YOLO('best_yolo11.pt')
 # barcode_model = YOLO('best.pt')
 # Store unique barcodes
 unique_barcodes = set()
