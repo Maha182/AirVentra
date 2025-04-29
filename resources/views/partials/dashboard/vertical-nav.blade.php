@@ -267,7 +267,7 @@
                         </a>
                 </li>
 
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link  {{activeRoute(route('special-pages.calender'))}}"
                         href="{{route('special-pages.calender')}}">
                         <i class="icon">
@@ -280,7 +280,7 @@
                         <i class="sidenav-mini-icon"> C </i>
                         <span class="item-name">Calendar</span>
                     </a>
-                </li>
+                </li> -->
             </ul>
         </li>
     

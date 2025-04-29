@@ -118,7 +118,7 @@ class InventoryController extends Controller
     public function resetScans()
     {
         $this->scanCounts = [];
-
+        session()->forget('current_rack');
         return redirect()->route('ScanShelf')->with('success', 'Scan counts and rack session reset');
     }
 

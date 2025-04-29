@@ -80,6 +80,9 @@
                 .then(data => {
                     console.log(data);  // Log the data to check for any issues
                     if (data.success && data.rack_id) {
+                        fetch('http://127.0.0.1:5000/reset_barcodes', {
+                            method: 'POST'
+                        });
                         console.log("Valid rack scanned:", data.rack_id); // Log new rack
                         // Redirect to mainPage immediately after valid rack is scanned
                         setTimeout(function() {
