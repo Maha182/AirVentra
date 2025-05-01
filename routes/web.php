@@ -94,6 +94,10 @@ Route::group(['middleware' => 'auth'], function () {
         $rackData = session('current_rack', null);
     
         if ($rackData) {
+
+            if ($request->get('message') === 'success') {
+                session()->flash('success', '✅ Rack scanned successfully. Ready to begin inventory check.');
+            }
             // Start the barcode service
             Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
             

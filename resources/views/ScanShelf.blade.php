@@ -86,7 +86,7 @@
                         console.log("Valid rack scanned:", data.rack_id); // Log new rack
                         // Redirect to mainPage immediately after valid rack is scanned
                         setTimeout(function() {
-                            const redirectUrl = "{{ url('mainPage') }}" + "?rack_id=" + data.rack_id;
+                            const redirectUrl = "{{ url('mainPage') }}" + "?rack_id=" + data.rack_id + "&message=success";
                             console.log("Redirecting to:", redirectUrl);
                             window.location.href = redirectUrl;  // Trigger redirection
                         }, 2000); // Delay for the shelf video to load or any other purpose
