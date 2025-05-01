@@ -259,6 +259,11 @@
                     ❌ {{ session('modal_error') }}
                 </div>
             @endif
+            @if (session('modal_success'))
+                <div class="alert alert-success text-center" role="alert">
+                    {{ session('modal_success') }}
+                </div>
+            @endif
                 <!-- Error Message Inside Modal -->
                 <div id="lookupError" class="alert alert-danger text-center d-none" role="alert">
                     Location ID not found!
@@ -266,6 +271,7 @@
 
                 <form action="{{ route('assignProduct') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="from_modal" value="1">
                     <div class="mb-3">
                         <label class="form-label bg-light p-2 d-block">Location ID</label>
                         <input type="text" class="form-control" name="selected_location_id"  id="locationID" required> 
@@ -474,8 +480,19 @@
                             populateLocationDropdown(assignedProductData);
                         }
                     } else {
-                        alert("❌ Unrecognized or invalid barcode. Please try again.");
+                        // ✅ Show real error if available
+                        const message = data.message2 || data.error || "❌ Unrecognized or invalid barcode. Please try again.";
+                        const alertContainer = document.getElementById('dynamic-success-alert');
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-danger text-center" role="alert">
+                                ${message}
+                            </div>
+                        `;
+                        setTimeout(() => {
+                            alertContainer.innerHTML = '';
+                        }, 20000);
                     }
+
                 })
                 .catch(error => {
                     console.error("Error fetching product data:", error);

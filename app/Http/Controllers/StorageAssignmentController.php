@@ -161,9 +161,10 @@ class StorageAssignmentController extends Controller
         if (!$location) {
             return [
                 'success' => false,
-                'error' => 'No available storage locations in zone: ' . $zone_name,
+                'message2' => "❌ The zone '{$zone_name}' is currently full. Please assign manually.",
             ];
         }
+        
         
 
         // Step 6: Prepare session data
@@ -214,22 +215,30 @@ class StorageAssignmentController extends Controller
             return redirect()->route('storage-assignment')->with('info', 'This batch is already assigned to this location.');
         }
 
-        // if ((int)$location->current_capacity >= (int)$location->capacity) {
-        //     return redirect()->route('storage-assignment')->with('error', 'Location is at full capacity.');
-        // }
         if ((int)$location->current_capacity >= (int)$location->capacity) {
-            return redirect()->back()
-                ->withInput() // to keep the input value in the form
-                ->with('modal_error', 'Location is at full capacity.')
-                ->with('open_modal', true); // flag to re-open modal
+            if ($request->has('from_modal')) {
+                return redirect()->route('storage-assignment')
+                    ->with('modal_error', 'Location is at full capacity.')
+                    ->with('open_modal', true);
+            } else {
+                return redirect()->route('storage-assignment')
+                    ->with('error', 'Location is at full capacity.');
+            }
         }
 
-        // Assign location to batch
         $batch->location_id = $location->id;
         $batch->save();
-        $location->increment('current_capacity');
+        $location->current_capacity = $location->current_capacity + $batch->quantity;
 
-        return redirect()->route('storage-assignment')->with('success', 'Batch Assigned Successfully');
+        // ✅ Detect if manual modal is used based on presence of "open_modal"
+        if ($request->has('from_modal')) {
+            return redirect()->route('storage-assignment')
+                ->with('modal_success', '✅ Location assigned manually!')
+                ->with('open_modal', true);
+        }
+
+        return redirect()->route('storage-assignment')
+            ->with('success', '✅ Batch Assigned Successfully');
     }
 
     public function lookupLocation(Request $request)
