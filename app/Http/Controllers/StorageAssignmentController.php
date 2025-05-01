@@ -19,73 +19,61 @@ class StorageAssignmentController extends Controller
         // Fetch barcode from Python
         $barcodeResponse = $client->get('http://127.0.0.1:5000/get_barcode');
         $barcodeData = json_decode($barcodeResponse->getBody()->getContents(), true);
-        $scannedBarcode = $barcodeData['barcode'] ?? null;
-
-        if (!$scannedBarcode) {
+        $barcode = $barcodeData['barcode'] ?? null;
+    
+        if (!$barcode) {
             return response()->json(['success' => false, 'error' => 'No barcode detected.'], 400);
         }
-
-        // Check if the barcode already exists (fully, with or without suffix)
-        $existingBatch = ProductBatch::where('barcode', $scannedBarcode)->first();
+    
+        // Try to find batch
+        $batch = ProductBatch::where('barcode', $barcode)->first();
         $batchWasNew = false;
-
-        if ($existingBatch) {
-            $batch = $existingBatch;
-        } else {
-            \Log::info("⚠️ New batch detected: $scannedBarcode");
-
-            // Match base format like: P001-25/04/12-100
-            preg_match('/^([A-Za-z0-9]{4,})-(\d{2}\/\d{2}\/\d{2})-(\d{1,4})$/', $scannedBarcode, $matches);
+    
+        // If batch doesn't exist, parse and add it
+        if (!$batch) {
+            \Log::info("⚠️ Batch is new: $barcode");
+            // Parse barcode
+            preg_match('/^([A-Za-z0-9]{5})-(\d{2}\/\d{2}\/\d{2})-(\d{1,3})$/', $barcode, $matches);
+            
 
             if (!$matches || count($matches) !== 4) {
-                \Log::warning("❌ Barcode did not match expected format: $scannedBarcode");
+                \Log::warning("❌ Barcode did not match expected format: $barcode");
                 return response()->json([
                     'success' => false,
                     'message2' => 'Invalid barcode format.'
                 ], 400);
             }
-
+    
             [$_, $productId, $expiryStr, $quantity] = $matches;
-
-            // Validate product exists
+    
+            // Convert expiry date to Y-m-d
+            $expiryDate = Carbon::createFromFormat('d/m/y', $expiryStr)->format('Y-m-d');
+    
             $product = Product::find($productId);
+    
             if (!$product) {
                 return response()->json([
                     'success' => false,
                     'error' => 'Product ID from barcode does not exist: ' . $productId
                 ], 404);
             }
-
-            // Format expiry date
-            $expiryDate = Carbon::createFromFormat('d/m/y', $expiryStr)->format('Y-m-d');
-
-            // Build base barcode (without suffix)
-            $baseBarcode = "{$productId}-{$expiryStr}-{$quantity}";
-
-            // Find how many existing batches use the same baseBarcode
-            $similarBatchesCount = ProductBatch::where('barcode', 'LIKE', $baseBarcode . '-%')->count();
-
-            // Generate a new unique suffix
-            $newSuffix = 'B' . str_pad($similarBatchesCount + 1, 3, '0', STR_PAD_LEFT);
-            $uniqueBarcode = $baseBarcode . '-' . $newSuffix;
-
-            // Create the batch
+    
+            // Create new batch
             $batch = ProductBatch::create([
                 'product_id' => $productId,
-                'barcode' => $uniqueBarcode,
+                'barcode' => $barcode,
                 'quantity' => (int)$quantity,
                 'expiry_date' => $expiryDate,
                 'received_date' => now(),
                 'status' => 'in_stock',
             ]);
-
+    
             $batchWasNew = true;
-            \Log::info("✅ New batch saved with unique barcode: $uniqueBarcode");
         }
-
+    
         // Continue with location assignment
         $description = $batch->product->description;
-
+    
         $response = $client->post('http://127.0.0.1:5001/getData', [
             'json' => ['description' => $description]
         ]);
@@ -96,16 +84,18 @@ class StorageAssignmentController extends Controller
         if (!$zone_name) {
             return response()->json(['success' => false, 'error' => 'Zone assignment failed.'], 500);
         }
-
         $data = $this->assignLocation($batch, $zone_name);
 
+        // Add extra message if batch was new
         if ($batchWasNew) {
             $data['message'] = '✅ The product was not in the stock of the warehouse and has been added.';
         }
-
+        
         return response()->json($data);
-    }
+        
 
+        
+    }
 
     private function assignLocation($batch, $zone_name)
     {
