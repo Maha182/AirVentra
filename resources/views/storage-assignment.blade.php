@@ -547,9 +547,6 @@
 
         function completeAssignment(batchId) {
             fetch(`/AirVentra/completeAssignment?batch_id=${batchId}`)
-            setTimeout(() => {
-            document.querySelector('img[alt="Live Video Feed"]').src = "http://127.0.0.1:5001/getData";
-            }, 3000); 
             .then(async response => {
                 const text = await response.text();
 

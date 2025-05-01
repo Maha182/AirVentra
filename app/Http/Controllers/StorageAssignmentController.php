@@ -95,32 +95,32 @@ class StorageAssignmentController extends Controller
         
 
         $description = $batch->product->description;
-        $response = $client->post('http://127.0.0.1:5001/getData', [
-            'json' => ['description' => $description]
-        ]);
+        // $response = $client->post('http://127.0.0.1:5001/getData', [
+        //     'json' => ['description' => $description]
+        // ]);
 
-        // try {
-        //     $maxAttempts = 5;
-        //     $delayBetweenAttempts = 1000; // in milliseconds
+        try {
+            $maxAttempts = 5;
+            $delayBetweenAttempts = 1000; // in milliseconds
         
-        //     for ($i = 0; $i < $maxAttempts; $i++) {
-        //         try {
-        //             $response = $client->post('http://127.0.0.1:5001/getData', [
-        //                 'json' => ['description' => $description]
-        //             ]);
-        //             break; // If it succeeds, break the loop
-        //         } catch (\GuzzleHttp\Exception\ConnectException $e) {
-        //             if ($i == $maxAttempts - 1) throw $e; // Final attempt failed
-        //             usleep($delayBetweenAttempts * 1000); // Wait before next attempt
-        //         }
-        //     }
-        // } catch (\Exception $e) {
-        //     \Log::error("❌ Could not reach Python API: " . $e->getMessage());
-        //     return response()->json([
-        //         'success' => false,
-        //         'error' => 'Could not reach the AI module for zone assignment.',
-        //     ], 500);
-        // }
+            for ($i = 0; $i < $maxAttempts; $i++) {
+                try {
+                    $response = $client->post('http://127.0.0.1:5001/getData', [
+                        'json' => ['description' => $description]
+                    ]);
+                    break; // If it succeeds, break the loop
+                } catch (\GuzzleHttp\Exception\ConnectException $e) {
+                    if ($i == $maxAttempts - 1) throw $e; // Final attempt failed
+                    usleep($delayBetweenAttempts * 1000); // Wait before next attempt
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error("❌ Could not reach Python API: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Could not reach the AI module for zone assignment.',
+            ], 500);
+        }
         
         
     
