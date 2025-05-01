@@ -72,7 +72,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => {
             document.querySelector('img[alt="Live Video Feed"]').src = "http://127.0.0.1:5000/video_feed";
-        }, 4000); 
+        }, 4000);
 
         function fetchRackData() {
             fetch("{{ url('scan-rack') }}")
@@ -80,26 +80,45 @@
                 .then(data => {
                     console.log(data);  // Log the data to check for any issues
                     if (data.success && data.rack_id) {
-                        fetch('http://127.0.0.1:5000/reset_barcodes', {
-                            method: 'POST'
-                        });
-                        console.log("Valid rack scanned:", data.rack_id); // Log new rack
-                        // Redirect to mainPage immediately after valid rack is scanned
-                        setTimeout(function() {
+                        // Call Flask reset
+                        fetch('http://127.0.0.1:5000/reset_barcodes', { method: 'POST' });
+
+                        // ✅ Display success alert dynamically
+                        const alertContainer = document.createElement('div');
+                        alertContainer.innerHTML = `
+                            <div id="rack-scan-alert" class="alert alert-success text-center mt-3" role="alert">
+                                ✅ Rack scanned successfully. Redirecting to inventory...
+                            </div>
+                        `;
+                        const featuresSection = document.getElementById('features');
+                        if (featuresSection) {
+                            featuresSection.appendChild(alertContainer);
+                        }
+
+                        // ⏳ Optional fade out before redirect
+                        setTimeout(() => {
+                            const alert = document.getElementById('rack-scan-alert');
+                            if (alert) {
+                                alert.style.transition = "opacity 1s";
+                                alert.style.opacity = 0;
+                            }
+                        }, 2500);
+
+                        // 🚀 Redirect after 3 seconds with message param
+                        setTimeout(function () {
                             const redirectUrl = "{{ url('mainPage') }}" + "?rack_id=" + data.rack_id + "&message=success";
                             console.log("Redirecting to:", redirectUrl);
-                            window.location.href = redirectUrl;  // Trigger redirection
-                        }, 2000); // Delay for the shelf video to load or any other purpose
+                            window.location.href = redirectUrl;
+                        }, 3000);
                     }
                 })
                 .catch(error => console.error("Error fetching rack data:", error));
         }
 
-        // Auto-fetch every 3 seconds to check for a new scan
+        // 🔁 Check every 3 seconds for new rack scan
         setInterval(fetchRackData, 3000);
     });
-
-
 </script>
+
 
 @endsection
