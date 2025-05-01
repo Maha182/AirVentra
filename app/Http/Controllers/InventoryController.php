@@ -36,6 +36,7 @@ class InventoryController extends Controller
         $unknownBatches = [];
 
         foreach ($barcodes as $barcode) {
+            $barcode = trim($barcode);  // 🔧 add this line
             $batch = ProductBatch::where('barcode', $barcode)->first();
 
             if ($batch) {

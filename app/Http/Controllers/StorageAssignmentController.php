@@ -19,7 +19,7 @@ class StorageAssignmentController extends Controller
         // Fetch barcode from Python
         $barcodeResponse = $client->get('http://127.0.0.1:5000/get_barcode');
         $barcodeData = json_decode($barcodeResponse->getBody()->getContents(), true);
-        $barcode = $barcodeData['barcode'] ?? null;
+        $barcode = trim($barcodeData['barcode'] ?? '');
     
         if (!$barcode) {
             return response()->json(['success' => false, 'error' => 'No barcode detected.'], 400);
@@ -71,7 +71,7 @@ class StorageAssignmentController extends Controller
             // Create new batch
             $batch = ProductBatch::create([
                 'product_id' => $productId,
-                'barcode' => $barcode,
+                'barcode' => trim($barcode),
                 'quantity' => (int)$quantity,
                 'expiry_date' => $expiryDateFormatted, 
                 'received_date' => now(),
