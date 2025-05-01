@@ -20,36 +20,40 @@ class StorageAssignmentController extends Controller
         $barcodeResponse = $client->get('http://127.0.0.1:5000/get_barcode');
         $barcodeData = json_decode($barcodeResponse->getBody()->getContents(), true);
         $barcode = $barcodeData['barcode'] ?? null;
-
+    
         if (!$barcode) {
             return response()->json(['success' => false, 'error' => 'No barcode detected.'], 400);
         }
-        
+    
         // Try to find batch
         $batch = ProductBatch::where('barcode', $barcode)->first();
         $batchWasNew = false;
-
+    
         // If batch doesn't exist, parse and add it
         if (!$batch) {
             \Log::info("⚠️ Batch is new: $barcode");
+            // Parse barcode
             preg_match('/^([A-Za-z0-9]+)-(\d{2}\/\d{2}\/\d{2})-(\d+)$/', $barcode, $matches);
-
-            if (!$matches || count($matches) !== 4) {
-                return response()->json(['success' => false, 'error' => 'Invalid barcode format. Expected format: PRODUCTID-DD/MM/YY-QUANTITY'], 400);
+    
+            if (!$matches) {
+                return response()->json(['success' => false, 'error' => 'Invalid barcode format.'], 400);
             }
-
+    
             [$_, $productId, $expiryStr, $quantity] = $matches;
-
+    
+            // Convert expiry date to Y-m-d
             $expiryDate = Carbon::createFromFormat('d/m/y', $expiryStr)->format('Y-m-d');
+    
             $product = Product::find($productId);
-
+    
             if (!$product) {
                 return response()->json([
                     'success' => false,
                     'error' => 'Product ID from barcode does not exist: ' . $productId
                 ], 404);
             }
-
+    
+            // Create new batch
             $batch = ProductBatch::create([
                 'product_id' => $productId,
                 'barcode' => $barcode,
@@ -58,83 +62,36 @@ class StorageAssignmentController extends Controller
                 'received_date' => now(),
                 'status' => 'in_stock',
             ]);
-
+    
             $batchWasNew = true;
         }
-
-        $Product = [
-            'batch_id' => $batch->id,
-            'product_name' => $batch->product->title,
-            'batch_quantity' => $batch->quantity,
-        ];
-
-        if ($batchWasNew) {
-            return response()->json([
-                'success' => true,
-                'status' => 'created',
-                'message' => '✅ The product was not in the stock of the warehouse and has been added.',
-                'product' =>$Product
-            ]);
-        }
-
-        return response()->json(['success' => true, 'status' => 'exists']);
-    }
-
-    public function completeAssignment(Request $request)
-    {
-        $client = new Client();
-
-        $batchId = $request->query('batch_id');  // Instead of $request->input('batch_id')
-        $batch = ProductBatch::find($batchId);
-
-
-        // $batch = ProductBatch::find($request->input('batch_id'));
-        if (!$batch) {
-            return response()->json(['success' => false, 'error' => 'Batch not found.'], 404);
-        }
-        
-
-        $description = $batch->product->description;
-        // $response = $client->post('http://127.0.0.1:5001/getData', [
-        //     'json' => ['description' => $description]
-        // ]);
-
-        try {
-            $maxAttempts = 5;
-            $delayBetweenAttempts = 1000; // in milliseconds
-        
-            for ($i = 0; $i < $maxAttempts; $i++) {
-                try {
-                    $response = $client->post('http://127.0.0.1:5001/getData', [
-                        'json' => ['description' => $description]
-                    ]);
-                    break; // If it succeeds, break the loop
-                } catch (\GuzzleHttp\Exception\ConnectException $e) {
-                    if ($i == $maxAttempts - 1) throw $e; // Final attempt failed
-                    usleep($delayBetweenAttempts * 1000); // Wait before next attempt
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error("❌ Could not reach Python API: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'error' => 'Could not reach the AI module for zone assignment.',
-            ], 500);
-        }
-        
-        
     
+        // Continue with location assignment
+        $description = $batch->product->description;
+    
+        $response = $client->post('http://127.0.0.1:5001/getData', [
+            'json' => ['description' => $description]
+        ]);
+
         $result = json_decode($response->getBody()->getContents(), true);
         $zone_name = $result['zone_name'] ?? null;
 
         if (!$zone_name) {
             return response()->json(['success' => false, 'error' => 'Zone assignment failed.'], 500);
         }
-
         $data = $this->assignLocation($batch, $zone_name);
+
+        // Add extra message if batch was new
+        if ($batchWasNew) {
+            $data['message'] = '✅ The product was not in the stock of the warehouse and has been added.';
+        }
+        
         return response()->json($data);
+        
+
+        
     }
-    
+
     private function assignLocation($batch, $zone_name)
     {
         $productId = $batch->product_id;
@@ -248,7 +205,7 @@ class StorageAssignmentController extends Controller
         // Assign location to batch
         $batch->location_id = $location->id;
         $batch->save();
-        $location->current_capacity = $location->current_capacity + $batch->quantity;
+        $location->increment('current_capacity');
 
         return redirect()->route('storage-assignment')->with('success', 'Batch Assigned Successfully');
     }

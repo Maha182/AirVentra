@@ -3,8 +3,6 @@
 @section('content')
 
 <meta charset="UTF-8">
-<meta name="csrf-token" content="{{ csrf_token() }}">
-
 <script>
         // Function to initialize the Python services after page load
         window.onload = function () {
@@ -408,6 +406,51 @@
         // Fetch product data and update fields
         let isFetching = false;
 
+        function fetchProductData(retries = 3) {
+            if (isFetching) return;
+            isFetching = true;
+
+            fetch('/AirVentra/sendLocationData')
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Received data:", data);
+                    if (data.message) {
+                        const alertContainer = document.getElementById('dynamic-success-alert');
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-success text-center" role="alert">
+                                ${data.message}
+                            </div>
+                        `;
+                        setTimeout(() => {
+                            alertContainer.innerHTML = '';
+                        }, 10000);
+                    }
+
+                    if (data.success && data.assigned_product) {
+                        let newBarcode = data.assigned_product.batch_id;
+
+                        if (newBarcode && newBarcode !== lastScannedBarcode) {
+                            lastScannedBarcode = newBarcode;
+                            sessionStorage.setItem('lastScannedBarcode', newBarcode);
+
+                            assignedProductData = data.assigned_product;
+                            updateProductUI(assignedProductData);
+                            updateChart(assignedProductData.current_capacity, assignedProductData.capacity);
+                            populateLocationDropdown(assignedProductData);
+                        }
+                    } else {
+                        alert("❌ Unrecognized or invalid barcode. Please try again.");
+                    }
+                })
+                .catch(error => console.error("Error fetching product data:", error))
+
+                .finally(() => {
+                    isFetching = false;
+                });
+        }
 
    
         function updateProductUI(productData) {
@@ -423,7 +466,7 @@
 
         function populateLocationDropdown(assignedProduct) {
             let locationsSelect = document.getElementById('locations');
-            locationsSelect.innerHTML = '';
+            locationsSelect.innerHTML = ''; // Clear previous options
 
             let nearestOption = document.createElement('option');
             nearestOption.value = assignedProduct.nearest.id || '';
@@ -445,7 +488,9 @@
 
         function updateLocationData() {
             if (!assignedProductData) return;
+
             const selectedLocationId = document.getElementById('locations').value;
+
             let selectedLocation = null;
 
             if (selectedLocationId == assignedProductData.freest?.id) {
@@ -461,6 +506,7 @@
                 return;
             }
 
+            // Update the UI
             document.getElementById('Location_id').innerText = selectedLocation.id || '';
             document.getElementById('zone_name').innerText = selectedLocation.zone_name || '';
             document.getElementById('aisle').innerText = selectedLocation.aisle || '';
@@ -470,112 +516,6 @@
             sessionStorage.setItem('selectedLocationId', selectedLocation.id);
             document.getElementById('selectedLocationInput').value = selectedLocation.id;
         }
-
-        function fetchProductData() {
-            if (isFetching) return;
-            isFetching = true;
-
-            fetch('/AirVentra/sendLocationData')
-                .then(async response => {
-                    const text = await response.text();
-
-                    try {
-                        const data = JSON.parse(text);
-
-                        if (!response.ok) {
-                            const errorMsg = data.error || 'An unexpected error occurred.';
-
-                            // Show only "Invalid barcode format" as a user-facing alert
-                            if (errorMsg.includes("Invalid barcode format")) {
-                                const alertContainer = document.getElementById('dynamic-success-alert');
-                                alertContainer.innerHTML = `
-                                    <div class="alert alert-danger text-center" role="alert">
-                                        ❌ ${errorMsg}
-                                    </div>
-                                `;
-                                setTimeout(() => {
-                                    alertContainer.innerHTML = '';
-                                }, 30000);
-                            } else {
-                                console.warn("Ignored backend error:", errorMsg);
-                            }
-
-                            return;
-                        }
-
-                        // If we reach here, barcode is valid — store scan session
-                        sessionStorage.setItem('lastScannedBarcode', 'true');
-
-                        let ProductData = data.product;
-                        updateProductUI(ProductData);
-
-                        if (data.status === 'created' && data.message) {
-                            const alertContainer = document.getElementById('dynamic-success-alert');
-                            alertContainer.innerHTML = `
-                                <div class="alert alert-success text-center" role="alert">
-                                    ✅ ${data.message}
-                                </div>
-                            `;
-                            setTimeout(() => {
-                                alertContainer.innerHTML = '';
-                            }, 30000);
-                        }
-
-                        if (data.status === 'created' || data.status === 'exists') {
-                            const batchId = (data.product && data.product.batch_id) || sessionStorage.getItem('lastBatchId');
-                            if (batchId) {
-                                sessionStorage.setItem('lastBatchId', batchId);
-                                completeAssignment(batchId);
-                            }
-                        }
-
-                    } catch (err) {
-                        console.error("Unexpected response error:", err);
-                        // No alert shown to user
-                    }
-                })
-                .catch(error => {
-                    // Suppress all network errors unless debugging
-                    console.warn("Network or fetch error:", error);
-                })
-                .finally(() => {
-                    isFetching = false;
-                });
-        }
-
-
-
-        function completeAssignment(batchId) {
-            fetch(`/AirVentra/completeAssignment?batch_id=${batchId}`)
-            .then(async response => {
-                const text = await response.text();
-
-                try {
-                    const data = JSON.parse(text); // Try parsing JSON
-                    console.log("Assignment response:", data);
-
-                    if (data.success && data.assigned_product) {
-                        assignedProductData = data.assigned_product;
-                        updateProductUI(assignedProductData);
-                        updateChart(assignedProductData.current_capacity, assignedProductData.capacity);
-                        populateLocationDropdown(assignedProductData);
-                    } else {
-                        console.error("Assignment failed:", data.error);
-                        alert("❌ Assignment failed: " + (data.error || "Unknown error"));
-                    }
-
-                } catch (err) {
-                    console.error("❌ Server returned non-JSON error:\n", text);
-                    // alert("❌ Internal server error. Please check Laravel logs.");
-                }
-            })
-            .catch(error => {
-                console.error("❌ Network or fetch error:", error);
-                alert("❌ Could not complete assignment. Check console for details.");
-            });
-        }
-
-
 
         document.getElementById('lookupLocationBtn').addEventListener('click', function () {
             let locationID = document.getElementById('locationID').value;
@@ -604,7 +544,6 @@
         }
     });
 </script>
-
 
 
 @endsection

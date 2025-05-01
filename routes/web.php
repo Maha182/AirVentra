@@ -119,7 +119,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sendLocationData', [StorageAssignmentController::class, 'sendLocationData'])->name('sendLocationData');
     Route::post('/assign-product', [StorageAssignmentController::class, 'assignProductToLocation'])->name('assignProduct');
     Route::get('/getErrorReports', [PlacementController::class, 'getErrorReports']);    
-    Route::get('/completeAssignment', [StorageAssignmentController::class, 'completeAssignment']);
 
     Route::get('/getBarcode', [PlacementController::class, 'getBarcode']);
     Route::get('/check-placement', [PlacementController::class, 'checkPlacement'])->name('check-placement');
