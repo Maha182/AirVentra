@@ -33,41 +33,52 @@ class StorageAssignmentController extends Controller
         if (!$batch) {
             \Log::info("⚠️ Batch is new: $barcode");
             // Parse barcode
-            preg_match('/^([A-Za-z0-9]{5})-(\d{2}\/\d{2}\/\d{2})-(\d{1,3})$/', $barcode, $matches);
-            
+            preg_match('/^([A-Z0-9]+)-(\d{6})-(\d{1,3})-([A-Z0-9]+)$/', $barcode, $matches);
 
-            if (!$matches || count($matches) !== 4) {
+            if (!$matches || count($matches) !== 5) {
                 \Log::warning("❌ Barcode did not match expected format: $barcode");
                 return response()->json([
                     'success' => false,
                     'message2' => 'Invalid barcode format.'
                 ], 400);
             }
-    
-            [$_, $productId, $expiryStr, $quantity] = $matches;
-    
-            // Convert expiry date to Y-m-d
-            $expiryDate = Carbon::createFromFormat('d/m/y', $expiryStr)->format('Y-m-d');
-    
+        
+            [$_, $productId, $expiryStr, $quantity, $batchCode] = $matches;
+
+            // Extract the components manually
+            $year = substr($expiryStr, 0, 2);   // '25'
+            $month = substr($expiryStr, 2, 2);  // '04'
+            $day = substr($expiryStr, 4, 2);    // '12'
+            
+
+            // Force 20xx interpretation
+            $fullYear = 2000 + (int)$year;
+
+            // Now build expiry date
+            $expiryDateFormatted = Carbon::createFromDate($fullYear, $month, $day)->format('Y-m-d');
+
+            
+        
             $product = Product::find($productId);
-    
+        
             if (!$product) {
                 return response()->json([
                     'success' => false,
                     'error' => 'Product ID from barcode does not exist: ' . $productId
                 ], 404);
             }
-    
+        
             // Create new batch
             $batch = ProductBatch::create([
                 'product_id' => $productId,
                 'barcode' => $barcode,
                 'quantity' => (int)$quantity,
-                'expiry_date' => $expiryDate,
+                'expiry_date' => $expiryDateFormatted, 
                 'received_date' => now(),
                 'status' => 'in_stock',
             ]);
-    
+            
+        
             $batchWasNew = true;
         }
     
