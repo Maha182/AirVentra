@@ -33,6 +33,8 @@
     </style>
 </div>
 
+<div id="dynamic-success-alert"></div>
+
 @if (session('warning'))
     <div class="alert alert-warning text-center">{{ session('warning') }}</div>
 @endif
@@ -208,26 +210,46 @@
                         sessionStorage.setItem('lastScannedBarcode', lastScannedBarcode);
 
                         fetch(`/AirVentra/check-placement?barcode=${lastScannedBarcode}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log("API Response:", data); // Log the API response
+                            .then(async response => {
+                                const responseText = await response.text();
+                                try {
+                                    const result = JSON.parse(responseText);
+                                    
+                                    if (!response.ok && result.error) {
+                                        // 🚨 Show danger alert for unknown batch
+                                        showAlert('danger', `❌ ${result.error}`);
+                                        return;
+                                    }
 
-                                if (data && data.product) {
-                                    let product = data.product;
-                                    updateElementText('product-id', product.product_id || '');
-                                    updateElementText('product-name', product.product_name || '');
-                                    updateElementText('product-zone', product.zone_name || '');
-                                } else {
-                                    console.error("Product data is undefined or null.");
+                                    if (result.product) {
+                                        let product = result.product;
+                                        updateElementText('product-id', product.product_id || '');
+                                        updateElementText('product-name', product.product_name || '');
+                                        updateElementText('product-zone', product.zone_name || '');
+                                    }
+                                } catch (e) {
+                                    console.error("Invalid JSON from check-placement response:", responseText);
                                 }
                             })
-                            .catch(error => console.error("Error fetching product data:", error));
+                            .catch(error => console.error("Error checking placement:", error));
                     }
                 })
-                .catch(error => console.error("Error fetching barcode or checking placement:", error));
+                .catch(error => console.error("Error fetching barcode:", error));
         }
 
-        
+
+        function showAlert(type, message) {
+            const container = document.getElementById('dynamic-success-alert');
+            if (container) {
+                container.innerHTML = `
+                    <div class="alert alert-${type} text-center" role="alert">
+                        ${message}
+                    </div>
+                `;
+                setTimeout(() => container.innerHTML = '', 15000);
+            }
+        }
+
         fetchErrorReports();
 
         // Auto-refresh every 10 seconds (10000 ms)
