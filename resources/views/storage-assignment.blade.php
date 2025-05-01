@@ -244,7 +244,7 @@
     </div>
 </div>
 
- 
+
 <!-- Manual Storage Assignment Modal -->
 <div class="modal fade" id="manualAssignModal" tabindex="-1" aria-labelledby="manualAssignModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -254,6 +254,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+            @if (session('modal_error'))
+                <div class="alert alert-danger text-center" role="alert">
+                    ❌ {{ session('modal_error') }}
+                </div>
+            @endif
                 <!-- Error Message Inside Modal -->
                 <div id="lookupError" class="alert alert-danger text-center d-none" role="alert">
                     Location ID not found!
@@ -289,6 +294,16 @@
         </div>
     </div>
 </div>
+
+
+@if(session('open_modal'))
+<script>
+    window.addEventListener('load', function () {
+        var myModal = new bootstrap.Modal(document.getElementById('manualAssignModal'));
+        myModal.show();
+    });
+</script>
+@endif
 
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -411,12 +426,29 @@
             isFetching = true;
 
             fetch('/AirVentra/sendLocationData')
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    return response.json();
+                .then(async response => {
+                    const data = await response.json(); // always try to read the JSON
+                    if (!response.ok) {
+                        // Still show alert if message2 or error exists
+                        const alertContainer = document.getElementById('dynamic-success-alert');
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-danger text-center" role="alert">
+                                ❌ ${data.message2 || data.error || 'An unexpected error occurred.'}
+                            </div>
+                        `;
+                        setTimeout(() => {
+                            alertContainer.innerHTML = '';
+                        }, 20000);
+
+                        // Throw to exit .then and skip the success logic
+                        throw new Error(data.message2 || data.error || 'HTTP error');
+                    }
+
+                    return data;
                 })
                 .then(data => {
                     console.log("Received data:", data);
+
                     if (data.message) {
                         const alertContainer = document.getElementById('dynamic-success-alert');
                         alertContainer.innerHTML = `
@@ -426,7 +458,7 @@
                         `;
                         setTimeout(() => {
                             alertContainer.innerHTML = '';
-                        }, 10000);
+                        }, 20000);
                     }
 
                     if (data.success && data.assigned_product) {
@@ -445,12 +477,15 @@
                         alert("❌ Unrecognized or invalid barcode. Please try again.");
                     }
                 })
-                .catch(error => console.error("Error fetching product data:", error))
-
+                .catch(error => {
+                    console.error("Error fetching product data:", error);
+                    // Already shown alert inside .then if response is not OK, so no need to repeat here
+                })
                 .finally(() => {
                     isFetching = false;
                 });
         }
+
 
    
         function updateProductUI(productData) {

@@ -33,10 +33,15 @@ class StorageAssignmentController extends Controller
         if (!$batch) {
             \Log::info("⚠️ Batch is new: $barcode");
             // Parse barcode
-            preg_match('/^([A-Za-z0-9]+)-(\d{2}\/\d{2}\/\d{2})-(\d+)$/', $barcode, $matches);
-    
-            if (!$matches) {
-                return response()->json(['success' => false, 'error' => 'Invalid barcode format.'], 400);
+            preg_match('/^([A-Za-z0-9]{5})-(\d{2}\/\d{2}\/\d{2})-(\d{1,3})$/', $barcode, $matches);
+            
+
+            if (!$matches || count($matches) !== 4) {
+                \Log::warning("❌ Barcode did not match expected format: $barcode");
+                return response()->json([
+                    'success' => false,
+                    'message2' => 'Invalid barcode format.'
+                ], 400);
             }
     
             [$_, $productId, $expiryStr, $quantity] = $matches;
@@ -198,8 +203,14 @@ class StorageAssignmentController extends Controller
             return redirect()->route('storage-assignment')->with('info', 'This batch is already assigned to this location.');
         }
 
+        // if ((int)$location->current_capacity >= (int)$location->capacity) {
+        //     return redirect()->route('storage-assignment')->with('error', 'Location is at full capacity.');
+        // }
         if ((int)$location->current_capacity >= (int)$location->capacity) {
-            return redirect()->route('storage-assignment')->with('error', 'Location is at full capacity.');
+            return redirect()->back()
+                ->withInput() // to keep the input value in the form
+                ->with('modal_error', 'Location is at full capacity.')
+                ->with('open_modal', true); // flag to re-open modal
         }
 
         // Assign location to batch
