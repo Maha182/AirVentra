@@ -56,8 +56,8 @@ Route::group(['middleware' => 'auth'], function () {
     
     // Inside the 'auth' or 'dashboard' middleware group
     Route::get('/options', function () {
-        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'barcode']);
-        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
+        // Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'barcode']);
+        // Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
     return view('optionspage');  
     })->name('OptionsPage');
 
@@ -82,8 +82,8 @@ Route::group(['middleware' => 'auth'], function () {
     //     })->name('AddEmployee');
 
     Route::get('/storage-assignment', function () {
-        Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
-        Http::post('http://127.0.0.1:5002/start_service',['service' => 'assignment']);
+        // Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
+        // Http::post('http://127.0.0.1:5002/start_service',['service' => 'assignment']);
         return view('storage-assignment');
     })->name('storage-assignment');
     
@@ -96,10 +96,10 @@ Route::group(['middleware' => 'auth'], function () {
         if ($rackData) {
 
             // Start the barcode service
-            Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
+            // Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
             
-            // Stop the assignment service if running
-            Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
+            // // Stop the assignment service if running
+            // Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
             
             // Pass the rack data to the main page view
             return view('mainPage', [
@@ -127,9 +127,9 @@ Route::group(['middleware' => 'auth'], function () {
     
     //inventory level check
     Route::get('/scan-shelf', function () {
-        Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
-        // Stop assignment service if running
-        Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
+        // Http::post('http://127.0.0.1:5002/start_service', ['service' => 'barcode']);
+        // // Stop assignment service if running
+        // Http::post('http://127.0.0.1:5002/stop_service', ['service' => 'assignment']);
         return view('ScanShelf');
     })->name('ScanShelf');
     

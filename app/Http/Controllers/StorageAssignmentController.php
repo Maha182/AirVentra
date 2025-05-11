@@ -21,9 +21,9 @@ class StorageAssignmentController extends Controller
         $barcodeData = json_decode($barcodeResponse->getBody()->getContents(), true);
         $barcode = trim($barcodeData['barcode'] ?? '');
     
-        if (!$barcode) {
-            return response()->json(['success' => false, 'error' => 'No barcode detected.'], 400);
-        }
+        // if (!$barcode) {
+        //     return response()->json(['success' => false, 'error' => 'No barcode detected.'], 400);
+        // }
     
         // Try to find batch
         $batch = ProductBatch::where('barcode', $barcode)->first();
@@ -136,35 +136,34 @@ class StorageAssignmentController extends Controller
             ->whereRaw('CAST(current_capacity AS SIGNED) < CAST(capacity AS SIGNED)')
             ->get();
 
-        $preferredLocation = null;
+        // $preferredLocation = null;
 
         // Step 4: Try to find a location near the existing ones
-        if (!$existingLocations->isEmpty()) {
-            $preferredLocation = $availableLocations->sortBy(function ($location) use ($existingLocations) {
-                return $existingLocations->min(function ($existing) use ($location) {
-                    // If aisle or rack is null or not numeric, set default distance high
-                    $aisleDiff = is_numeric($existing->aisle) && is_numeric($location->aisle)
-                        ? abs((int)$existing->aisle - (int)$location->aisle)
-                        : 999;
+        // if (!$existingLocations->isEmpty()) {
+        //     $preferredLocation = $availableLocations->sortBy(function ($location) use ($existingLocations) {
+        //         return $existingLocations->min(function ($existing) use ($location) {
+        //             // If aisle or rack is null or not numeric, set default distance high
+        //             $aisleDiff = is_numeric($existing->aisle) && is_numeric($location->aisle)
+        //                 ? abs((int)$existing->aisle - (int)$location->aisle)
+        //                 : 999;
 
-                    $rackDiff = is_numeric($existing->rack) && is_numeric($location->rack)
-                        ? abs((int)$existing->rack - (int)$location->rack)
-                        : 999;
+        //             $rackDiff = is_numeric($existing->rack) && is_numeric($location->rack)
+        //                 ? abs((int)$existing->rack - (int)$location->rack)
+        //                 : 999;
 
-                    return $aisleDiff + $rackDiff;
-                });
-            })->first();
-        }
+        //             return $aisleDiff + $rackDiff;
+        //         });
+        //     })->first();
+        // }
 
         // Step 5: Fallback to a default available location if no preferred
-        $location = $preferredLocation ?: $availableLocations->sortBy('current_capacity')->first();
+        $location = $existingLocations->sortBy('current_capacity')->first();
         if (!$location) {
             return [
                 'success' => false,
                 'message2' => "❌ The zone '{$zone_name}' is currently full. Please assign manually.",
             ];
         }
-        
         
 
         // Step 6: Prepare session data

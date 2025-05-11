@@ -3,32 +3,7 @@
 @section('content')
 
 <meta charset="UTF-8">
-<script>
-        // Function to initialize the Python services after page load
-        window.onload = function () {
-            // Start the barcode detection service
-            fetch('http://127.0.0.1:5002/start_service', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ service: 'barcode' })
-            }).then(response => response.json())
-            .then(data => console.log('Barcode service started:', data))
-            .catch(error => console.error('Error starting barcode service:', error));
 
-            // Start the storage assignment service
-            fetch('http://127.0.0.1:5002/start_service', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ service: 'assignment' })
-            }).then(response => response.json())
-            .then(data => console.log('Assignment service started:', data))
-            .catch(error => console.error('Error starting assignment service:', error));
-        };
-</script>
 <style>
     body {
         font-family: Arial, sans-serif;
